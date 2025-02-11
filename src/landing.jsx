@@ -1,8 +1,10 @@
+import Header from "./header.jsx"
+import React from 'react';
 function Landing() {
     return (
-      <div>
-        <p>bc fcrcr</p>
-      </div>
+      <>
+       <Header/>
+      </>
     )
   }
   
