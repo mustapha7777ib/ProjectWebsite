@@ -1,11 +1,53 @@
 .header{
     display: flex;
     flex-direction: row;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    color: white;
+    background-color: black;
+    padding: 10px;
+    z-index: 1000; 
+    justify-content: space-between;
 }
 .header *{
     display: flex;
     flex-direction: row;
 }
 .header1{
+    justify-content: space-around;
+    display: flex;
+    margin-left: 150px
+    
+}
+.header1 *{
+    margin-right: 30px;
+    padding-top: 10px;
+}
+.header2{
+    margin-right: 100px;
+    display: flex;
+}
+.header2 *{
+    margin-right: 30px;
+    color: white;
+    padding: 10px;
 
+}
+@media screen and (max-width: 912px) and (min-width: 600px){
+    .header1{
+        margin-left: 0;
+    }
+    .header2{
+        margin-right: 0;
+    }
+}
+@media screen and (max-width: 650px) and (min-width: 300px) {
+    .header1{
+        margin-left: 0;
+    }
+    .header2{
+        margin-left: 0;
+    }
 }
