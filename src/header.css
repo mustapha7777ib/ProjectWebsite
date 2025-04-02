@@ -7,6 +7,7 @@ body {
   font-family: "Montserrat", sans-serif;
   font-weight: 600;
   font-style: normal;
+  margin-left: 150px;
 }
 .header{
     display: flex;
@@ -29,13 +30,11 @@ body {
 .header1{
     justify-content: space-around;
     display: flex;
-    margin-left: 150px;
 
 }
 .header11{
     justify-content: space-around;
     display: flex;
-    margin-left: 150px;
  
 }
 .header1 *{
@@ -82,10 +81,10 @@ body {
 }
 .containerbody{
     display: flex;
+    padding-bottom: 50px;
 }
 .text{
-    padding-top: 100px;
-    padding-left: 150px;
+    padding-top: 600px;
     padding-right: 100px;
     margin-right: 20px;
     font-size: 20px;
@@ -100,10 +99,64 @@ body {
 }
 .right{
     margin-left: 100px;
+    margin-top: 500px;
+
 }
 .buttonss:hover{
     cursor: pointer;
 
+}
+.containerservices{
+    display: flex;
+    flex-direction: row;
+    margin-left: -40px;
+    
+}
+.containerservices1{
+    background-color: #764abc;
+    color: white;
+    margin-right: 130px;
+    border-radius: 10px;
+    height: 300px;
+    width: 400px;
+    padding-left: 20px;
+    padding-top: 10px;
+    padding-right: 30px;
+}
+.containerservices2{
+    background-color: white;
+    color: #764abc;
+    border-radius: 10px;
+    height: 300px;
+    width: 400px;
+    padding-left: 20px;
+    padding-top: 10px;
+}
+.servicetext{
+    line-height: 30px;
+    padding-bottom: 40px;
+}
+.findmore1{
+    text-align: center;
+    font-size: 15px;
+    height: 40px;
+    width: 80px;
+    border-radius: 5px;
+    color: #764abc;
+    background-color: white;
+    margin-top: 10px;
+    border: none;
+}
+.findmore2{
+    text-align: center;
+    font-size: 15px;
+    height: 40px;
+    width: 80px;
+    border-radius: 5px;
+    color: white;
+    background-color: #764abc;
+    margin-top: 10px;
+    border: none;
 }
 @media screen and (max-width: 912px) and (min-width: 600px){
     .header1{
