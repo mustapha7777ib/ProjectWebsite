@@ -1,8 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+#home, #services, #about, #contact {
+    scroll-margin-top: 80px; 
+}
 body {
   display: flex;
   align-items: center;
-  height: 100vh;
   margin: 0;    
   font-family: "Montserrat", sans-serif;
   font-weight: 600;
@@ -30,7 +32,7 @@ body {
 .header1{
     justify-content: space-around;
     display: flex;
-
+    padding-left: 100px
 }
 .header11{
     justify-content: space-around;
@@ -84,7 +86,7 @@ body {
     padding-bottom: 50px;
 }
 .text{
-    padding-top: 600px;
+    padding-top: 300px;
     padding-right: 100px;
     margin-right: 20px;
     font-size: 20px;
@@ -99,7 +101,7 @@ body {
 }
 .right{
     margin-left: 100px;
-    margin-top: 500px;
+    margin-top: 200px;
 
 }
 .buttonss:hover{
@@ -110,6 +112,7 @@ body {
     display: flex;
     flex-direction: row;
     margin-left: -40px;
+    margin-bottom: 40px;
     
 }
 .containerservices1{
@@ -157,6 +160,125 @@ body {
     background-color: #764abc;
     margin-top: 10px;
     border: none;
+}
+
+.containerservices11{
+    background-color: white ;
+    color: #764abc;
+    margin-right: 130px;
+    border-radius: 10px;
+    height: 300px;
+    width: 400px;
+    padding-left: 20px;
+    padding-top: 10px;
+    padding-right: 30px;
+}
+.containerservices21{
+    background-color: #764abc;
+    color: white;
+    border-radius: 10px;
+    height: 300px;
+    width: 400px;
+    padding-left: 20px;
+    padding-top: 10px;
+    padding-right: 20px;
+}
+.servicetext{
+    line-height: 30px;
+    padding-bottom: 40px;
+}
+.findmore11{
+    text-align: center;
+    font-size: 15px;
+    height: 40px;
+    width: 80px;
+    border-radius: 5px;
+    color: white;
+    background-color: #764abc;
+    margin-top: 10px;
+    border: none;
+}
+.findmore21{
+    text-align: center;
+    font-size: 15px;
+    height: 40px;
+    width: 80px;
+    border-radius: 5px;
+    color: #764abc;
+    background-color: white;
+    margin-top: 10px;
+    border: none;
+}
+.seemore{
+    text-align: center;
+    padding-top: 20px;
+    font-size: 15px;
+    height: 40px;
+    width: 300px;
+    border-radius: 5px;
+    color: white;
+    background-color: #764abc;
+    margin-top: 70px;
+    border: none;
+    margin-left: 360px;
+    margin-bottom: 100px;
+}
+.hear{
+    font-style: italic;
+    color: #764abc;
+}
+.hearwhatoga{
+    color: white;
+    background-color: #764abc;
+    padding: 50px;
+    height: 400px;
+    border-radius: 20px;
+}
+.hearwhat{
+    line-height: 30px;
+    font-style: italic;
+    font-size: 20px;
+    font-weight: 300;
+}
+.okay{
+    width: 1000px;
+    margin-bottom: 200px;
+}
+.CEO{
+    margin-top: 50px;
+    margin-left: 600px;
+    font-size: 25px;
+    font-style: italic;
+}
+.contact{
+    margin-left: -150px;
+    width: 95.5vw;
+    background-color: #764abc;
+    padding-bottom: 30px;
+    padding: 20px;
+    color: white;
+    margin-bottom: -30px;
+}
+.email{
+    font-size: 300;
+    margin-bottom: -20px;
+}
+.phone{
+    font-size: 300;
+    margin-bottom: -20px;
+}
+.address{
+    font-size: 300;
+    margin-bottom: -20px;
+}
+.contact1{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding-bottom: 40px;
+}
+.details{
+    margin-left: -130px;
 }
 @media screen and (max-width: 912px) and (min-width: 600px){
     .header1{
