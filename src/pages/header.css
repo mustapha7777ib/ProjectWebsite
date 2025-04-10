@@ -79,7 +79,6 @@ body {
 .up{
     font-size: 90px;
     font-style: italic;
-    
 }
 .containerbody{
     display: flex;
@@ -102,7 +101,6 @@ body {
 .right{
     margin-left: 100px;
     margin-top: 200px;
-
 }
 .buttonss{
     text-decoration: none;
@@ -118,8 +116,13 @@ body {
     display: flex;
     flex-direction: row;
     margin-left: -40px;
-    margin-bottom: 40px;
-    
+    margin-bottom: 40px;  
+}
+.okay{
+    margin-top: 100px;
+}
+.okay h1{
+    padding-top: 30px;
 }
 .containerservices1{
     background-color: #764abc;
@@ -156,6 +159,11 @@ body {
     border: none;
     text-decoration: none;
 }
+.findmore1:hover{
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
 .findmore2{
     text-align: center;
     font-size: 15px;
@@ -167,7 +175,11 @@ body {
     border: none;
     text-decoration: none;
 }
-
+.findmore2:hover{
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
 .containerservices11{
     background-color: white ;
     color: #764abc;
@@ -188,6 +200,7 @@ body {
     padding-left: 20px;
     padding-top: 10px;
     padding-right: 20px;
+    margin-bottom: 40px;
 }
 .servicetext{
     line-height: 30px;
@@ -204,6 +217,11 @@ body {
     border: none;
     text-decoration: none;
 }
+.findmore11:hover{
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
 .findmore21{
     text-align: center;
     font-size: 15px;
@@ -215,19 +233,30 @@ body {
     border: none;
     text-decoration: none;
 }
+.findmore21:hover{
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
 .seemore{
     text-align: center;
     padding-top: 20px;
     font-size: 15px;
-    height: 40px;
-    width: 300px;
+    padding: 20px;
+    padding-left: 100px;
+    padding-right: 100px;
     border-radius: 5px;
     color: white;
     background-color: #764abc;
     margin-top: 70px;
     border: none;
     margin-left: 360px;
-    margin-bottom: 100px;
+    text-decoration: none;
+}
+.seemore:hover{
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
 }
 .hear{
     font-style: italic;
@@ -367,6 +396,42 @@ body {
     flex-direction: row;
     margin-top: 20px;
 }
+.artisanss1:hover{
+    cursor: pointer;
+    background-color: #764abc;
+    transition: background-color 0.3s ease;
+    color: white;
+}
+.artisanss2:hover{
+    cursor: pointer;
+    background-color: #764abc;
+    transition: background-color 0.3s ease;
+    color: white;
+}
+.artisanss3:hover{
+    cursor: pointer;
+    background-color: #764abc;
+    transition: background-color 0.3s ease;
+    color: white;
+}
+.artisanss4:hover{
+    cursor: pointer;
+    background-color: #764abc;
+    transition: background-color 0.3s ease;
+    color: white;
+}
+.artisanss5:hover{
+    cursor: pointer;
+    background-color: #764abc;
+    transition: background-color 0.3s ease;
+    color: white;
+}
+.searchbar:hover{
+    cursor: pointer;
+    background-color: #764abc;
+    transition: background-color 0.3s ease;
+    color: white;
+}
 .artisanss *{
     color: black;
     font-weight: 300;
@@ -392,6 +457,136 @@ body {
 .artisanss5{
     border: 1px solid black;
     padding-left: 20px;
+}
+.artisanssmodal{
+    height: 100hv;
+}
+.artisanssmodal {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    grid-template-rows: repeat(3, auto);   
+    gap: 10px; 
+    padding-bottom: 10px;
+}
+.artisanssmodal1{
+    border: 1px solid black;
+    padding-left: 20px;
+    border-radius: 5px;
+}
+.artisanssmodal2{
+    border: 1px solid black;
+    padding-left: 20px;
+    border-radius: 5px;
+}
+.artisanssmodal3{
+    border: 1px solid black;
+    padding-left: 20px;
+    border-radius: 5px;
+}
+.artisanssmodal4{
+    border: 1px solid black;
+    padding-left: 20px;
+    border-radius: 5px;
+}
+.artisanssmodal5{
+    border: 1px solid black;
+    padding-left: 20px;
+    border-radius: 5px;
+}
+.artisanssmodal6{
+    border: 1px solid black;
+    padding-left: 20px;
+    border-radius: 5px;
+}
+.artisanssmodal7{
+    border: 1px solid black;
+    padding-left: 20px;
+    border-radius: 5px;
+}
+.artisanssmodal8{
+    border: 1px solid black;
+    padding-left: 20px;
+    border-radius: 5px;
+}
+.artisanssmodal9{
+    border: 1px solid black;
+    padding-left: 20px;
+    border-radius: 5px;
+}
+.artisanssmodal1:hover{
+    cursor: pointer;
+    background-color: #764abc;
+    transition: background-color 0.3s ease;
+    color: white;
+}
+.artisanssmodal2:hover{
+    cursor: pointer;
+    background-color: #764abc;
+    transition: background-color 0.3s ease;
+    color: white;
+}
+.artisanssmodal3:hover{
+    cursor: pointer;
+    background-color: #764abc;
+    transition: background-color 0.3s ease;
+    color: white;
+}
+.artisanssmodal4:hover{
+    cursor: pointer;
+    background-color: #764abc;
+    transition: background-color 0.3s ease;
+    color: white;
+}
+.artisanssmodal5:hover{
+    cursor: pointer;
+    background-color: #764abc;
+    transition: background-color 0.3s ease;
+    color: white;
+}
+.artisanssmodal6:hover{
+    cursor: pointer;
+    background-color: #764abc;
+    transition: background-color 0.3s ease;
+    color: white;
+}
+.artisanssmodal7:hover{
+    cursor: pointer;
+    background-color: #764abc;
+    transition: background-color 0.3s ease;
+    color: white;
+}
+.artisanssmodal8:hover{
+    cursor: pointer;
+    background-color: #764abc;
+    transition: background-color 0.3s ease;
+    color: white;
+}
+.artisanssmodal9:hover{
+    cursor: pointer;
+    background-color: #764abc;
+    transition: background-color 0.3s ease;
+    color: white;
+}
+.close{
+    font-size: 15px;
+    height: 55px;
+    width: 400px;
+    color: white;
+    background-color: #764abc;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
+.close:hover{
+    color: black;
+    background-color: white;
+    transition: all 0.2s ease;
+}
+.inputbox{
+    height: 40px;
+    width: 390px;
+    margin-bottom: 20px;
+    margin-top: 10px;
 }
 @media screen and (max-width: 912px) and (min-width: 600px){
     .header1{

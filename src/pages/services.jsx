@@ -51,14 +51,16 @@ function Services() {
                         <p className="servicetext">
                             Reliable welding services now available in Abuja! We cater to residents in specific areas of the city. Learn more below!
                         </p>
-                        <Link to="/workers" className="findmore21 anchortagfindmore">
+                        <Link to="/workers" className="findmore21">
                             More
                         </Link>
                         <button className="joinus4">Join Us</button>
                     </div>
                 </div>
             </div>
-            <p className="seemore">See More</p>
+            <Link to="/workers" className="seemore">
+                See More
+            </Link>
         </div>
     );
 }
