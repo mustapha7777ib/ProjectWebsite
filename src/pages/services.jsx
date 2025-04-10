@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 function Services() {
     return (
@@ -11,7 +12,10 @@ function Services() {
                             We are currently available in Abuja, we provide this woodwork services for 
                             residence of the city in certain areas, find more below
                         </p>
-                        <button className="findmore1">More</button>
+                        <Link to="/workers" className="findmore1 anchortagfindmore">
+                            More
+                        </Link>
+                        <button className="joinus1">Join Us</button>
                     </div>
                 </div>
                 <div>
@@ -20,7 +24,8 @@ function Services() {
                         <p className="servicetext">
                             Now serving Abuja! We offer reliable electrical services to residents in select areas of the city. Learn more below!
                         </p>
-                        <button className="findmore2">More</button>
+                        <button className="findmore2"><a className='anchortagfindmore' href='https://www.youtube.com/watch?v=MYOIc7sJ6Qg' >More</a></button>
+                        <button className="joinus2">Join Us</button>
                     </div>
                 </div>
             </div>
@@ -31,7 +36,9 @@ function Services() {
                         <p className="servicetext">
                             Providing expert plumbing services across Abuja! We serve residents in select areas of the city. Find out more below!
                         </p>
-                        <button className="findmore11">More</button>
+                        <button className="findmore11"><a className='anchortagfindmore' href='https://www.youtube.com/watch?v=MYOIc7sJ6Qg' >More</a></button>
+                        <button className="joinus3">Join Us</button>
+
                     </div>
                 </div>
                 <div>
@@ -41,6 +48,7 @@ function Services() {
                             Reliable welding services now available in Abuja! We cater to residents in specific areas of the city. Learn more below!
                         </p>
                         <button className="findmore21">More</button>
+                        <button className="joinus4">Join Us</button>
                     </div>
                 </div>
             </div>

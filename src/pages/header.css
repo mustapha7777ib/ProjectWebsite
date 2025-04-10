@@ -104,9 +104,15 @@ body {
     margin-top: 200px;
 
 }
+.buttonss{
+    text-decoration: none;
+    display: flex;
+    flex-direction: row;
+    color: white;
+    padding-top: 25px;
+}
 .buttonss:hover{
     cursor: pointer;
-
 }
 .containerservices{
     display: flex;
@@ -279,6 +285,73 @@ body {
 }
 .details{
     margin-left: -130px;
+}
+.joinus1{
+    text-align: center;
+    font-size: 15px;
+    height: 40px;
+    width: 80px;
+    border-radius: 5px;
+    color: white;
+    background-color: #764abc;
+    margin-top: 10px;
+    border: none;
+}
+.joinus2{
+    text-align: center;
+    font-size: 15px;
+    height: 40px;
+    width: 80px;
+    border-radius: 5px;
+    color: #764abc;
+    background-color: white ;
+    margin-top: 10px;
+    border: none;
+}
+.joinus3{
+    text-align: center;
+    font-size: 15px;
+    height: 40px;
+    width: 80px;
+    border-radius: 5px;
+    color: #764abc;
+    background-color: white ;
+    margin-top: 10px;
+    border: none;
+}
+.joinus4{
+    text-align: center;
+    font-size: 15px;
+    height: 40px;
+    width: 80px;
+    border-radius: 5px;
+    color: white;
+    background-color: #764abc;
+    margin-top: 10px;
+    border: none;
+}
+.anchortagfindmore{
+   text-decoration: none;
+}
+.Workers{
+    padding-top: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-left: 150px;
+}
+.Artisans{
+    color: #764abc;
+}
+.Workers h1{
+    font-size: 50px;
+    text-align: center;
+}
+.Workers p{
+    text-align: center;
+    font-size: 20px;
+    line-height: 30px;
 }
 @media screen and (max-width: 912px) and (min-width: 600px){
     .header1{

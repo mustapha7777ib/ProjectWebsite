@@ -1,5 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 function Header() {
     const [show, setShow] = useState(true);
@@ -18,18 +19,18 @@ function Header() {
     return (
         <div className="header">
             <div className={`${show ? 'header1' : 'header11'}`}>
-                <p className="buttonss" onClick={() => scrollToSection('home')}>
+                <Link to="/" className="buttonss" onClick={() => scrollToSection('home')}>
                     Home
-                </p>
-                <p className="buttonss" onClick={() => scrollToSection('services')}>
+                </Link>
+                <Link to="/" className="buttonss" onClick={() => scrollToSection('services')}>
                     Services
-                </p>
-                <p className="buttonss" onClick={() => scrollToSection('about')}>
+                </Link>
+                <Link to="/" className="buttonss" onClick={() => scrollToSection('about')}>
                     About Us
-                </p>
-                <p className="buttonss" onClick={() => scrollToSection('contact')}>
+                </Link>
+                <Link to="/" className="buttonss" onClick={() => scrollToSection('contact')}>
                     Contact Us
-                </p>
+                </Link>
             </div>
             <div onClick={handleClick} className="hamburger">
                 ☰
