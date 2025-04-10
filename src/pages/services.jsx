@@ -24,7 +24,9 @@ function Services() {
                         <p className="servicetext">
                             Now serving Abuja! We offer reliable electrical services to residents in select areas of the city. Learn more below!
                         </p>
-                        <button className="findmore2"><a className='anchortagfindmore' href='https://www.youtube.com/watch?v=MYOIc7sJ6Qg' >More</a></button>
+                        <Link to="/workers" className="findmore2 anchortagfindmore">
+                            More
+                        </Link>
                         <button className="joinus2">Join Us</button>
                     </div>
                 </div>
@@ -36,7 +38,9 @@ function Services() {
                         <p className="servicetext">
                             Providing expert plumbing services across Abuja! We serve residents in select areas of the city. Find out more below!
                         </p>
-                        <button className="findmore11"><a className='anchortagfindmore' href='https://www.youtube.com/watch?v=MYOIc7sJ6Qg' >More</a></button>
+                        <Link to="/workers" className="findmore11 anchortagfindmore">
+                            More
+                        </Link>
                         <button className="joinus3">Join Us</button>
 
                     </div>
@@ -47,7 +51,9 @@ function Services() {
                         <p className="servicetext">
                             Reliable welding services now available in Abuja! We cater to residents in specific areas of the city. Learn more below!
                         </p>
-                        <button className="findmore21">More</button>
+                        <Link to="/workers" className="findmore21 anchortagfindmore">
+                            More
+                        </Link>
                         <button className="joinus4">Join Us</button>
                     </div>
                 </div>

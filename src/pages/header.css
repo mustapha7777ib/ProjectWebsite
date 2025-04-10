@@ -148,24 +148,24 @@ body {
 .findmore1{
     text-align: center;
     font-size: 15px;
-    height: 40px;
-    width: 80px;
+    padding: 10px;
     border-radius: 5px;
     color: #764abc;
     background-color: white;
     margin-top: 10px;
     border: none;
+    text-decoration: none;
 }
 .findmore2{
     text-align: center;
     font-size: 15px;
-    height: 40px;
-    width: 80px;
+    padding: 10px;
     border-radius: 5px;
     color: white;
     background-color: #764abc;
     margin-top: 10px;
     border: none;
+    text-decoration: none;
 }
 
 .containerservices11{
@@ -196,24 +196,24 @@ body {
 .findmore11{
     text-align: center;
     font-size: 15px;
-    height: 40px;
-    width: 80px;
+    padding: 10px;
     border-radius: 5px;
     color: white;
     background-color: #764abc;
     margin-top: 10px;
     border: none;
+    text-decoration: none;
 }
 .findmore21{
     text-align: center;
     font-size: 15px;
-    height: 40px;
-    width: 80px;
+    padding: 10px;
     border-radius: 5px;
     color: #764abc;
     background-color: white;
     margin-top: 10px;
     border: none;
+    text-decoration: none;
 }
 .seemore{
     text-align: center;
@@ -330,16 +330,12 @@ body {
     margin-top: 10px;
     border: none;
 }
-.anchortagfindmore{
-   text-decoration: none;
-}
 .Workers{
     padding-top: 200px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding-left: 150px;
 }
 .Artisans{
     color: #764abc;
@@ -352,6 +348,50 @@ body {
     text-align: center;
     font-size: 20px;
     line-height: 30px;
+}
+.searchbar{
+    display: flex;
+    flex-direction: row;
+    border: 1px solid black;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-weight: 300;
+}
+.icon{
+    height:40px;
+    padding-top: 15px;
+    padding-left: 100px;
+}
+.artisanss{
+    display: flex;
+    flex-direction: row;
+    margin-top: 20px;
+}
+.artisanss *{
+    color: black;
+    font-weight: 300;
+    border-radius: 10px;
+    margin-right: 20px;
+}
+.artisanss1{
+    border: 1px solid black;
+    padding-left: 20px;
+}
+.artisanss2{
+    border: 1px solid black;
+    padding-left: 20px;
+}
+.artisanss3{
+    border: 1px solid black;
+    padding-left: 20px;
+}
+.artisanss4{
+    border: 1px solid black;
+    padding-left: 20px;
+}
+.artisanss5{
+    border: 1px solid black;
+    padding-left: 20px;
 }
 @media screen and (max-width: 912px) and (min-width: 600px){
     .header1{
