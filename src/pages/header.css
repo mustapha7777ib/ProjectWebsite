@@ -396,35 +396,14 @@ body {
     flex-direction: row;
     margin-top: 20px;
 }
-.artisanss1:hover{
+.artisanss > div:hover{
     cursor: pointer;
-    background-color: #764abc;
+    border: 1px solid #764abc;
     transition: background-color 0.3s ease;
-    color: white;
+    color: #764abc;
 }
-.artisanss2:hover{
-    cursor: pointer;
-    background-color: #764abc;
-    transition: background-color 0.3s ease;
-    color: white;
-}
-.artisanss3:hover{
-    cursor: pointer;
-    background-color: #764abc;
-    transition: background-color 0.3s ease;
-    color: white;
-}
-.artisanss4:hover{
-    cursor: pointer;
-    background-color: #764abc;
-    transition: background-color 0.3s ease;
-    color: white;
-}
-.artisanss5:hover{
-    cursor: pointer;
-    background-color: #764abc;
-    transition: background-color 0.3s ease;
-    color: white;
+.artisanss > div:hover > p{
+    color: #764abc;
 }
 .searchbar:hover{
     cursor: pointer;
@@ -437,29 +416,17 @@ body {
     font-weight: 300;
     border-radius: 10px;
     margin-right: 20px;
+    max-width: 100%;
 }
-.artisanss1{
+.artisanss > div{
     border: 1px solid black;
     padding-left: 20px;
 }
-.artisanss2{
-    border: 1px solid black;
-    padding-left: 20px;
+.artisanss > div.selected {
+    background-color: #764abc;
 }
-.artisanss3{
-    border: 1px solid black;
-    padding-left: 20px;
-}
-.artisanss4{
-    border: 1px solid black;
-    padding-left: 20px;
-}
-.artisanss5{
-    border: 1px solid black;
-    padding-left: 20px;
-}
-.artisanssmodal{
-    height: 100hv;
+.artisanss > div.selected > p {
+    color: white;
 }
 .artisanssmodal {
     display: grid;
@@ -468,105 +435,25 @@ body {
     gap: 10px; 
     padding-bottom: 10px;
 }
-.artisanssmodal1{
+.artisansmodal{
     border: 1px solid black;
     padding-left: 20px;
     border-radius: 5px;
 }
-.artisanssmodal2{
-    border: 1px solid black;
-    padding-left: 20px;
-    border-radius: 5px;
-}
-.artisanssmodal3{
-    border: 1px solid black;
-    padding-left: 20px;
-    border-radius: 5px;
-}
-.artisanssmodal4{
-    border: 1px solid black;
-    padding-left: 20px;
-    border-radius: 5px;
-}
-.artisanssmodal5{
-    border: 1px solid black;
-    padding-left: 20px;
-    border-radius: 5px;
-}
-.artisanssmodal6{
-    border: 1px solid black;
-    padding-left: 20px;
-    border-radius: 5px;
-}
-.artisanssmodal7{
-    border: 1px solid black;
-    padding-left: 20px;
-    border-radius: 5px;
-}
-.artisanssmodal8{
-    border: 1px solid black;
-    padding-left: 20px;
-    border-radius: 5px;
-}
-.artisanssmodal9{
-    border: 1px solid black;
-    padding-left: 20px;
-    border-radius: 5px;
-}
-.artisanssmodal1:hover{
-    cursor: pointer;
+.artisansmodal.selected {
     background-color: #764abc;
-    transition: background-color 0.3s ease;
     color: white;
 }
-.artisanssmodal2:hover{
+.artisansmodal:hover{
     cursor: pointer;
-    background-color: #764abc;
+    border: 1px solid #764abc;
     transition: background-color 0.3s ease;
+    color: #764abc;
+}
+.artisansmodal.selected:hover {
     color: white;
 }
-.artisanssmodal3:hover{
-    cursor: pointer;
-    background-color: #764abc;
-    transition: background-color 0.3s ease;
-    color: white;
-}
-.artisanssmodal4:hover{
-    cursor: pointer;
-    background-color: #764abc;
-    transition: background-color 0.3s ease;
-    color: white;
-}
-.artisanssmodal5:hover{
-    cursor: pointer;
-    background-color: #764abc;
-    transition: background-color 0.3s ease;
-    color: white;
-}
-.artisanssmodal6:hover{
-    cursor: pointer;
-    background-color: #764abc;
-    transition: background-color 0.3s ease;
-    color: white;
-}
-.artisanssmodal7:hover{
-    cursor: pointer;
-    background-color: #764abc;
-    transition: background-color 0.3s ease;
-    color: white;
-}
-.artisanssmodal8:hover{
-    cursor: pointer;
-    background-color: #764abc;
-    transition: background-color 0.3s ease;
-    color: white;
-}
-.artisanssmodal9:hover{
-    cursor: pointer;
-    background-color: #764abc;
-    transition: background-color 0.3s ease;
-    color: white;
-}
+
 .close{
     font-size: 15px;
     height: 55px;
@@ -577,6 +464,22 @@ body {
     border: none;
     border-radius: 5px;
 }
+.proceed{
+    font-size: 15px;
+    height: 55px;
+    width: 400px;
+    color: white;
+    background-color: #764abc;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+.proceed:hover{
+    color: black;
+    background-color: white;
+    transition: all 0.2s ease;
+}
 .close:hover{
     color: black;
     background-color: white;
@@ -585,9 +488,33 @@ body {
 .inputbox{
     height: 40px;
     width: 390px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+#email{
+    height: 40px;
+    width: 390px;
     margin-bottom: 20px;
     margin-top: 10px;
 }
+.error{
+    color: red;
+    margin-top: -20px;
+    font-size: 10px;
+    font-style: italic;
+}
+.notavailable{
+    color: red;
+    margin-top: -20px;
+    font-size: 10px;
+    font-style: italic;
+}
+.modalh2{
+    padding-top: 30px;
+}
+/* .modalclass{
+    display: none;
+} */
 @media screen and (max-width: 912px) and (min-width: 600px){
     .header1{
         margin-left: 0;
