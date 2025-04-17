@@ -36,8 +36,12 @@ function Header() {
                 ☰
             </div>
             <div className={`${show ? 'header2' : 'header21'}`}>
-                <p>Log in</p>
-                <p>Sign Up</p>
+                <Link to="/signin" className="buttonss">
+                    Log in
+                </Link>
+                <Link to="/signup" className="buttonss">
+                    Sign Up
+                </Link>
             </div>
         </div>
     );

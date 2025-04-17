@@ -9,7 +9,6 @@ body {
   font-family: "Montserrat", sans-serif;
   font-weight: 600;
   font-style: normal;
-  margin-left: 150px;
 }
 .header{
     display: flex;
@@ -27,7 +26,6 @@ body {
 .header *{
     display: flex;
     flex-direction: row;
-    
 }
 .header1{
     justify-content: space-around;
@@ -37,11 +35,9 @@ body {
 .header11{
     justify-content: space-around;
     display: flex;
- 
 }
 .header1 *{
     margin-right: 30px;
-    padding-top: 10px;
 }
 .header11 *{
     margin-right: 30px;
@@ -318,46 +314,52 @@ body {
 .joinus1{
     text-align: center;
     font-size: 15px;
-    height: 40px;
-    width: 80px;
+    padding: 10px;
     border-radius: 5px;
     color: white;
     background-color: #764abc;
     margin-top: 10px;
     border: none;
+    text-decoration: none;
 }
 .joinus2{
+    margin-top: 10px;
+    border: none;
     text-align: center;
     font-size: 15px;
-    height: 40px;
-    width: 80px;
+    padding: 10px;
     border-radius: 5px;
     color: #764abc;
     background-color: white ;
     margin-top: 10px;
     border: none;
+    text-decoration: none;
 }
 .joinus3{
+    margin-top: 10px;
+    border: none;
     text-align: center;
     font-size: 15px;
-    height: 40px;
-    width: 80px;
+    padding: 10px;
     border-radius: 5px;
     color: #764abc;
     background-color: white ;
     margin-top: 10px;
     border: none;
+    text-decoration: none;
 }
 .joinus4{
+    margin-top: 10px;
+    border: none;
     text-align: center;
     font-size: 15px;
-    height: 40px;
-    width: 80px;
+    padding: 10px;
     border-radius: 5px;
     color: white;
     background-color: #764abc;
     margin-top: 10px;
     border: none;
+    text-decoration: none;
 }
 .Workers{
     padding-top: 200px;
@@ -469,7 +471,7 @@ body {
     height: 55px;
     width: 400px;
     color: white;
-    background-color: #764abc;
+    background-color: rgb(118, 74, 188);
     cursor: pointer;
     border: none;
     border-radius: 5px;
@@ -512,40 +514,140 @@ body {
 .modalh2{
     padding-top: 30px;
 }
-/* .modalclass{
-    display: none;
-} */
-@media screen and (max-width: 912px) and (min-width: 600px){
-    .header1{
-        margin-left: 0;
-    }
-    .header2{
-        margin-right: 0;
-    }
-    .header11{
-        margin-right: 0;
-    }
-    .header21{
-        margin-right: 0;
-    }
+.icon2{
+    height: 100vh;
+    padding-left: 210px;
 }
-@media screen and (max-width: 650px) and (min-width: 300px) {
-    .header1{
-        margin-left: 0;
-        display: none;
-    }
-    .header2{
-        margin-left: 0;
-        display: none;
-    }
-    .header11{
-        margin-left: 0;
-    }
-    .header21{
-        margin-left: 0;
-    }
-    .hamburger {
-        margin-left: 400px;
-        display: block;
-    }
+.join{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-left: 150px;
+}
+.join_container{
+    padding-top: 300px;
+    margin-left: -10px;
+}
+.already{
+    font-weight: 200;
+    margin-bottom: 30px;
+}
+.signin{
+    font-weight: 900;
+    color: #764abc;
+}
+.signupbutton{
+    padding: 10px;
+    background-color: #764abc;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+}
+.signinjsx{
+    display: flex;
+    flex-direction: row;
+    padding-top: 120px;
+    display: flex;
+    flex-direction: column;
+    margin-top: 100px;
+    margin-left: 450px;
+}
+.signinjsx > div{
+    flex: 50% 0 0;
+}
+.secondhalf{
+    display: flex;
+    flex-direction: column;
+    margin-top: 100px;
+}
+.secondhalf h2{
+    font-weight: 600;
+}
+.forgot{
+    margin-left: 280px;
+    color: #764abc;
+}
+.signinjsx button{
+    background-color: #764abc;
+    color: white;
+    width: 420px;
+    border: none;
+    border-radius: 5px;
+    height: 40px;
+}
+.donthave{
+    margin-left: 60px;
+}
+.signup{
+    color: #764abc;
+    text-decoration: none;
+}
+.inputerchild{
+    width: 420px;
+    height: 40px;
+    background-color: #F5EFED;
+    border: 1px black solid;
+    border-radius: 5px;
+    padding-left: 5px;
+}
+.inputer p{
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+.workuplogo{
+    color: #764abc;
+    font-style: italic;
+    margin-bottom: -10px;
+}
+.workuplogo span{
+    color: black;
+}
+.signupjsx{
+    margin-top: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.step-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 40px;
+}
+.step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 3px solid #764abc;
+    color: #764abc;
+    background-color: #fefcf8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 20px;
+}
+.step-circle.active {
+    background-color: #764abc;
+    color: white;
+}
+.step-line {
+    width: 60px;
+    height: 3px;
+    background-color: #764abc;
+}
+.signupjsx button{
+    margin-top: 20px;
+    background-color: #764abc;
+    color: white;
+    width: 420px;
+    border: none;
+    border-radius: 5px;
+    height: 40px;
+}
+.have{
+    margin-left: 80px;
 }

@@ -15,7 +15,9 @@ function Services() {
                         <Link to="/workers" className="findmore1 anchortagfindmore">
                             More
                         </Link>
-                        <button className="joinus1">Join Us</button>
+                        <Link to="/join" className="joinus1">
+                            Join Us
+                        </Link>
                     </div>
                 </div>
                 <div>
@@ -27,7 +29,9 @@ function Services() {
                         <Link to="/workers" className="findmore2 anchortagfindmore">
                             More
                         </Link>
-                        <button className="joinus2">Join Us</button>
+                        <Link to="/join" className="joinus2">
+                            Join Us
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -41,7 +45,9 @@ function Services() {
                         <Link to="/workers" className="findmore11 anchortagfindmore">
                             More
                         </Link>
-                        <button className="joinus3">Join Us</button>
+                        <Link to="/join" className="joinus3">
+                            Join Us
+                        </Link>
 
                     </div>
                 </div>
@@ -54,7 +60,9 @@ function Services() {
                         <Link to="/workers" className="findmore21">
                             More
                         </Link>
-                        <button className="joinus4">Join Us</button>
+                        <Link to="/join" className="joinus4">
+                            Join Us
+                        </Link>
                     </div>
                 </div>
             </div>
