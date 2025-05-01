@@ -8,6 +8,7 @@ import Contact from './contact.jsx';
 import Join from './join.jsx';
 import SignIn from './signin.jsx';
 import SignUp from './signup.jsx';
+import Profile from './profile.jsx';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
                 <Route path="/join" element={<Join />} />
                 <Route path="/signin" element={<SignIn />} />
                 <Route path="/signup" element={<SignUp />} />
+                <Route path="/profile" element={<Profile />} />
                 </Routes>
         </Router>
         

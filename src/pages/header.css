@@ -546,12 +546,10 @@ body {
 }
 .signinjsx{
     display: flex;
-    flex-direction: row;
-    padding-top: 120px;
-    display: flex;
     flex-direction: column;
-    margin-top: 100px;
-    margin-left: 450px;
+    align-items: center;
+    justify-content: center;
+    padding-top: 200px;
 }
 .signinjsx > div{
     flex: 50% 0 0;
@@ -609,35 +607,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-}
-.step-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin: 40px;
-}
-.step-circle {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 3px solid #764abc;
-    color: #764abc;
-    background-color: #fefcf8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 20px;
-}
-.step-circle.active {
-    background-color: #764abc;
-    color: white;
-}
-.step-line {
-    width: 60px;
-    height: 3px;
-    background-color: #764abc;
+    padding-top: 100px;
 }
 .signupjsx button{
     margin-top: 20px;
@@ -650,4 +620,107 @@ body {
 }
 .have{
     margin-left: 80px;
+}
+.message {
+    color: red;
+    font-size: 1.2em;
+    margin-top: 10px;
+  }
+.profile-btn {
+    background-color: #764abc;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 17px;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 600;
+    margin-top: 2px;
+    font-style: normal;
+  }
+  
+  .profile-container {
+    position: relative;
+  } 
+  .dropdown {
+    position: absolute;
+    right: 0;
+    top: 30px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+  }
+  .dropdown-item {
+    padding: 10px;
+    color: #333;
+    text-decoration: none;
+    display: block;
+  }
+  
+  .dropdown-item:hover {
+    background-color: #f1f1f1;
+  }
+.abc{
+    padding-bottom: 30px;
+}
+form {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #764abc;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    margin-top: 150px;
+  }
+  
+  form h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: white;
+
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 1rem;
+    color: #444;
+    font-weight: 500;
+  }
+  
+  label input,
+  label select,
+  label textarea {
+    width: 100%;
+    padding: 0.6rem;
+    margin-top: 0.4rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+  
+  label input[type="file"] {
+    padding: 0.3rem;
+  }
+  
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+.submitbutton{
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    background-color: white;
+    color: purple;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    margin-top: 1.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+label{
+    color: white;
 }
