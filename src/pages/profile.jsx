@@ -108,8 +108,8 @@ function Profile() {
         alert(data.message);
 
         if (data.success || data.message === "Registration successful") {
-          setArtisanStatus("true"); // ✅ Now it will update the context
-          navigate("/artisan-profile"); // ✅ Correct path
+          setArtisanStatus("true"); 
+          navigate("/artisan-profile"); 
         }
       })
       .catch((err) => {

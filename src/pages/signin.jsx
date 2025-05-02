@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "./AuthContext"; // ✅ correct usage
+import { useAuth } from "./AuthContext"; 
 
 function SignIn() {
-  const { login } = useAuth(); // ✅ make sure this is *inside* the component
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
@@ -31,8 +31,8 @@ function SignIn() {
           setMessage(data.error);
         } else {
           setMessage("Login successful!");
-          login(data.user); // ✅ use login from context
-          navigate("/"); // ✅ redirect to profile
+          login(data.user);
+          navigate("/");
         }
       })
       .catch((err) => setMessage("Error: " + err.message));

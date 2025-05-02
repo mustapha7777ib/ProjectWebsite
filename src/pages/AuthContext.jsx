@@ -13,6 +13,7 @@ export function AuthProvider({ children }) {
   });
 
 
+
   const login = (userData) => {
     console.log("Logging in user:", userData);
     localStorage.setItem("user", JSON.stringify(userData));

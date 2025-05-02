@@ -18,12 +18,12 @@ app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-const uploadDir = path.join(__dirname, "uploads");
+const uploadDir = path.join(__dirname, "Uploads");
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "uploads/");
+    cb(null, "Uploads/");
   },
   filename: function (req, file, cb) {
     const uniqueName = `${Date.now()}-${file.originalname}`;
@@ -93,6 +93,23 @@ app.post(
   }
 );
 
+app.get("/artisan/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query(
+      `SELECT * FROM artisans WHERE id = $1`,
+      [id]
+    );
 
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Artisan not found" });
+    }
+
+    res.status(200).json(result.rows[0]);
+  } catch (err) {
+    console.error("Error fetching artisan:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
 app.listen(8080, () => console.log("Server running on http://localhost:8080"));
