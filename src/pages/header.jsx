@@ -4,16 +4,22 @@ import { Link, useNavigate } from "react-router-dom";
 function Header() {
   const [show, setShow] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false); 
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isArtisan, setIsArtisan] = useState(false); // State to track if the user is an artisan
   const navigate = useNavigate();
 
-  
   useEffect(() => {
     const user = localStorage.getItem("user");
+    const artisanStatus = localStorage.getItem("isArtisan"); // Check if user is an artisan
+
     if (user) {
-      setIsLoggedIn(true); 
+      setIsLoggedIn(true);
     } else {
       setIsLoggedIn(false);
+    }
+
+    if (artisanStatus === "true") {
+      setIsArtisan(true); // Set artisan status if the user is an artisan
     }
   }, []);
 
@@ -22,8 +28,10 @@ function Header() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("user"); 
+    localStorage.removeItem("user");
+    localStorage.removeItem("isArtisan"); // Clear artisan status on logout
     setIsLoggedIn(false);
+    setIsArtisan(false);
     navigate("/signin");
   };
 
@@ -66,9 +74,15 @@ function Header() {
             </button>
             {dropdownOpen && (
               <div className="dropdown">
-                <Link to="/profile" className="dropdown-item">
-                  Become an artisan
-                </Link>
+                {isArtisan ? (
+                  <Link to="/artisan-profile" className="dropdown-item">
+                    Artisan Profile
+                  </Link>
+                ) : (
+                  <Link to="/profile" className="dropdown-item">
+                    Become an Artisan
+                  </Link>
+                )}
                 <button onClick={handleLogout} className="dropdown-item">
                   Logout
                 </button>

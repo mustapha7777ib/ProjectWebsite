@@ -724,3 +724,44 @@ form {
 label{
     color: white;
 }
+.rememberme{
+    display: flex;
+    flex-direction: row;
+    padding-left: 290px;
+}
+.error {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 0.2rem;
+  }
+  .aesterik {
+    color: black;
+  }
+  .city-dropdown-wrapper {
+    position: relative;
+  }
+  
+  .city-dropdown {
+    border: 1px solid #ccc;
+    max-height: 150px;
+    overflow-y: scroll;
+    position: absolute;
+    background-color: white;
+    width: 100%;
+    z-index: 10;
+    margin-top: 2px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    color: black;
+  }
+  
+  .city-dropdown li {
+    padding: 8px;
+    cursor: pointer;
+
+  }
+  
+  .city-dropdown li:hover {
+    background-color: #f0f0f0;
+
+  }
+  

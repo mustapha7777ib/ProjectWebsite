@@ -10,6 +10,7 @@ import SignIn from './signin.jsx';
 import SignUp from './signup.jsx';
 import Profile from './profile.jsx';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import ArtisanProfile from './artisanprofile';
 
 function App() {
     return (
@@ -32,6 +33,7 @@ function App() {
                 <Route path="/signin" element={<SignIn />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/artisanprofile" element={<ArtisanProfile />} />
                 </Routes>
         </Router>
         
