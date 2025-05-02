@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext"; // ✅ correct usage
 
 function SignIn() {
+  const { login } = useAuth(); // ✅ make sure this is *inside* the component
+
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
@@ -28,13 +31,12 @@ function SignIn() {
           setMessage(data.error);
         } else {
           setMessage("Login successful!");
-          localStorage.setItem("user", JSON.stringify(data.user));
-          navigate("/");
+          login(data.user); // ✅ use login from context
+          navigate("/"); // ✅ redirect to profile
         }
       })
       .catch((err) => setMessage("Error: " + err.message));
   }
-
   return (
     <div className="signinjsx">
       <p className="workuplogo">WORK<span>UP</span></p>

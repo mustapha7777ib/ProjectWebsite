@@ -1,104 +1,76 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 
 function Header() {
   const [show, setShow] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [isArtisan, setIsArtisan] = useState(false); // State to track if the user is an artisan
+  const { user, logout, isArtisan } = useAuth();
   const navigate = useNavigate();
+  const dropdownRef = useRef(null);
+  console.log("Current user in header:", user);
+
+
+  const handleClick = () => setShow(false);
+  const toggleDropdown = () => setDropdownOpen((prev) => !prev);
+
+  const scrollToSection = (id) => {
+    const section = document.getElementById(id);
+    if (section) section.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
-    const user = localStorage.getItem("user");
-    const artisanStatus = localStorage.getItem("isArtisan"); // Check if user is an artisan
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
 
-    if (user) {
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
-    }
-
-    if (artisanStatus === "true") {
-      setIsArtisan(true); // Set artisan status if the user is an artisan
-    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const handleClick = () => {
-    setShow(false);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("isArtisan"); // Clear artisan status on logout
-    setIsLoggedIn(false);
-    setIsArtisan(false);
-    navigate("/signin");
-  };
-
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
-
-  const scrollToSection = (sectionId) => {
-    const section = document.getElementById(sectionId);
-    if (section) {
-      section.scrollIntoView({ behavior: "smooth" });
-    }
-  };
 
   return (
     <div className="header">
       <div className={`${show ? "header1" : "header11"}`}>
-        <Link to="/" className="buttonss" onClick={() => scrollToSection("home")}>
-          Home
-        </Link>
-        <Link to="/" className="buttonss" onClick={() => scrollToSection("services")}>
-          Services
-        </Link>
-        <Link to="/" className="buttonss" onClick={() => scrollToSection("about")}>
-          About Us
-        </Link>
-        <Link to="/" className="buttonss" onClick={() => scrollToSection("contact")}>
-          Contact Us
-        </Link>
-      </div>
-      <div onClick={handleClick} className="hamburger">
-        ☰
+        <Link to="/" className="buttonss" onClick={() => scrollToSection("home")}>Home</Link>
+        <Link to="/" className="buttonss" onClick={() => scrollToSection("services")}>Services</Link>
+        <Link to="/" className="buttonss" onClick={() => scrollToSection("about")}>About Us</Link>
+        <Link to="/" className="buttonss" onClick={() => scrollToSection("contact")}>Contact Us</Link>
       </div>
 
+      <div onClick={handleClick} className="hamburger">☰</div>
+
       <div className={`${show ? "header2" : "header21"}`}>
-        {isLoggedIn ? (
-          <div className="profile-container">
-            <button onClick={toggleDropdown} className="profile-btn">
-              Profile
-            </button>
-            {dropdownOpen && (
-              <div className="dropdown">
-                {isArtisan ? (
-                  <Link to="/artisan-profile" className="dropdown-item">
-                    Artisan Profile
-                  </Link>
-                ) : (
-                  <Link to="/profile" className="dropdown-item">
-                    Become an Artisan
-                  </Link>
-                )}
-                <button onClick={handleLogout} className="dropdown-item">
-                  Logout
-                </button>
-              </div>
-            )}
-          </div>
+      {user ? (
+  <div className="profile-container" ref={dropdownRef}>
+    <button onClick={toggleDropdown} className="profile-btn">Profile</button>
+    {dropdownOpen && (
+      <div className="dropdown">
+        {isArtisan ? (
+          <Link to="/artisan-profile" className="dropdown-item">Artisan Profile</Link>
         ) : (
-          <>
-            <Link to="/signin" className="buttonss">
-              Log in
-            </Link>
-            <Link to="/signup" className="buttonss">
-              Sign Up
-            </Link>
-          </>
+          <Link to="/profile" className="dropdown-item">Become an Artisan</Link>
         )}
+        <button
+          onClick={() => {
+            logout();
+            navigate("/signin");
+          }}
+          className="dropdown-item"
+        >
+          Logout
+        </button>
+      </div>
+    )}
+  </div>
+) : (
+  <>
+    <Link to="/signin" className="buttonss">Log in</Link>
+    <Link to="/signup" className="buttonss">Sign Up</Link>
+  </>
+)}
+
       </div>
     </div>
   );
