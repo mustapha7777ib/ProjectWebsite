@@ -8,25 +8,27 @@ function ArtisanProfile() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!user) {
-      navigate("/signin");
-      return;
-    }
-  
-    const userId = user.id;
-  
-    fetch(`http://localhost:8080/artisan/${userId}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setArtisan(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to load artisan profile:", err);
-        setLoading(false);
-      });
-  }, [user, navigate]);
+    useEffect(() => {
+      if (!user) {
+        navigate("/signin");
+        return;
+      }
+    
+      const userId = user.id;
+    
+      fetch(`http://localhost:8080/artisan/${userId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log('Artisan data:', data);  // Add this line to inspect the data
+          setArtisan(data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("Failed to load artisan profile:", err);
+          setLoading(false);
+        });
+    }, [user, navigate]);
+    
   
 
   if (loading) return <p className="profile-loading">Loading profile...</p>;
@@ -38,12 +40,13 @@ function ArtisanProfile() {
 
       <div className="profile-header">
         
-        <img
-          src={`http://localhost:8080/uploads/${artisan.profilePic}`}
-          alt="Profile"
-          className="profile-image"
-          onError={(e) => (e.target.src = "/default-profile.png")}
-        />
+      <img
+  src={`http://localhost:8080/uploads/${artisan.profilePic}`}
+  alt="Profile"
+  className="profile-image"
+  onError={(e) => (e.target.src = "/default-profile.png")}
+/>
+
         <div className="profile-info">
           <h2>{artisan.firstName} {artisan.lastName}</h2>
           <p className="profile-skill">{artisan.skill}</p>

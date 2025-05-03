@@ -11,6 +11,8 @@ import SignUp from './signup.jsx';
 import Profile from './profile.jsx';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ArtisanProfile from './artisanprofile';
+import MatchingArtisansPage from './matching-artisans';
+
 
 function App() {
     return (
@@ -34,6 +36,8 @@ function App() {
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/artisan-profile" element={<ArtisanProfile />} />
+                <Route path="/matching-artisans" element={<MatchingArtisansPage />} />
+
                 </Routes>
         </Router>
         

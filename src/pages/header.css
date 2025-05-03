@@ -893,4 +893,32 @@ label{
     margin-top: 50px;
     color: #666;
   }
+  .city-dropdown-wrapper {
+    position: relative;
+}
+
+.city-dropdown {
+    position: absolute;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    max-height: 150px;
+    overflow-y: auto; /* enables scrolling */
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.matching-artisans-page {
+    padding: 2rem;
+}
+
+.artisan-card {
+    border: 1px solid #ddd;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    background: #f9f9f9;
+}
+
+
   

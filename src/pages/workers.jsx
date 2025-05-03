@@ -1,17 +1,12 @@
 import React, { useState } from 'react';
 import icon1 from "../images/icons8-search.svg";
 import Modal from 'react-modal';
+import { useNavigate } from 'react-router-dom'; 
 
 Modal.setAppElement('#root');
 
 function Workers() {
-    const [city, setCity] = useState('');
-    const [isOpen, setIsOpen] = useState(false);
-    const [selectedArtisan, setSelectedArtisan] = useState(0);
-    const [isCityValid, setIsCityValid] = useState(true);
-    const [email, setEmail] = useState('');
-    const [showErrors, setShowErrors] = useState(false); 
-
+    const navigate = useNavigate();
     const abujaData = {
         cities: [
             "Asokoro", "Maitama", "Wuse", "Garki", "Gwarimpa", "Lokogoma", "Jabi", "Utako", "Katampe Extension Hill",
@@ -27,19 +22,33 @@ function Workers() {
         "Tiler", "Cleaner", "Painter", "Gardener", "Technician",
     ];
 
+    const [city, setCity] = useState('');
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedArtisan, setSelectedArtisan] = useState(0);
+    const [isCityValid, setIsCityValid] = useState(true);
+    const [email, setEmail] = useState('');
+    const [showErrors, setShowErrors] = useState(false);
+    const [showCityDropdown, setShowCityDropdown] = useState(false);
+    const [filteredCities, setFilteredCities] = useState(abujaData.cities);
+
     const validateCity = () => {
         const cityFormatted = city.trim().toLowerCase();
         console.log('🔍 You entered:', cityFormatted);
-        const isValid = cityFormatted ? abujaData.cities.some(c => c.toLowerCase() === cityFormatted) : false;
+        const isValid = cityFormatted
+            ? abujaData.cities.some(c => c.toLowerCase() === cityFormatted)
+            : false;
         setIsCityValid(isValid);
         console.log(isValid ? '✅ City accepted:' : '❌ City not found:', city);
     };
 
     const handleProceed = () => {
         setShowErrors(true);
-        if (isCityValid && city && email && selectedArtisan !== 0) {
-            console.log('Proceeding with:', { city, email, artisan: jobs[selectedArtisan - 1] });
-            setIsOpen(false);
+        if (isCityValid && city && selectedArtisan !== 0) {
+            console.log('Proceeding with:', {
+                city,
+                artisan: jobs[selectedArtisan - 1]
+            });
+            navigate(`/matching-artisans?artisan=${encodeURIComponent(jobs[selectedArtisan - 1])}&city=${encodeURIComponent(city)}`);
         } else {
             console.log('Cannot proceed: Invalid city, missing fields, or no artisan selected');
         }
@@ -89,50 +98,73 @@ function Workers() {
                     }
                 }}
             >
-            <div className='modalclass'>
-                <div>
-                    <h2 className='modalh2'>What type of artisan do you want to hire?</h2>
-                    <p>Select an artisan that you want to hire</p>
-                    <div className='artisanssmodal'>
-                        {jobs.map((j, i) => (
-                            <div
-                                key={i}
-                                className={`artisansmodal ${selectedArtisan === i + 1 ? 'selected' : ''}`}
-                                onClick={() => setSelectedArtisan(selectedArtisan === i + 1 ? 0 : i + 1)}
-                            >
-                                <p>{j}</p>
-                            </div>
-                        ))}
+                <div className='modalclass'>
+                    <div>
+                        <h2 className='modalh2'>What type of artisan do you want to hire?</h2>
+                        <p>Select an artisan that you want to hire</p>
+                        <div className='artisanssmodal'>
+                            {jobs.map((j, i) => (
+                                <div
+                                    key={i}
+                                    className={`artisansmodal ${selectedArtisan === i + 1 ? 'selected' : ''}`}
+                                    onClick={() => setSelectedArtisan(selectedArtisan === i + 1 ? 0 : i + 1)}
+                                >
+                                    <p>{j}</p>
+                                </div>
+                            ))}
+                        </div>
                     </div>
+
+                    <div className='city-dropdown-wrapper'>
+                        <input
+                            className='inputbox'
+                            placeholder='Your Location in Abuja'
+                            value={city}
+                            onClick={() => setShowCityDropdown(!showCityDropdown)}
+                            readOnly
+                        />
+                        {showErrors && !city && <p className='error'>Fill in the space</p>}
+                        {city && !isCityValid && <p className='notavailable'>Not Available</p>}
+
+                        {showCityDropdown && (
+                            <div className='city-dropdown' style={{
+                                maxHeight: '150px',
+                                overflowY: 'scroll',
+                                border: '1px solid #ccc',
+                                marginTop: '4px',
+                                borderRadius: '4px',
+                                backgroundColor: '#fff'
+                            }}>
+                                {filteredCities.map((c, i) => (
+                                    <div
+                                        key={i}
+                                        onClick={() => {
+                                            setCity(c);
+                                            setShowCityDropdown(false);
+                                            setIsCityValid(true);
+                                        }}
+                                        style={{
+                                            padding: '8px 12px',
+                                            cursor: 'pointer',
+                                            borderBottom: '1px solid #eee'
+                                        }}
+                                    >
+                                        {c}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    <button
+                        className='proceed'
+                        onClick={handleProceed}
+                        disabled={city && !isCityValid}
+                    >
+                        Proceed
+                    </button>
+                    <button className='close' onClick={() => setIsOpen(false)}>Close</button>
                 </div>
-                <input
-                    className='inputbox'
-                    placeholder='Your Location in Abuja'
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    onBlur={validateCity}
-                />
-                {showErrors && !city && <p className='error'>Fill in the space</p>}
-                {city && !isCityValid && <p className='notavailable'>Not Available</p>}
-                <input
-                    id='email'
-                    placeholder='Email Address'
-                    value={email}
-                    onChange={handleEmailChange}
-                />
-                {showErrors && !email && <p className='error'>Fill in the space</p>}
-                <button
-                    className='proceed'
-                    onClick={handleProceed}
-                    disabled={city && !isCityValid} 
-                >
-                    Proceed
-                </button>
-                <button className='close' onClick={() => setIsOpen(false)}>Close</button>
-            </div>
-            <div>
-                
-            </div>
             </Modal>
 
             <div className='artisanss'>
@@ -140,7 +172,10 @@ function Workers() {
                     <div
                         key={i}
                         className={`artisan ${selectedArtisan === i + 1 ? 'selected' : ''}`}
-                        onClick={() => setSelectedArtisan(selectedArtisan === i + 1 ? 0 : i + 1)}
+                        onClick={() => {
+                            setSelectedArtisan(i + 1);
+                            setIsOpen(true);
+                        }}
                     >
                         <p>{j}</p>
                     </div>
