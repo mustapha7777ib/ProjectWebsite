@@ -112,4 +112,22 @@ app.get("/artisan/:id", async (req, res) => {
   }
 });
 
+
+
+app.post("/register-artisan", upload.single('profilePic'), async (req, res) => {
+  const { phone, gender, dob, city, address, skill, experience, bio, certificate, reference, portfolio } = req.body;
+  const profilePic = req.file ? req.file.filename : null;  // Ensure the filename is saved
+
+  // Save data to database, including the profilePic filename
+  const query = 'INSERT INTO artisans (phone, gender, dob, city, address, skill, experience, bio, profile_pic) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)';
+  await db.query(query, [phone, gender, dob, city, address, skill, experience, bio, profilePic]);
+
+  res.json({
+    success: true,
+    message: 'Registration successful',
+    profilePic,  // Return the profile picture path in the response
+  });
+});
+
+
 app.listen(8080, () => console.log("Server running on http://localhost:8080"));

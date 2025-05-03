@@ -13,9 +13,9 @@ function ArtisanProfile() {
       navigate("/signin");
       return;
     }
-
+  
     const userId = user.id;
-
+  
     fetch(`http://localhost:8080/artisan/${userId}`)
       .then((res) => res.json())
       .then((data) => {
@@ -27,6 +27,7 @@ function ArtisanProfile() {
         setLoading(false);
       });
   }, [user, navigate]);
+  
 
   if (loading) return <p className="profile-loading">Loading profile...</p>;
   if (!artisan) return <p className="profile-error">No profile data found.</p>;
@@ -36,6 +37,7 @@ function ArtisanProfile() {
       <h1 className="profile-title">Artisan Profile</h1>
 
       <div className="profile-header">
+        
         <img
           src={`http://localhost:8080/uploads/${artisan.profilePic}`}
           alt="Profile"
