@@ -13,6 +13,8 @@ const pool = new Pool({
   password: "password",
   port: 5432,
 });
+app.use('/api/messages', require('./messages'));
+
 
 app.use(cors());
 app.use(express.json());

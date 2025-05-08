@@ -69,10 +69,9 @@ function SignIn() {
             onChange={handleChange}
           />
         </div>
-        <p className="forgot">Forgot password?</p>
       </div>
 
-      <button onClick={handleSubmit}>Login</button>
+      <button className="issue" onClick={handleSubmit}>Login</button>
 
       <p className="donthave">
         Don't have an account?{" "}

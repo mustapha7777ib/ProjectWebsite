@@ -34,10 +34,10 @@ function ArtisanProfile() {
 
       <div className="profile-header">
         <img
-          src={`http://localhost:8080/uploads/${artisan.profilePic}`}
-          alt="Profile"
-          className="profile-image"
-          onError={(e) => (e.target.src = "/default-profile.png")}
+            src={`http://localhost:8080/uploads/${artisan.profile_pic}`} 
+            alt="Profile" 
+            className="profile-image"
+            onError={(e) => { e.target.src = 'https://via.placeholder.com/150'; }}
         />
         <div className="profile-info">
           <h2>{artisan.firstName} {artisan.lastName}</h2>

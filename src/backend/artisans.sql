@@ -1,5 +1,6 @@
 CREATE TABLE artisans (
   id SERIAL PRIMARY KEY,
+  gmail VARCHAR(100) NOT NULL,
   phone VARCHAR(20) NOT NULL,
   gender VARCHAR(10),
   dob DATE NOT NULL,

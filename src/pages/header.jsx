@@ -38,6 +38,7 @@ function Header() {
         <Link to="/" className="buttonss" onClick={() => scrollToSection("services")}>Services</Link>
         <Link to="/" className="buttonss" onClick={() => scrollToSection("about")}>About Us</Link>
         <Link to="/" className="buttonss" onClick={() => scrollToSection("contact")}>Contact Us</Link>
+        {user && <Link to="/conversations" className="buttonss">Messages</Link>}
       </div>
 
       <div onClick={handleClick} className="hamburger">☰</div>
