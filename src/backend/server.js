@@ -12,7 +12,7 @@ const pool = new Pool({
   user: "postgres",
   host: "localhost",
   database: "artisans",
-  password: "password",
+  password: "password", // Replace with your PostgreSQL password
   port: 5432,
 });
 
@@ -48,13 +48,16 @@ const messagesRouter = express.Router();
 
 messagesRouter.get('/conversations-summary/:artisanId', async (req, res) => {
   const { artisanId } = req.params;
+  if (!artisanId || artisanId === 'undefined') {
+    return res.status(400).json({ error: 'Invalid artisanId' });
+  }
   try {
     const messages = await pool.query(
       `SELECT DISTINCT ON (
         LEAST(sender_id, receiver_id), 
         GREATEST(sender_id, receiver_id)
       ) m.*, 
-        u.firstname, u.lastname,
+        u.first_name, u.last_name,
         (SELECT COUNT(*) FROM messages m2 
          WHERE m2.receiver_id = $1 AND m2.sender_id = CASE 
            WHEN m.sender_id = $1 THEN m.receiver_id 
@@ -74,13 +77,16 @@ messagesRouter.get('/conversations-summary/:artisanId', async (req, res) => {
     );
     res.json(messages.rows);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error('Error fetching conversations:', err.message);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
 messagesRouter.get('/conversations/:userId/:otherUserId', async (req, res) => {
   const { userId, otherUserId } = req.params;
+  if (!userId || !otherUserId) {
+    return res.status(400).json({ error: 'Missing userId or otherUserId' });
+  }
   try {
     const messages = await pool.query(
       `SELECT * FROM messages
@@ -91,15 +97,15 @@ messagesRouter.get('/conversations/:userId/:otherUserId', async (req, res) => {
     );
     res.json(messages.rows);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error('Error fetching conversation:', err.message);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
 messagesRouter.post('/', async (req, res) => {
   const { sender_id, receiver_id, content } = req.body;
-  if (!content || typeof content !== 'string' || content.trim() === '') {
-    return res.status(400).json({ error: 'Invalid message content' });
+  if (!sender_id || !receiver_id || !content || typeof content !== 'string' || content.trim() === '') {
+    return res.status(400).json({ error: 'Invalid message content or missing fields' });
   }
 
   try {
@@ -135,13 +141,16 @@ messagesRouter.post('/', async (req, res) => {
     );
     res.json(newMessage.rows[0]);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error('Error sending message:', err.message);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
 messagesRouter.patch('/mark-as-read', async (req, res) => {
   const { sender_id, receiver_id } = req.body;
+  if (!sender_id || !receiver_id) {
+    return res.status(400).json({ error: 'Missing sender_id or receiver_id' });
+  }
   try {
     await pool.query(
       `UPDATE messages
@@ -151,8 +160,8 @@ messagesRouter.patch('/mark-as-read', async (req, res) => {
     );
     res.json({ message: 'Messages marked as read' });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error('Error marking messages as read:', err.message);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
@@ -178,7 +187,7 @@ app.post("/signup", async (req, res) => {
     );
     res.json({ message: "User added", user: result.rows[0] });
   } catch (err) {
-    console.error("Database error:", err);
+    console.error("Database error:", err.message);
     res.status(500).json({ error: "Database error" });
   }
 });
@@ -200,7 +209,7 @@ app.post("/signin", async (req, res) => {
       user: { id: user.id, email: user.email, artisanId: user.artisanid }
     });
   } catch (err) {
-    console.error("Sign-in error:", err);
+    console.error("Sign-in error:", err.message);
     res.status(500).json({ error: "Server error" });
   }
 });
@@ -223,7 +232,7 @@ app.put("/link-artisan-to-user", async (req, res) => {
       user: result.rows[0],
     });
   } catch (err) {
-    console.error("Failed to link artisan to user:", err);
+    console.error("Failed to link artisan to user:", err.message);
     res.status(500).json({ error: "Server error" });
   }
 });
@@ -253,7 +262,7 @@ app.post("/register-artisan", upload.any(), async (req, res) => {
     req.files.forEach((file) => {
       if (file.fieldname === "profilePic") {
         profilePic = file.filename;
-      } else if (file.fieldname === "certificate") {
+      } else if (fffff.file.fieldname === "certificate") {
         certificate = file.filename;
       } else if (file.fieldname.startsWith("portfolio_")) {
         portfolio.push(file.filename);
@@ -262,8 +271,8 @@ app.post("/register-artisan", upload.any(), async (req, res) => {
 
     const result = await pool.query(
       `INSERT INTO artisans 
-       (firstname, lastname, phone, gender, dob, city, address, skill, experience, bio, profile_pic, certificate, reference, email, portfolio, coins)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, 50)
+       (id, firstname, lastname, phone, gender, dob, city, address, skill, experience, bio, profile_pic, certificate, reference, email, portfolio, coins)
+       VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, 50)
        RETURNING *`,
       [
         firstname,
@@ -280,12 +289,12 @@ app.post("/register-artisan", upload.any(), async (req, res) => {
         certificate,
         reference,
         email,
-        portfolio
+        JSON.stringify(portfolio)
       ]
     );
     res.status(200).json({ message: "Registration successful", data: result.rows[0] });
   } catch (err) {
-    console.error("Registration failed:", err);
+    console.error("Registration failed:", err.message);
     res.status(500).json({ error: "Server error" });
   }
 });
@@ -302,7 +311,7 @@ app.get("/artisan/:id", async (req, res) => {
     }
     res.status(200).json(result.rows[0]);
   } catch (err) {
-    console.error("Error fetching artisan:", err);
+    console.error("Error fetching artisan:", err.message);
     res.status(500).json({ error: "Server error" });
   }
 });
@@ -316,7 +325,7 @@ app.get("/artisans", async (req, res) => {
     );
     res.status(200).json(result.rows);
   } catch (err) {
-    console.error("Error fetching artisans:", err);
+    console.error("Error fetching artisans:", err.message);
     res.status(500).json({ error: "Server error" });
   }
 });
@@ -333,7 +342,7 @@ app.get("/artisan/:id/coins", async (req, res) => {
     }
     res.status(200).json({ coins: result.rows[0].coins });
   } catch (err) {
-    console.error("Error fetching coins:", err);
+    console.error("Error fetching coins:", err.message);
     res.status(500).json({ error: "Server error" });
   }
 });
@@ -354,9 +363,14 @@ app.post("/artisan/:id/purchase-coins", async (req, res) => {
     }
     res.status(200).json({ message: "Coins purchased successfully", coins: result.rows[0].coins });
   } catch (err) {
-    console.error("Error purchasing coins:", err);
+    console.error("Error purchasing coins:", err.message);
     res.status(500).json({ error: "Server error" });
   }
+});
+
+// Health check
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "Server is running" });
 });
 
 app.listen(8080, () => console.log("Server running on http://localhost:8080"));
