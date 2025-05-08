@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "./AuthContext"; // adjust path as needed
-
+import { useAuth } from "./AuthContext";
 
 const abujaData = {
   cities: [
@@ -15,7 +14,10 @@ const abujaData = {
 
 function Profile() {
   const [formData, setFormData] = useState({
+    firstname: "",
+    lastname: "",
     phone: "",
+    email: "",
     gender: "",
     dob: "",
     city: "",
@@ -24,6 +26,7 @@ function Profile() {
     experience: "",
     bio: "",
   });
+
   const navigate = useNavigate();
   const [profilePic, setProfilePic] = useState(null);
   const [certificate, setCertificate] = useState(null);
@@ -37,8 +40,7 @@ function Profile() {
     phone: "",
     city: "",
   });
-  const { setArtisanStatus } = useAuth();
-
+  const { setArtisanStatus, setArtisan, user, artisanId } = useAuth();
   const phoneErrorRef = useRef(null);
   const today = new Date().toISOString().split("T")[0];
 
@@ -108,8 +110,21 @@ function Profile() {
         alert(data.message);
 
         if (data.success || data.message === "Registration successful") {
-          setArtisanStatus("true"); 
-          navigate("/artisan-profile"); 
+          setArtisanStatus("true");
+          setArtisan(data.data.id);
+
+          fetch("http://localhost:5050/link-artisan-to-user", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: user.id, artisanId: data.data.id }),
+          })
+            .then((res) => res.json())
+            .then(() => {
+              navigate("/artisan-profile");
+            })
+            .catch((err) => {
+              console.error("Error linking artisan to user:", err);
+            });
         }
       })
       .catch((err) => {
@@ -117,7 +132,6 @@ function Profile() {
         alert("Submission failed");
       });
   };
-
   return (
     <form onSubmit={handleSubmit} encType="multipart/form-data">
       <h2>Artisan Registration</h2>
@@ -140,6 +154,21 @@ function Profile() {
           </div>
         )}
       </label>
+
+      <label>
+        Email: <span className="aesterik">*</span>
+        <input name="email" value={formData.email} onChange={handleChange} required />
+      </label>
+      <label>
+        First Name: <span className="aesterik">*</span>
+        <input name="firstname" value={formData.firstname} onChange={handleChange} required />
+      </label>
+
+    <label>
+      Last Name: <span className="aesterik">*</span>
+      <input name="lastname" value={formData.lastname} onChange={handleChange} required />
+    </label>
+
 
       <label>
         Gender: <span className="aesterik">*</span>

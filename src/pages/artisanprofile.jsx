@@ -5,31 +5,25 @@ import { useNavigate } from "react-router-dom";
 function ArtisanProfile() {
   const [artisan, setArtisan] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
+  const { artisanId } = useAuth();
   const navigate = useNavigate();
 
-    useEffect(() => {
-      if (!user) {
-        navigate("/signin");
-        return;
-      }
+  useEffect(() => {
+    console.log(artisanId);
     
-      const userId = user.id;
-    
-      fetch(`http://localhost:8080/artisan/${userId}`)
-        .then((res) => res.json())
-        .then((data) => {
-          console.log('Artisan data:', data);  // Add this line to inspect the data
-          setArtisan(data);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error("Failed to load artisan profile:", err);
-          setLoading(false);
-        });
-    }, [user, navigate]);
-    
-  
+    const userId = artisanId;
+
+    fetch(`http://localhost:8080/artisan/${userId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setArtisan(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to load artisan profile:", err);
+        setLoading(false);
+      });
+  }, [artisanId, navigate]);
 
   if (loading) return <p className="profile-loading">Loading profile...</p>;
   if (!artisan) return <p className="profile-error">No profile data found.</p>;
@@ -39,14 +33,12 @@ function ArtisanProfile() {
       <h1 className="profile-title">Artisan Profile</h1>
 
       <div className="profile-header">
-        
-      <img
-  src={`http://localhost:8080/uploads/${artisan.profilePic}`}
-  alt="Profile"
-  className="profile-image"
-  onError={(e) => (e.target.src = "/default-profile.png")}
-/>
-
+        <img
+          src={`http://localhost:8080/uploads/${artisan.profilePic}`}
+          alt="Profile"
+          className="profile-image"
+          onError={(e) => (e.target.src = "/default-profile.png")}
+        />
         <div className="profile-info">
           <h2>{artisan.firstName} {artisan.lastName}</h2>
           <p className="profile-skill">{artisan.skill}</p>

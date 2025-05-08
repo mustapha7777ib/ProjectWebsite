@@ -765,22 +765,21 @@ label{
 
   }
   .artisan-profile-container {
-    margin-top: 150px;
     max-width: 1000px;
     margin: 40px auto;
     padding: 30px;
-    background-color: #fefefe;
+    background-color: #764abc;
     border-radius: 12px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    color: #333;
+    color: white;
   }
   
   .profile-title {
     text-align: center;
     font-size: 2.5em;
     margin-bottom: 30px;
-    color: #2b3a55; /* adapt to your website's theme */
+    color: white;
   }
   
   .profile-header {
@@ -910,6 +909,7 @@ label{
 }
 .matching-artisans-page {
     padding: 2rem;
+    margin-top: 150px;
 }
 
 .artisan-card {
@@ -919,6 +919,7 @@ label{
     border-radius: 8px;
     background: #f9f9f9;
 }
+
 
 
   

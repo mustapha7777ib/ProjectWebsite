@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 
 function SignUp() {
   const [step, setStep] = useState(1); 
@@ -11,6 +12,9 @@ function SignUp() {
     confirmPassword: "",
   });
   const [message, setMessage] = useState(""); 
+
+  const { login } = useAuth(); 
+  const navigate = useNavigate(); 
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -54,8 +58,8 @@ function SignUp() {
         if (data.error) {
           setMessage(data.error); 
         } else {
-          setMessage("Account created successfully!");
-
+          login(data.user); 
+          navigate("/"); 
         }
       })
       .catch((err) => setMessage("Error: " + err.message)); 
@@ -107,30 +111,26 @@ function SignUp() {
         <>
           <div className="inputer">
             <p>Password</p>
-            <div >
-                <input
-                    className="inputerchild"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your Password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                />
-            </div>
+            <input
+              className="inputerchild"
+              type="password"
+              placeholder="Enter your Password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="inputer">
             <p>Confirm Password</p>
-            <div >
-              <input
+            <input
               className="inputerchild"
-                type={showConfirm ? "text" : "password"}
-                placeholder="Confirm your Password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-              />
-            </div>
+              type="password"
+              placeholder="Confirm your Password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+            />
           </div>
 
           <button onClick={handleFinalSubmit}>Sign Up</button>

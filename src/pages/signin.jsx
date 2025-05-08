@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext"; 
 
 function SignIn() {
-  const { login } = useAuth();
+  const { login, setArtisan } = useAuth();
 
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
@@ -31,7 +31,10 @@ function SignIn() {
           setMessage(data.error);
         } else {
           setMessage("Login successful!");
+          console.log("User data:", data.user);
+          
           login(data.user);
+          setArtisan(data.user.artisanId);
           navigate("/");
         }
       })

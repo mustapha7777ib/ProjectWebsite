@@ -5,11 +5,12 @@ import { useAuth } from "./AuthContext";
 function Header() {
   const [show, setShow] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { user, logout, isArtisan } = useAuth();
+  const { user, logout, artisanId } = useAuth();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
   console.log("Current user in header:", user);
 
+  console.log("Is artisan in header:", artisanId);
 
   const handleClick = () => setShow(false);
   const toggleDropdown = () => setDropdownOpen((prev) => !prev);
@@ -47,7 +48,7 @@ function Header() {
     <button onClick={toggleDropdown} className="profile-btn">Profile</button>
     {dropdownOpen && (
       <div className="dropdown">
-        {isArtisan ? (
+        {artisanId && artisanId != "null" ? (
           <Link to="/artisan-profile" className="dropdown-item">Artisan Profile</Link>
         ) : (
           <Link to="/profile" className="dropdown-item">Become an Artisan</Link>

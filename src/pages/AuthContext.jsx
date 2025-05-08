@@ -1,4 +1,4 @@
-// @refresh skip
+
 import React, { createContext, useContext, useState } from "react";
 const AuthContext = createContext(null);
 
@@ -11,6 +11,10 @@ export const AuthProvider = ({ children }) => {
 
   const [isArtisan, setIsArtisan] = useState(() => {
     return localStorage.getItem("isArtisan") === "true";
+  });
+
+  const [artisanId, setArtisanId] = useState((id) => {
+    return localStorage.getItem("artisanId") === id;
   });
 
   const login = async (userData) => {
@@ -48,9 +52,15 @@ export const AuthProvider = ({ children }) => {
     setIsArtisan(status === "true");
   };
 
+  const setArtisan = (id) => {
+    localStorage.setItem("artisanId", id);
+    setArtisanId(id);
+    setIsArtisan(true);
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user, login, logout, isArtisan, setArtisanStatus }}
+      value={{ user, login, logout, setArtisan, isArtisan, artisanId, setArtisanStatus }}
     >
       {children}
     </AuthContext.Provider>

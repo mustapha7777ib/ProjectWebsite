@@ -15,7 +15,7 @@ const pool = new Pool({
 });
 app.use(cors({
   origin: "http://localhost:5173", 
-  methods: ["GET", "POST", "OPTIONS"],
+  methods: ["GET", "POST", "PUT", "OPTIONS"],
   credentials: true,
 }));
 
@@ -51,6 +51,35 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+app.put("/link-artisan-to-user", async (req, res) => {
+  try {
+    const { userId, artisanId } = req.body;
+
+    if (!userId || !artisanId) {
+      return res.status(400).json({ error: "Missing userId or artisanId" });
+    }
+
+    const result = await pool.query(
+      `UPDATE users SET artisanid = $1 WHERE id = $2 RETURNING *`,
+      [artisanId, userId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    console.log(result.rows[0]);
+
+    res.status(200).json({
+      message: "User linked to artisan successfully",
+      user: result.rows[0],
+    });
+  } catch (err) {
+    console.error("Failed to link artisan to user:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 app.post("/signin", async (req, res) => {
     const { email, password } = req.body;
     try {
@@ -67,7 +96,9 @@ app.post("/signin", async (req, res) => {
         return res.status(401).json({ error: "Invalid email or password" });
       }
   
-      res.json({ message: "Login successful", user: { id: user.id, email: user.email } });
+      console.log(user);
+      
+      res.json({ message: "Login successful", user: { id: user.id, email: user.email, artisanId: user.artisanId } });
   
     } catch (err) {
       console.error("Sign-in error:", err);
