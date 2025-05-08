@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-
 function MatchingArtisansPage() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const city = queryParams.get('city');
   const artisan = queryParams.get('artisan');
   const navigate = useNavigate();
-
 
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,11 +16,9 @@ function MatchingArtisansPage() {
     const fetchArtisans = async () => {
       try {
         const response = await fetch(`http://localhost:8080/artisans?artisan=${encodeURIComponent(artisan)}&city=${encodeURIComponent(city)}`);
-        
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-
         const data = await response.json();
         setResults(data);
       } catch (err) {
@@ -48,16 +44,15 @@ function MatchingArtisansPage() {
         {results.length === 0 && !loading && <p>No artisans found for this search.</p>}
 
         {results.map((artisan, i) => (
-  <div key={i} className="artisan-card">
-    <h3>{artisan.firstname} {artisan.lastname}</h3>
-    <p>Email: {artisan.email}</p>
-    <p>Phone: {artisan.phone}</p>
-    <p>Location: {artisan.city}</p>
-    <p>Service: {artisan.skill}</p>
-    <button onClick={() => navigate(`/artisan-profile/${artisan.id}`)}>View More</button>
-  </div>
-))}
-
+          <div key={i} className="artisan-card">
+            <h3>{artisan.firstname} {artisan.lastname}</h3>
+            <p>Email: {artisan.email}</p>
+            <p>Phone: {artisan.phone}</p>
+            <p>Location: {artisan.city}</p>
+            <p>Service: {artisan.skill}</p>
+            <button onClick={() => navigate(`/artisan-profile/${artisan.id}`)}>View More</button>
+          </div>
+        ))}
       </div>
     </div>
   );

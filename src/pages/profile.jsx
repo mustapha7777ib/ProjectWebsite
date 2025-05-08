@@ -40,7 +40,7 @@ function Profile() {
     phone: "",
     city: "",
   });
-  const { setArtisanStatus, setArtisan, user, artisanId } = useAuth();
+  const { setArtisanStatus, setArtisan, user } = useAuth();
   const phoneErrorRef = useRef(null);
   const today = new Date().toISOString().split("T")[0];
 
@@ -106,14 +106,11 @@ function Profile() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("Response from server:", data);
-        alert(data.message);
-
-        if (data.success || data.message === "Registration successful") {
+        if (data.message === "Registration successful") {
           setArtisanStatus("true");
           setArtisan(data.data.id);
 
-          fetch("http://localhost:5050/link-artisan-to-user", {
+          fetch("http://localhost:8080/link-artisan-to-user", {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ userId: user.id, artisanId: data.data.id }),
@@ -125,6 +122,8 @@ function Profile() {
             .catch((err) => {
               console.error("Error linking artisan to user:", err);
             });
+        } else {
+          alert("Registration failed: " + data.error);
         }
       })
       .catch((err) => {
@@ -132,6 +131,11 @@ function Profile() {
         alert("Submission failed");
       });
   };
+
+  if (!user) {
+    return <p>Please log in to register as an artisan.</p>;
+  }
+
   return (
     <form onSubmit={handleSubmit} encType="multipart/form-data">
       <h2>Artisan Registration</h2>
@@ -164,11 +168,10 @@ function Profile() {
         <input name="firstname" value={formData.firstname} onChange={handleChange} required />
       </label>
 
-    <label>
-      Last Name: <span className="aesterik">*</span>
-      <input name="lastname" value={formData.lastname} onChange={handleChange} required />
-    </label>
-
+      <label>
+        Last Name: <span className="aesterik">*</span>
+        <input name="lastname" value={formData.lastname} onChange={handleChange} required />
+      </label>
 
       <label>
         Gender: <span className="aesterik">*</span>

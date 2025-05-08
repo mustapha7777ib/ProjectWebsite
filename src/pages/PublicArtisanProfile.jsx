@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 function PublicArtisanProfile() {
   const { id } = useParams();
@@ -57,23 +56,9 @@ function PublicArtisanProfile() {
           <p><strong>Phone:</strong> {artisan.phone}</p>
           <p><strong>City:</strong> {artisan.city}</p>
           <p><strong>Bio:</strong> {artisan.bio || "No bio available"}</p>
+          <p><strong>Coins:</strong> {artisan.coins}</p>
           <button onClick={handleChat}>Chat</button>
         </div>
-      </div>
-
-      <div className="jobs-section">
-        <h3>Previous Jobs</h3>
-        {artisan.jobs && artisan.jobs.length > 0 ? (
-          <ul>
-            {artisan.jobs.map((job, i) => (
-              <li key={i}>
-                <strong>{job.title}</strong> – {job.description}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No previous jobs listed.</p>
-        )}
       </div>
     </div>
   );

@@ -1,4 +1,3 @@
-// App.jsx
 import React from 'react';
 import Header from './header.jsx';
 import Body from './body.jsx';
@@ -10,14 +9,23 @@ import Join from './join.jsx';
 import SignIn from './signin.jsx';
 import SignUp from './signup.jsx';
 import Profile from './profile.jsx';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import ArtisanProfile from './artisanprofile';
-import MatchingArtisansPage from './matching-artisans';
-import PublicArtisanProfile from './PublicArtisanProfile';
+import ArtisanProfile from './artisanprofile.jsx';
+import MatchingArtisansPage from './matching-artisans.jsx';
+import PublicArtisanProfile from './PublicArtisanProfile.jsx';
 import Chat from './chat.jsx';
-import { useAuth } from './AuthContext';
 import Conversations from './conversations.jsx';
 import ConversationsList from './conversationslist.jsx';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useAuth } from './AuthContext';
+
+function PurchaseCoins() {
+  return (
+    <div style={{ padding: "20px", textAlign: "center" }}>
+      <h2>Purchase Coins</h2>
+      <p>Please proceed to the payment gateway to purchase more coins.</p>
+    </div>
+  );
+}
 
 function App() {
   const { user } = useAuth();
@@ -48,6 +56,7 @@ function App() {
         <Route path="/chat/:artisanId" element={<Chat currentUser={user} />} />
         <Route path="/conversations" element={<Conversations />} />
         <Route path="/conversationslist" element={<ConversationsList />} />
+        <Route path="/purchase-coins" element={<PurchaseCoins />} />
       </Routes>
     </Router>
   );

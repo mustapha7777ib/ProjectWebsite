@@ -9,12 +9,16 @@ function ArtisanProfile() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(artisanId);
-    
-    const userId = artisanId;
+    if (!artisanId) {
+      navigate("/profile");
+      return;
+    }
 
-    fetch(`http://localhost:8080/artisan/${userId}`)
-      .then((res) => res.json())
+    fetch(`http://localhost:8080/artisan/${artisanId}`)
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch artisan');
+        return res.json();
+      })
       .then((data) => {
         setArtisan(data);
         setLoading(false);
@@ -34,13 +38,13 @@ function ArtisanProfile() {
 
       <div className="profile-header">
         <img
-            src={`http://localhost:8080/uploads/${artisan.profile_pic}`} 
-            alt="Profile" 
-            className="profile-image"
-            onError={(e) => { e.target.src = 'https://via.placeholder.com/150'; }}
+          src={`http://localhost:8080/uploads/${artisan.profile_pic}`} 
+          alt="Profile" 
+          className="profile-image"
+          onError={(e) => { e.target.src = 'https://via.placeholder.com/150'; }}
         />
         <div className="profile-info">
-          <h2>{artisan.firstName} {artisan.lastName}</h2>
+          <h2>{artisan.firstname} {artisan.lastname}</h2>
           <p className="profile-skill">{artisan.skill}</p>
         </div>
       </div>
@@ -56,6 +60,7 @@ function ArtisanProfile() {
           <p><strong>City:</strong> {artisan.city}</p>
           <p><strong>Address:</strong> {artisan.address}</p>
           <p><strong>Years of Experience:</strong> {artisan.experience}</p>
+          <p><strong>Coins:</strong> {artisan.coins}</p>
         </div>
       </div>
 
@@ -108,7 +113,6 @@ function ArtisanProfile() {
           </div>
         </div>
       )}
-
       <div className="profile-edit-button-wrapper">
         <button onClick={() => navigate("/edit-profile")} className="edit-button">
           Edit Profile

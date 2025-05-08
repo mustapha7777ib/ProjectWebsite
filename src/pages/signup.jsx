@@ -48,7 +48,7 @@ function SignUp() {
       return;
     }
 
-    fetch("http://localhost:5050/signup", {
+    fetch("http://localhost:8080/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),

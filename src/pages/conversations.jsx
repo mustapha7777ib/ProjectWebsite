@@ -1,50 +1,62 @@
-// Conversations.jsx
 import React, { useEffect, useState } from 'react';
-import { useAuth } from './AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 
 const Conversations = () => {
-  const { user } = useAuth();
-  const [threads, setThreads] = useState([]);
+  const { user, artisanId } = useAuth();
+  const [conversations, setConversations] = useState([]);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchConversations = async () => {
-      try {
-        const res = await fetch(`/api/messages/conversations/${user.id}`);
-        const data = await res.json();
-        setThreads(data);
-      } catch (err) {
-        console.error('Failed to fetch conversations', err);
-      }
-    };
+    if (!user) return;
+    const id = artisanId || user.id;
+    fetch(`http://localhost:8080/api/messages/conversations-summary/${id}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch conversations');
+        return res.json();
+      })
+      .then(data => setConversations(data))
+      .catch(err => {
+        console.error('Error fetching conversations:', err);
+        setError('Could not load conversations');
+      });
+  }, [user, artisanId]);
 
-    fetchConversations();
-  }, [user]);
+  const goToChat = (participantId) => {
+    navigate(`/chat/${participantId}`);
+  };
 
-  const getOtherParticipant = (msg) =>
-    msg.sender_id === user.id ? msg.receiver_id : msg.sender_id;
+  if (!user) {
+    return <p>Please log in to view conversations.</p>;
+  }
+
+  if (error) {
+    return <p style={{ color: 'red' }}>{error}</p>;
+  }
 
   return (
-    <div style={{ padding: '1rem' }}>
-      <h2>Your Conversations</h2>
-      {threads.map((msg) => (
-        <div key={msg.id} style={{ margin: '1rem 0', cursor: 'pointer' }}>
-          <div
-            onClick={() => navigate(`/chat/${getOtherParticipant(msg)}`)}
-            style={{
-              padding: '0.5rem 1rem',
-              border: '1px solid #ccc',
-              borderRadius: '8px',
-              background: '#f9f9f9',
-            }}
-          >
-            <p><strong>With user:</strong> {getOtherParticipant(msg)}</p>
-            <p>{msg.content}</p>
-            <small>{new Date(msg.timestamp).toLocaleString()}</small>
-          </div>
-        </div>
-      ))}
+    <div className='conversations' style={{ padding: "20px" }}>
+      <h2>Inbox</h2>
+      {conversations.length === 0 ? (
+        <p>No conversations yet.</p>
+      ) : (
+        conversations.map((msg, index) => {
+          const otherUserId = msg.sender_id === (artisanId || user.id) ? msg.receiver_id : msg.sender_id;
+          const name = `${msg.firstname} ${msg.lastname}`;
+          return (
+            <div
+              key={index}
+              onClick={() => goToChat(otherUserId)}
+              style={{ cursor: 'pointer', borderBottom: '1px solid #ccc', padding: '10px' }}
+            >
+              <p><strong>{name}</strong> {msg.unread_count > 0 && `(${msg.unread_count} unread)`}</p>
+              <p>{msg.content}</p>
+              <small>{new Date(msg.timestamp).toLocaleString()}</small>
+            </div>
+          );
+        })
+      )}
     </div>
   );
 };

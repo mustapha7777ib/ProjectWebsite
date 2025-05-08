@@ -1006,4 +1006,13 @@ label{
     color: red;
     text-align: center;
   }
-  
+.conversations{
+    margin-top: 150px;
+    padding: 20px;
+    margin-left: 100px;
+}
+.chatbox{
+    margin-top: 150px;
+    padding: 20px;
+    margin-left: 100px;
+}
