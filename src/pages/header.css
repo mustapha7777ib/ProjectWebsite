@@ -2,15 +2,15 @@
 #home, #services, #about, #contact {
     scroll-margin-top: 80px; 
 }
+
 body {
-  display: flex;
-  align-items: center;
-  margin: 0;    
-  font-family: "Montserrat", sans-serif;
-  font-weight: 600;
-  font-style: normal;
+    margin: 0;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 600;
+    font-style: normal;
 }
-.header{
+
+.header {
     display: flex;
     flex-direction: row;
     position: fixed;
@@ -20,107 +20,124 @@ body {
     color: white;
     background-color: #764abc;
     padding: 10px;
-    z-index: 1000; 
+    z-index: 1000;
     justify-content: space-between;
 }
-.header *{
+
+.header * {
     display: flex;
     flex-direction: row;
 }
-.header1{
+
+.header1 {
     justify-content: space-around;
     display: flex;
-    padding-left: 100px
+    padding-left: 100px;
 }
-.header11{
+
+.header11 {
     justify-content: space-around;
     display: flex;
 }
-.header1 *{
+
+.header1 * {
     margin-right: 30px;
 }
-.header11 *{
+
+.header11 * {
     margin-right: 30px;
     padding-top: 10px;
 }
-.header2{
+
+.header2 {
     margin-right: 100px;
     display: flex;
 }
-.header21{
+
+.header21 {
     margin-right: 100px;
     display: flex;
 }
-.header2 *{
+
+.header2 *, .header21 * {
     margin-right: 30px;
     color: white;
     padding: 10px;
 }
-.header21 *{
-    margin-right: 30px;
-    color: white;
-    padding: 10px;
-}
+
 .hamburger {
     display: none;
     font-size: 2rem;
     cursor: pointer;
 }
-.work{
+
+.work {
     font-size: 100px;
     font-style: italic;
     margin-bottom: -100px;
     color: #764abc;
 }
-.up{
+
+.up {
     font-size: 90px;
     font-style: italic;
 }
-.containerbody{
+
+.containerbody {
     display: flex;
     padding-bottom: 50px;
 }
-.text{
+
+.text {
     padding-top: 300px;
     padding-right: 100px;
     margin-right: 20px;
     font-size: 20px;
     letter-spacing: 3px;
 }
-.spann{
+
+.spann {
     font-weight: bold;
     color: #764abc;
 }
-.spannn{
+
+.spannn {
     font-weight: 900;
 }
-.right{
+
+.right {
     margin-left: 100px;
     margin-top: 200px;
 }
-.buttonss{
+
+.buttonss {
     text-decoration: none;
     display: flex;
     flex-direction: row;
     color: white;
     padding-top: 25px;
 }
-.buttonss:hover{
+
+.buttonss:hover {
     cursor: pointer;
 }
-.containerservices{
+
+.containerservices {
     display: flex;
     flex-direction: row;
     margin-left: -40px;
-    margin-bottom: 40px;  
+    margin-bottom: 40px;
 }
-.okay{
+
+.okay {
     margin-top: 100px;
 }
-.okay h1{
+
+.okay h1 {
     padding-top: 30px;
 }
-.containerservices1{
+
+.containerservices1 {
     background-color: #764abc;
     color: white;
     margin-right: 130px;
@@ -131,7 +148,8 @@ body {
     padding-top: 10px;
     padding-right: 30px;
 }
-.containerservices2{
+
+.containerservices2 {
     background-color: white;
     color: #764abc;
     border-radius: 10px;
@@ -140,11 +158,13 @@ body {
     padding-left: 20px;
     padding-top: 10px;
 }
-.servicetext{
+
+.servicetext {
     line-height: 30px;
     padding-bottom: 40px;
 }
-.findmore1{
+
+.findmore1 {
     text-align: center;
     font-size: 15px;
     padding: 10px;
@@ -155,12 +175,14 @@ body {
     border: none;
     text-decoration: none;
 }
-.findmore1:hover{
+
+.findmore1:hover {
     cursor: pointer;
     opacity: 0.5;
     transition: opacity 0.3s ease;
 }
-.findmore2{
+
+.findmore2 {
     text-align: center;
     font-size: 15px;
     padding: 10px;
@@ -171,16 +193,19 @@ body {
     border: none;
     text-decoration: none;
 }
-.join-container{
+
+.join-container {
     margin-top: 250px;
 }
-.findmore2:hover{
+
+.findmore2:hover {
     cursor: pointer;
     opacity: 0.5;
     transition: opacity 0.3s ease;
 }
-.containerservices11{
-    background-color: white ;
+
+.containerservices11 {
+    background-color: white;
     color: #764abc;
     margin-right: 130px;
     border-radius: 10px;
@@ -190,7 +215,8 @@ body {
     padding-top: 10px;
     padding-right: 30px;
 }
-.containerservices21{
+
+.containerservices21 {
     background-color: #764abc;
     color: white;
     border-radius: 10px;
@@ -201,11 +227,8 @@ body {
     padding-right: 20px;
     margin-bottom: 40px;
 }
-.servicetext{
-    line-height: 30px;
-    padding-bottom: 40px;
-}
-.findmore11{
+
+.findmore11 {
     text-align: center;
     font-size: 15px;
     padding: 10px;
@@ -216,12 +239,14 @@ body {
     border: none;
     text-decoration: none;
 }
-.findmore11:hover{
+
+.findmore11:hover {
     cursor: pointer;
     opacity: 0.5;
     transition: opacity 0.3s ease;
 }
-.findmore21{
+
+.findmore21 {
     text-align: center;
     font-size: 15px;
     padding: 10px;
@@ -232,12 +257,14 @@ body {
     border: none;
     text-decoration: none;
 }
-.findmore21:hover{
+
+.findmore21:hover {
     cursor: pointer;
     opacity: 0.5;
     transition: opacity 0.3s ease;
 }
-.seemore{
+
+.seemore {
     text-align: center;
     padding-top: 20px;
     font-size: 15px;
@@ -252,19 +279,23 @@ body {
     margin-left: 360px;
     text-decoration: none;
 }
-.seemore:hover{
+
+.seemore:hover {
     cursor: pointer;
     opacity: 0.5;
     transition: opacity 0.3s ease;
 }
-.about{
+
+.about {
     margin-top: 100px;
 }
-.hear{
+
+.hear {
     font-style: italic;
     color: #764abc;
 }
-.hearwhatoga{
+
+.hearwhatoga {
     color: white;
     background-color: #764abc;
     padding: 50px;
@@ -273,23 +304,27 @@ body {
     width: 900px;
     margin-bottom: 100px;
 }
-.hearwhat{
+
+.hearwhat {
     line-height: 30px;
     font-style: italic;
     font-size: 20px;
     font-weight: 300;
 }
-.okay{
+
+.okay {
     width: 1000px;
     margin-bottom: 200px;
 }
-.CEO{
+
+.CEO {
     margin-top: 50px;
     margin-left: 600px;
     font-size: 25px;
     font-style: italic;
 }
-.contact{
+
+.contact {
     margin-left: -150px;
     width: 95.5vw;
     background-color: #764abc;
@@ -298,97 +333,67 @@ body {
     color: white;
     margin-bottom: -30px;
 }
-.email{
+
+.email, .phone, .address {
     font-size: 300;
     margin-bottom: -20px;
 }
-.phone{
-    font-size: 300;
-    margin-bottom: -20px;
-}
-.address{
-    font-size: 300;
-    margin-bottom: -20px;
-}
-.contact1{
+
+.contact1 {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
     padding-bottom: 40px;
 }
-.details{
+
+.details {
     margin-left: -130px;
 }
-.joinus1{
+
+.joinus1, .joinus2, .joinus3, .joinus4 {
     text-align: center;
     font-size: 15px;
     padding: 10px;
     border-radius: 5px;
+    margin-top: 10px;
+    border: none;
+    text-decoration: none;
+}
+
+.joinus1, .joinus4 {
     color: white;
     background-color: #764abc;
-    margin-top: 10px;
-    border: none;
-    text-decoration: none;
 }
-.joinus2{
-    margin-top: 10px;
-    border: none;
-    text-align: center;
-    font-size: 15px;
-    padding: 10px;
-    border-radius: 5px;
+
+.joinus2, .joinus3 {
     color: #764abc;
-    background-color: white ;
-    margin-top: 10px;
-    border: none;
-    text-decoration: none;
+    background-color: white;
 }
-.joinus3{
-    margin-top: 10px;
-    border: none;
-    text-align: center;
-    font-size: 15px;
-    padding: 10px;
-    border-radius: 5px;
-    color: #764abc;
-    background-color: white ;
-    margin-top: 10px;
-    border: none;
-    text-decoration: none;
-}
-.joinus4{
-    margin-top: 10px;
-    border: none;
-    text-align: center;
-    font-size: 15px;
-    padding: 10px;
-    border-radius: 5px;
-    color: white;
-    background-color: #764abc;
-    margin-top: 10px;
-    border: none;
-    text-decoration: none;
-}
-.Workers{
+
+.Workers {
     padding-top: 200px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
-.Artisans{
+
+.Artisans {
     color: #764abc;
 }
-.Workers h1{
+
+.Workers h1 {
     font-size: 50px;
     text-align: center;
 }
-.Workers p{
+
+.Workers p {
     text-align: center;
     font-size: 20px;
     line-height: 30px;
 }
-.searchbar{
+
+.searchbar {
     display: flex;
     flex-direction: row;
     border: 1px solid black;
@@ -396,75 +401,89 @@ body {
     padding-right: 10px;
     font-weight: 300;
 }
-.icon{
-    height:40px;
+
+.icon {
+    height: 40px;
     padding-top: 15px;
     padding-left: 100px;
 }
-.artisanss{
+
+.artisanss {
     display: flex;
     flex-direction: row;
     margin-top: 20px;
 }
-.artisanss > div:hover{
+
+.artisanss > div:hover {
     cursor: pointer;
     border: 1px solid #764abc;
     transition: background-color 0.3s ease;
     color: #764abc;
 }
-.artisanss > div:hover > p{
+
+.artisanss > div:hover > p {
     color: #764abc;
 }
-.searchbar:hover{
+
+.searchbar:hover {
     cursor: pointer;
     background-color: #764abc;
     transition: background-color 0.3s ease;
     color: white;
 }
-.artisanss *{
+
+.artisanss * {
     color: black;
     font-weight: 300;
     border-radius: 10px;
     margin-right: 20px;
     max-width: 100%;
 }
-.artisanss > div{
+
+.artisanss > div {
     border: 1px solid black;
     padding-left: 20px;
 }
+
 .artisanss > div.selected {
     background-color: #764abc;
 }
+
 .artisanss > div.selected > p {
     color: white;
 }
+
 .artisanssmodal {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); 
-    grid-template-rows: repeat(3, auto);   
-    gap: 10px; 
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, auto);
+    gap: 10px;
     padding-bottom: 10px;
 }
-.artisansmodal{
+
+.artisansmodal {
     border: 1px solid black;
     padding-left: 20px;
     border-radius: 5px;
 }
+
 .artisansmodal.selected {
     background-color: #764abc;
     color: white;
 }
-.artisansmodal:hover{
+
+.artisansmodal:hover {
     cursor: pointer;
     border: 1px solid #764abc;
     transition: background-color 0.3s ease;
     color: #764abc;
 }
+
 .artisansmodal.selected:hover {
     color: white;
 }
 
-.close{
+.close, .proceed {
     font-size: 15px;
     height: 55px;
     width: 400px;
@@ -474,77 +493,63 @@ body {
     border: none;
     border-radius: 5px;
 }
-.proceed{
-    font-size: 15px;
-    height: 55px;
-    width: 400px;
-    color: white;
-    background-color: rgb(118, 74, 188);
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
+
+.proceed {
     margin-bottom: 10px;
 }
-.proceed:hover{
+
+.proceed:hover, .close:hover {
     color: black;
     background-color: white;
     transition: all 0.2s ease;
 }
-.close:hover{
-    color: black;
-    background-color: white;
-    transition: all 0.2s ease;
-}
-.inputbox{
+
+.inputbox, #email {
     height: 40px;
     width: 390px;
     margin-top: 10px;
     margin-bottom: 20px;
 }
-#email{
-    height: 40px;
-    width: 390px;
-    margin-bottom: 20px;
-    margin-top: 10px;
-}
-.error{
+
+.error, .notavailable {
     color: red;
     margin-top: -20px;
     font-size: 10px;
     font-style: italic;
 }
-.notavailable{
-    color: red;
-    margin-top: -20px;
-    font-size: 10px;
-    font-style: italic;
-}
-.modalh2{
+
+.modalh2 {
     padding-top: 30px;
 }
-.icon2{
+
+.icon2 {
     height: 100vh;
     padding-left: 210px;
 }
-.join{
+
+.join {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     margin-left: 150px;
 }
-.join_container{
+
+.join_container {
     padding-top: 300px;
     margin-left: -10px;
 }
-.already{
+
+.already {
     font-weight: 200;
     margin-bottom: 30px;
 }
-.signin{
+
+.signin {
     font-weight: 900;
     color: #764abc;
 }
-.signupbutton{
+
+.signupbutton {
     padding: 10px;
     background-color: #764abc;
     color: white;
@@ -552,29 +557,35 @@ body {
     border-radius: 5px;
     text-decoration: none;
 }
-.signinjsx{
+
+.signinjsx {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     padding-top: 200px;
 }
-.signinjsx > div{
+
+.signinjsx > div {
     flex: 50% 0 0;
 }
-.secondhalf{
+
+.secondhalf {
     display: flex;
     flex-direction: column;
     margin-top: 100px;
 }
-.secondhalf h2{
+
+.secondhalf h2 {
     font-weight: 600;
 }
-.forgot{
+
+.forgot {
     margin-left: 280px;
     color: #764abc;
 }
-.signinjsx button{
+
+.signinjsx button {
     background-color: #764abc;
     color: white;
     width: 420px;
@@ -582,14 +593,17 @@ body {
     border-radius: 5px;
     height: 40px;
 }
-.donthave{
+
+.donthave {
     margin-left: 60px;
 }
-.signup{
+
+.signup {
     color: #764abc;
     text-decoration: none;
 }
-.inputerchild{
+
+.inputerchild {
     width: 420px;
     height: 40px;
     background-color: #F5EFED;
@@ -597,19 +611,23 @@ body {
     border-radius: 5px;
     padding-left: 5px;
 }
-.inputer p{
+
+.inputer p {
     font-weight: 600;
     margin-bottom: 5px;
 }
-.workuplogo{
+
+.workuplogo {
     color: #764abc;
     font-style: italic;
     margin-bottom: -10px;
 }
-.workuplogo span{
+
+.workuplogo span {
     color: black;
 }
-.signupjsx{
+
+.signupjsx {
     margin-top: 100px;
     display: flex;
     flex-direction: column;
@@ -617,7 +635,8 @@ body {
     justify-content: center;
     padding-top: 100px;
 }
-.signupjsx button{
+
+.signupjsx button {
     margin-top: 20px;
     background-color: #764abc;
     color: white;
@@ -626,14 +645,17 @@ body {
     border-radius: 5px;
     height: 40px;
 }
-.have{
+
+.have {
     margin-left: 80px;
 }
-.message {
+
+.form-message {
     color: red;
     font-size: 1.2em;
     margin-top: 10px;
-  }
+}
+
 .profile-btn {
     background-color: #764abc;
     border: none;
@@ -644,12 +666,13 @@ body {
     font-weight: 600;
     margin-top: 2px;
     font-style: normal;
-  }
-  
-  .profile-container {
+}
+
+.profile-container {
     position: relative;
-  } 
-  .dropdown {
+}
+
+.dropdown {
     position: absolute;
     right: 0;
     top: 30px;
@@ -658,20 +681,23 @@ body {
     border-radius: 5px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     z-index: 100;
-  }
-  .dropdown-item {
+}
+
+.dropdown-item {
     padding: 10px;
     color: #333;
     text-decoration: none;
     display: block;
-  }
-  
-  .dropdown-item:hover {
+}
+
+.dropdown-item:hover {
     background-color: #f1f1f1;
-  }
-.abc{
+}
+
+.abc {
     padding-bottom: 30px;
 }
+
 form {
     max-width: 600px;
     margin: 2rem auto;
@@ -681,42 +707,42 @@ form {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     font-family: Arial, sans-serif;
     margin-top: 150px;
-  }
-  
-  form h2 {
+}
+
+form h2 {
     text-align: center;
     margin-bottom: 1.5rem;
     color: white;
+}
 
-  }
-  
-  label {
+label {
     display: block;
     margin-bottom: 1rem;
     color: #444;
     font-weight: 500;
-  }
-  
-  label input,
-  label select,
-  label textarea {
+}
+
+label input,
+label select,
+label textarea {
     width: 100%;
     padding: 0.6rem;
     margin-top: 0.4rem;
     border: 1px solid #ccc;
     border-radius: 8px;
     font-size: 1rem;
-  }
-  
-  label input[type="file"] {
+}
+
+label input[type="file"] {
     padding: 0.3rem;
-  }
-  
-  textarea {
+}
+
+textarea {
     resize: vertical;
     min-height: 80px;
-  }
-.submitbutton{
+}
+
+.submitbutton {
     display: block;
     width: 100%;
     padding: 0.75rem;
@@ -729,27 +755,32 @@ form {
     cursor: pointer;
     transition: background-color 0.3s;
 }
-label{
+
+label {
     color: white;
 }
-.rememberme{
+
+.rememberme {
     display: flex;
     flex-direction: row;
     padding-left: 290px;
 }
+
 .error {
     color: red;
     font-size: 0.9em;
     margin-top: 0.2rem;
-  }
-  .aesterik {
+}
+
+.aesterik {
     color: black;
-  }
-  .city-dropdown-wrapper {
+}
+
+.city-dropdown-wrapper {
     position: relative;
-  }
-  
-  .city-dropdown {
+}
+
+.city-dropdown {
     border: 1px solid #ccc;
     max-height: 150px;
     overflow-y: scroll;
@@ -760,19 +791,18 @@ label{
     margin-top: 2px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     color: black;
-  }
-  
-  .city-dropdown li {
+}
+
+.city-dropdown li {
     padding: 8px;
     cursor: pointer;
+}
 
-  }
-  
-  .city-dropdown li:hover {
+.city-dropdown li:hover {
     background-color: #f0f0f0;
+}
 
-  }
-  .artisan-profile-container {
+.artisan-profile-container {
     max-width: 1000px;
     margin: 40px auto;
     padding: 30px;
@@ -781,105 +811,105 @@ label{
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     color: white;
-  }
-  
-  .profile-title {
+}
+
+.profile-title {
     text-align: center;
     font-size: 2.5em;
     margin-bottom: 30px;
     color: white;
-  }
-  
-  .profile-header {
+}
+
+.profile-header {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-  }
-  
-  .profile-image {
+}
+
+.profile-image {
     width: 150px;
     height: 150px;
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid #ccc;
     margin-bottom: 10px;
-  }
-  
-  .profile-info h2 {
+}
+
+.profile-info h2 {
     margin: 10px 0 5px;
     font-size: 1.8em;
-  }
-  
-  .profile-skill {
+}
+
+.profile-skill {
     color: #777;
     font-style: italic;
-  }
-  
-  .profile-details {
+}
+
+.profile-details {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     margin: 30px 0;
     gap: 20px;
-  }
-  
-  .details-column {
+}
+
+.details-column {
     flex: 1;
     min-width: 280px;
-  }
-  
-  .details-column p {
+}
+
+.details-column p {
     margin: 10px 0;
     line-height: 1.6;
-  }
-  
-  .profile-section {
+}
+
+.profile-section {
     margin-bottom: 30px;
-  }
-  
-  .profile-section h3 {
+}
+
+.profile-section h3 {
     margin-bottom: 10px;
     font-size: 1.2em;
     color: #2b3a55;
-  }
-  
-  .profile-bio {
+}
+
+.profile-bio {
     background-color: #2b3a55;
     padding: 15px;
     border-radius: 8px;
     line-height: 1.6;
-  }
-  
-  .certificate-link {
+}
+
+.certificate-link {
     color: #0066cc;
     text-decoration: none;
-  }
-  
-  .certificate-link:hover {
+}
+
+.certificate-link:hover {
     text-decoration: underline;
-  }
-  
-  .portfolio-grid {
+}
+
+.portfolio-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 20px;
-  }
-  
-  .portfolio-item img,
-  .portfolio-item video {
+}
+
+.portfolio-item img,
+.portfolio-item video {
     width: 100%;
     border-radius: 8px;
     object-fit: cover;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .profile-edit-button-wrapper {
+}
+
+.profile-edit-button-wrapper {
     text-align: center;
     margin-top: 40px;
-  }
-  
-  .edit-button {
+}
+
+.edit-button {
     background-color: #2b3a55;
     color: white;
     border: none;
@@ -888,33 +918,19 @@ label{
     border-radius: 6px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-  }
-  
-  .edit-button:hover {
+}
+
+.edit-button:hover {
     background-color: #1e2b3a;
-  }
-  
-  .profile-loading,
-  .profile-error {
+}
+
+.profile-loading,
+.profile-error {
     text-align: center;
     margin-top: 50px;
     color: #666;
-  }
-  .city-dropdown-wrapper {
-    position: relative;
 }
 
-.city-dropdown {
-    position: absolute;
-    width: 100%;
-    z-index: 1000;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    max-height: 150px;
-    overflow-y: auto; /* enables scrolling */
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
 .matching-artisans-page {
     padding: 2rem;
     margin-top: 150px;
@@ -927,7 +943,8 @@ label{
     border-radius: 8px;
     background: #f9f9f9;
 }
-.issue{
+
+.issue {
     margin-top: 30px;
 }
 
@@ -937,43 +954,41 @@ label{
     padding: 20px;
     font-family: 'Segoe UI', sans-serif;
     margin-left: 100px;
-  }
-  
-  .profile-card {
+}
+
+.profile-card {
     display: flex;
     background-color: #fff;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+}
 
-  }
-  
-  .profile-left {
+.profile-left {
     flex: 1;
     padding: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-right: 1px solid #eee;
-  }
-  
-  
-  .profile-right1 {
+}
+
+.profile-right1 {
     flex: 2;
     padding: 20px;
-  }
-  
-  .profile-right1 h2 {
+}
+
+.profile-right1 h2 {
     margin-bottom: 10px;
     color: #333;
-  }
-  
-  .profile-right1 p {
+}
+
+.profile-right1 p {
     margin: 8px 0;
     color: #555;
-  }
-  
-  .chat-button {
+}
+
+.chat-button {
     margin-top: 15px;
     padding: 10px 20px;
     background-color: #1e90ff;
@@ -983,51 +998,50 @@ label{
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.3s ease;
-  }
-  
-  .chat-button:hover {
+}
+
+.chat-button:hover {
     background-color: #0f6cd3;
-  }
-  
-  .jobs-section {
+}
+
+.jobs-section {
     margin-top: 30px;
-  }
-  
-  .jobs-section h3 {
+}
+
+.jobs-section h3 {
     color: #222;
     margin-bottom: 10px;
-  }
-  
-  .jobs-section ul {
+}
+
+.jobs-section ul {
     list-style: none;
     padding: 0;
-  }
-  
-  .jobs-section li {
+}
+
+.jobs-section li {
     background-color: #f7f7f7;
     margin-bottom: 8px;
     padding: 10px;
     border-radius: 6px;
-  }
-  
-  .error {
-    color: red;
-    text-align: center;
-  }
-  .conversations {
+}
+
+.conversations {
     margin-top: 150px;
     padding: 20px;
     margin-left: 100px;
 }
+
 .chatbox {
     margin-top: 150px;
     padding: 20px;
     margin-left: 100px;
 }
+
 .coin-balance {
     margin-top: 2px;
-    text-decoration: 0px;
+    text-decoration: none;
 }
+
 .conversations-container {
     max-width: 800px;
     margin: 0 auto;
@@ -1037,36 +1051,44 @@ label{
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     margin-top: 150px;
 }
+
 .title {
     font-size: 24px;
     font-weight: bold;
     color: #2d3748;
     margin-bottom: 16px;
 }
+
 .error-message {
     background-color: #fee2e2;
     color: #b91c1c;
     padding: 12px;
     border-radius: 4px;
     margin-bottom: 16px;
+    text-align: center;
 }
+
 .no-conversations {
     color: #718096;
 }
+
 .conversation-list {
     list-style: none;
     padding: 0;
     margin: 0;
 }
+
 .conversation-item {
     border: 1px solid #e2e8f0;
     border-radius: 6px;
     margin-bottom: 8px;
     transition: background-color 0.2s;
 }
+
 .conversation-item:hover {
     background-color: #f7fafc;
 }
+
 .conversation-link {
     display: flex;
     justify-content: space-between;
@@ -1075,18 +1097,22 @@ label{
     text-decoration: none;
     color: inherit;
 }
+
 .conversation-details {
     flex-grow: 1;
 }
+
 .conversation-name {
     font-weight: 600;
     color: #2d3748;
 }
+
 .artisan-label {
     margin-left: 8px;
     font-size: 12px;
     color: #3182ce;
 }
+
 .conversation-preview {
     font-size: 14px;
     color: #4a5568;
@@ -1094,6 +1120,7 @@ label{
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 .unread-badge {
     background-color: #e53e3e;
     color: white;
@@ -1101,25 +1128,122 @@ label{
     padding: 4px 8px;
     border-radius: 9999px;
 }
+
 .loading {
     text-align: center;
     color: #718096;
     padding: 20px;
+    font-size: 18px;
 }
+
 .chat-container {
     max-width: 800px;
-    margin: 0 auto;
-    padding: 16px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 150px auto 0;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
 .chat-title {
     font-size: 24px;
     font-weight: bold;
-    color: #2d3748;
-    margin-bottom: 16px;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
 }
+
+.messages {
+    max-height: 500px;
+    overflow-y: auto;
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.message {
+    display: flex;
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: 6px;
+    max-width: 70%;
+}
+
+.message.sent {
+    justify-content: flex-end;
+}
+
+.message.received {
+    justify-content: flex-start;
+}
+
+.message-box {
+    max-width: 100%;
+    padding: 10px 15px;
+    border-radius: 10px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.message.sent .message-box {
+    background-color: #007bff;
+    color: white;
+    border: 1px solid #0056b3;
+}
+
+.message.received .message-box {
+    background-color: #e9ecef;
+    color: #333;
+    border: 1px solid #ced4da;
+}
+
+.message-box p {
+    margin: 0;
+    font-size: 16px;
+    word-wrap: break-word;
+}
+
+.message-box .timestamp {
+    font-size: 12px;
+    opacity: 0.7;
+    display: block;
+    margin-top: 5px;
+    text-align: right;
+}
+
+.message-input {
+    display: flex;
+    gap: 10px;
+}
+
+.form-input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    outline: none;
+}
+
+.form-input:focus {
+    border-color: #007bff;
+}
+
+.send-btn {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.send-btn:hover {
+    background-color: #0056b3;
+}
+
 .message-area {
     height: 384px;
     overflow-y: auto;
@@ -1128,39 +1252,41 @@ label{
     border-radius: 6px;
     margin-bottom: 16px;
 }
-.message {
-    margin-bottom: 8px;
-    padding: 8px;
-    border-radius: 6px;
-    max-width: 300px;
-}
+
 .message-sent {
     background-color: #bfdbfe;
     margin-left: auto;
 }
+
 .message-received {
     background-color: #e5e7eb;
     margin-right: auto;
 }
+
 .message-content {
     font-size: 14px;
 }
+
 .message-timestamp {
     font-size: 12px;
     color: #718096;
 }
+
 .no-messages {
     color: #718096;
 }
+
 .coin-warning {
     background-color: #fef3c7;
     padding: 16px;
     border-radius: 6px;
     margin-bottom: 16px;
 }
+
 .coin-warning-text {
     color: #92400e;
 }
+
 .purchase-coins-btn {
     margin-top: 8px;
     padding: 8px 16px;
@@ -1170,43 +1296,26 @@ label{
     border-radius: 6px;
     cursor: pointer;
 }
+
 .purchase-coins-btn:hover {
     background-color: #1d4ed8;
 }
+
 .message-form {
     display: flex;
     gap: 8px;
 }
-.message-input {
-    flex: 1;
-    padding: 8px;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    outline: none;
-}
-.message-input:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
-}
-.send-btn {
-    padding: 8px 16px;
-    background-color: #2563eb;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
-.send-btn:hover {
-    background-color: #1d4ed8;
-}
+
 .back-link {
     color: #3182ce;
     text-decoration: underline;
     cursor: pointer;
 }
+
 .back-link:hover {
     color: #1d4ed8;
 }
+
 .purchase-coins-container {
     max-width: 600px;
     margin: 2rem auto;
@@ -1215,51 +1324,34 @@ label{
     border-radius: 8px;
     text-align: center;
     margin-top: 150px;
-  }
-  
-  .title {
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
-  }
-  
-  .current-balance {
+}
+
+.current-balance {
     font-size: 1.2rem;
     margin-bottom: 1rem;
-  }
-  
-  .error-message {
-    color: red;
-    margin: 1rem 0;
-  }
-  
-  .success-message {
+}
+
+.success-message {
     color: green;
     margin: 1rem 0;
-  }
-  
-  .purchase-form {
+}
+
+.purchase-form {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-  }
-  
-  .form-label {
+}
+
+.form-label {
     font-size: 1.1rem;
-  }
-  
-  .form-input {
-    padding: 0.5rem;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .cost-info {
+}
+
+.cost-info {
     font-size: 1rem;
     color: #555;
-  }
-  
-  .purchase-btn {
+}
+
+.purchase-btn {
     padding: 0.75rem;
     background-color: #28a745;
     color: white;
@@ -1267,8 +1359,32 @@ label{
     border-radius: 4px;
     font-size: 1.1rem;
     cursor: pointer;
-  }
-  
-  .purchase-btn:hover {
+}
+
+.purchase-btn:hover {
     background-color: #218838;
-  }
+}
+
+.error-boundary {
+    text-align: center;
+    padding: 50px;
+    color: #ff0000;
+}
+
+.error-boundary h1 {
+    font-size: 24px;
+}
+
+.error-boundary p {
+    font-size: 18px;
+}
+
+.error-boundary button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}

@@ -1,17 +1,19 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import '../pages/header.css';
-import App from '../pages/App.jsx';
-import { AuthProvider } from './AuthContext.jsx'; 
 import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider } from './AuthContext';
+import App from '../pages/App.jsx';
+import ErrorBoundary from './ErrorBoundary';
+import '../pages/header.css';
 
-const root = createRoot(document.getElementById('root'));
-
+const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <StrictMode>
-    <AuthProvider>
-      <App />
-    </AuthProvider>
-  </StrictMode>
+  <ErrorBoundary>
+    <BrowserRouter>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </BrowserRouter>
+  </ErrorBoundary>
 );
 

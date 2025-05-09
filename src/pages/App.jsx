@@ -1,4 +1,6 @@
 import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 import Header from './header.jsx';
 import Body from './body.jsx';
 import Services from './services.jsx';
@@ -15,17 +17,22 @@ import PublicArtisanProfile from './PublicArtisanProfile.jsx';
 import Chat from './chat.jsx';
 import Conversations from './conversations.jsx';
 import ConversationsList from './conversationslist.jsx';
-import EditProfile from "./editprofile.jsx";
-import PurchaseCoins from "./PurchaseCoins";
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { useAuth } from './AuthContext';
+import EditProfile from './editprofile.jsx';
+import PurchaseCoins from './PurchaseCoins.jsx';
 
+function ProtectedRoute({ children }) {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="loading">Loading...</div>;
+  return user ? children : <Navigate to="/signin" />;
+}
 
 function App() {
-  const { user } = useAuth();
+  const { loading } = useAuth();
+
+  if (loading) return <div className="loading">Loading...</div>;
 
   return (
-    <Router>
+    <>
       <Header />
       <Routes>
         <Route
@@ -43,18 +50,81 @@ function App() {
         <Route path="/join" element={<Join />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/artisan-profile" element={<ArtisanProfile />} />
-        <Route path="/matching-artisans" element={<MatchingArtisansPage />} />
-        <Route path="/artisan-profile/:id" element={<PublicArtisanProfile />} />
-        <Route path="/chat/:artisanId" element={<Chat currentUser={user} />} />
-        <Route path="/conversations" element={<Conversations />} />
-        <Route path="/conversationslist" element={<ConversationsList />} />
-        <Route path="/purchase-coins" element={<PurchaseCoins />} />
-        <Route path="/edit-profile" element={<EditProfile />} />
-        <Route path="/purchase-coins" element={<PurchaseCoins />} />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/artisan-profile"
+          element={
+            <ProtectedRoute>
+              <ArtisanProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/matching-artisans"
+          element={
+            <ProtectedRoute>
+              <MatchingArtisansPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/artisan-profile/:id"
+          element={
+            <ProtectedRoute>
+              <PublicArtisanProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/chat/:recipientId"
+          element={
+            <ProtectedRoute>
+              <Chat />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/conversations"
+          element={
+            <ProtectedRoute>
+              <Conversations />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/conversationslist"
+          element={
+            <ProtectedRoute>
+              <ConversationsList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/purchase-coins"
+          element={
+            <ProtectedRoute>
+              <PurchaseCoins />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/edit-profile"
+          element={
+            <ProtectedRoute>
+              <EditProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<div className="not-found">404 - Page Not Found</div>} />
       </Routes>
-    </Router>
+    </>
   );
 }
 
