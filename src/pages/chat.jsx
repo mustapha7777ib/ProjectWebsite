@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 
 function Chat() {
@@ -13,13 +13,16 @@ function Chat() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log("Chat.jsx: user:", user, "user.id:", user?.id, "recipientId:", recipientId, "URL:", window.location.href);
     if (loading) return;
-    if (!user) {
+    if (!user || !user.id) {
+      console.log("No user or user.id, redirecting to signin");
       navigate("/signin");
       return;
     }
     if (!recipientId || recipientId === "undefined") {
-      setError("Please select a valid user to chat with");
+      console.error("Invalid recipientId:", recipientId);
+      setError("Invalid recipient selected. Please choose a conversation.");
       return;
     }
 
@@ -35,16 +38,20 @@ function Chat() {
           setMessages(data);
           setError("");
           // Mark messages as read
-          await fetch(`http://localhost:8080/api/messages/mark-as-read`, {
+          const markReadResponse = await fetch(`http://localhost:8080/api/messages/mark-as-read`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ sender_id: recipientId, receiver_id: user.id }),
           });
+          if (!markReadResponse.ok) {
+            console.error("Failed to mark messages as read:", markReadResponse.status, markReadResponse.statusText);
+          }
         } else {
+          console.error("Fetch messages failed:", response.status, response.statusText);
           setError(`Failed to fetch messages: ${response.status}`);
         }
       } catch (err) {
-        console.error("Error fetching messages:", err);
+        console.error("Error fetching messages:", err.message, err.stack);
         setError("Error fetching messages. Please try again.");
       } finally {
         setFetchLoading(false);
@@ -66,16 +73,28 @@ function Chat() {
       setError("Message cannot be empty");
       return;
     }
+    if (!user?.id) {
+      setError("User not logged in");
+      navigate("/signin");
+      return;
+    }
+    if (!recipientId || recipientId === "undefined") {
+      setError("No recipient selected");
+      return;
+    }
+
+    const payload = {
+      sender_id: user.id,
+      receiver_id: recipientId,
+      content: newMessage,
+    };
+    console.log("Sending message payload:", payload);
 
     try {
       const response = await fetch("http://localhost:8080/api/messages", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sender_id: user.id,
-          receiver_id: recipientId,
-          content: newMessage,
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
@@ -83,71 +102,70 @@ function Chat() {
         setMessages([...messages, newMsg]);
         setNewMessage("");
         setError("");
-        // Update coins if deducted (first reply)
-        if (isArtisan) {
+        // Update coins for artisans after first reply
+        if (isArtisan && artisanId) {
           const coinsResponse = await fetch(`http://localhost:8080/artisan/${artisanId}/coins`);
           if (coinsResponse.ok) {
             const { coins: updatedCoins } = await coinsResponse.json();
+            console.log("Updated coins:", updatedCoins);
             updateCoins(updatedCoins);
+          } else {
+            console.error("Failed to fetch coins:", coinsResponse.status, coinsResponse.statusText);
           }
         }
       } else {
         const errorData = await response.json();
+        console.error("Send message failed:", errorData);
         setError(errorData.error || `Failed to send message: ${response.status}`);
       }
     } catch (err) {
-      console.error("Error sending message:", err);
+      console.error("Error sending message:", err.message, err.stack);
       setError("Error sending message. Please try again.");
     }
   };
 
-  const handlePurchaseCoins = async () => {
-    try {
-      const response = await fetch(`http://localhost:8080/artisan/${artisanId}/purchase-coins`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: 50 }),
-      });
-
-      if (response.ok) {
-        const { coins: newCoins } = await response.json();
-        updateCoins(newCoins);
-        setError("");
-        alert("Coins purchased successfully!");
-      } else {
-        setError(`Failed to purchase coins: ${response.status}`);
-      }
-    } catch (err) {
-      console.error("Error purchasing coins:", err);
-      setError("Error purchasing coins. Please try again.");
-    }
-  };
-
   if (loading || fetchLoading) {
-    return <div className="text-center text-gray-500">Loading...</div>;
+    return <div className="loading">Loading...</div>;
+  }
+
+  if (!recipientId || recipientId === "undefined") {
+    return (
+      <div className="chatbox chat-container">
+        <h2 className="chat-title">Chat Error</h2>
+        <p className="error-message">
+          {error}
+          <br />
+          <Link to="/conversations" className="conversation-link">
+            Go to Conversations
+          </Link>
+        </p>
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4 bg-white shadow-lg rounded-lg">
-      <h2 className="text-2xl font-bold mb-4 text-gray-800">
-        Chat with {recipientId}
-      </h2>
+    <div className="chatbox chat-container">
+      <h2 className="chat-title">Chat with User {recipientId}</h2>
       {error && (
-        <p className="text-red-500 bg-red-100 p-2 rounded mb-4">{error}</p>
+        <p className="error-message">
+          {error}
+          <br />
+          <Link to="/conversations" className="conversation-link">
+            Go to Conversations
+          </Link>
+        </p>
       )}
-      <div className="h-96 overflow-y-auto mb-4 p-4 border border-gray-200 rounded">
+      <div className="message-area">
         {messages.length === 0 ? (
-          <p className="text-gray-500">No messages yet.</p>
+          <p className="no-messages">No messages yet.</p>
         ) : (
           messages.map((msg) => (
             <div
               key={msg.id}
-              className={`mb-2 p-2 rounded max-w-xs ${
-                msg.sender_id === user.id ? "bg-blue-100 ml-auto" : "bg-gray-100 mr-auto"
-              }`}
+              className={`message ${msg.sender_id === user.id ? "message-sent" : "message-received"}`}
             >
-              <p className="text-sm">{msg.content}</p>
-              <p className="text-xs text-gray-500">
+              <p className="message-content">{msg.content}</p>
+              <p className="message-timestamp">
                 {new Date(msg.timestamp).toLocaleTimeString()}
               </p>
             </div>
@@ -156,29 +174,26 @@ function Chat() {
         <div ref={messagesEndRef} />
       </div>
       {isArtisan && coins < 25 && (
-        <div className="mb-4 p-4 bg-yellow-100 rounded">
-          <p className="text-yellow-800">
+        <div className="coin-warning">
+          <p className="coin-warning-text">
             You need more coins to send your first message to this user.
           </p>
-          <button
-            onClick={handlePurchaseCoins}
-            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Purchase 50 Coins
-          </button>
+          <Link to="/purchase-coins" className="purchase-coins-btn">
+            Purchase Coins
+          </Link>
         </div>
       )}
-      <form onSubmit={handleSendMessage} className="flex gap-2">
+      <form onSubmit={handleSendMessage} className="message-form">
         <input
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Type a message..."
-          className="flex-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="message-input"
         />
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          className="send-btn"
         >
           Send
         </button>

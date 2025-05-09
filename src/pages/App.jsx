@@ -16,17 +16,10 @@ import Chat from './chat.jsx';
 import Conversations from './conversations.jsx';
 import ConversationsList from './conversationslist.jsx';
 import EditProfile from "./editprofile.jsx";
+import PurchaseCoins from "./PurchaseCoins";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 
-function PurchaseCoins() {
-  return (
-    <div style={{ padding: "20px", textAlign: "center" }}>
-      <h2>Purchase Coins</h2>
-      <p>Please proceed to the payment gateway to purchase more coins.</p>
-    </div>
-  );
-}
 
 function App() {
   const { user } = useAuth();
@@ -59,6 +52,7 @@ function App() {
         <Route path="/conversationslist" element={<ConversationsList />} />
         <Route path="/purchase-coins" element={<PurchaseCoins />} />
         <Route path="/edit-profile" element={<EditProfile />} />
+        <Route path="/purchase-coins" element={<PurchaseCoins />} />
       </Routes>
     </Router>
   );
