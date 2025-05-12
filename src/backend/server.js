@@ -381,10 +381,9 @@ app.put("/link-artisan-to-user", async (req, res) => {
   }
 });
 
-// Artisan-related endpoints
 app.post("/register-artisan", upload.any(), async (req, res) => {
-  const { firstname, lastname, phone, gender, dob, city, address, skill, experience, bio, reference, email } = req.body;
-  console.log("server.js: POST /register-artisan", { firstname, lastname, email });
+  const { firstname, lastname, phone, gender, dob, city, address, skill, experience, bio, reference, email, userId } = req.body;
+  console.log("server.js: POST /register-artisan", { firstname, lastname, email, userId });
   try {
     let profilePic = null;
     let certificate = null;
@@ -421,8 +420,27 @@ app.post("/register-artisan", upload.any(), async (req, res) => {
         portfolio.length > 0 ? JSON.stringify(portfolio) : null
       ]
     );
-    console.log("server.js: Artisan registered:", result.rows[0].id);
-    res.status(200).json({ message: "Registration successful", data: result.rows[0] });
+    const artisan = result.rows[0];
+
+    // Link artisan to user if userId is provided
+    if (userId) {
+      const userCheck = await pool.query(
+        `SELECT id FROM users WHERE id = $1`,
+        [parseInt(userId)]
+      );
+      if (userCheck.rows.length === 0) {
+        console.error("server.js: User not found for ID:", userId);
+        return res.status(404).json({ error: "User not found" });
+      }
+      await pool.query(
+        `UPDATE users SET artisanid = $1 WHERE id = $2`,
+        [artisan.id, parseInt(userId)]
+      );
+      console.log("server.js: Artisan linked to user:", userId);
+    }
+
+    console.log("server.js: Artisan registered:", artisan.id);
+    res.status(200).json({ message: "Registration successful", data: artisan });
   } catch (err) {
     console.error("Registration failed:", err.message, err.stack);
     res.status(500).json({ error: "Server error: " + err.message });

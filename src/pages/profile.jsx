@@ -13,6 +13,7 @@ const abujaData = {
 };
 
 function Profile() {
+  const { user, login, setArtisanStatus, setArtisan, loading } = useAuth();
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -40,9 +41,20 @@ function Profile() {
     city: "",
     general: "",
   });
-  const { setArtisanStatus, setArtisan, user } = useAuth();
   const phoneErrorRef = useRef(null);
   const today = new Date().toISOString().split("T")[0];
+
+  // Handle loading state
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  // Handle unauthenticated user
+  if (!user) {
+    console.log("Profile.jsx: No user, redirecting to signin");
+    navigate("/signin");
+    return null;
+  }
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -68,6 +80,12 @@ function Profile() {
     e.preventDefault();
     setErrorMessages({ gender: "", phone: "", city: "", general: "" });
 
+    if (!user?.id) {
+      setErrorMessages({ ...errorMessages, general: "You must be logged in to register as an artisan." });
+      navigate("/signin");
+      return;
+    }
+
     let formErrors = {};
     const phoneRegex = /^0\d{10}$/;
     if (!formData.phone || !phoneRegex.test(formData.phone)) {
@@ -91,7 +109,7 @@ function Profile() {
     Object.entries(formData).forEach(([key, value]) => {
       if (value) submission.append(key, value);
     });
-
+    submission.append("userId", user.id);
     if (profilePic) submission.append("profilePic", profilePic);
     if (certificate) submission.append("certificate", certificate);
     portfolio.forEach((file, index) => {
@@ -99,7 +117,7 @@ function Profile() {
     });
 
     try {
-      console.log("Submitting artisan registration:", [...submission.entries()]);
+      console.log("Profile.jsx: Submitting artisan registration for user:", user.id);
       const response = await fetch("http://localhost:8080/register-artisan", {
         method: "POST",
         body: submission,
@@ -108,36 +126,25 @@ function Profile() {
 
       const data = await response.json();
       if (!response.ok) {
+        console.error("Profile.jsx: Registration failed:", data.error);
         throw new Error(data.error || "Registration failed");
       }
 
-      if (data.message === "Registration successful") {
-        setArtisanStatus(true);
-        setArtisan(data.data.id);
-
-        const linkResponse = await fetch("http://localhost:8080/link-artisan-to-user", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: user.id, artisanId: data.data.id }),
-          credentials: "include",
-        });
-
-        if (!linkResponse.ok) {
-          const linkData = await linkResponse.json();
-          throw new Error(linkData.error || "Failed to link artisan to user");
-        }
-
-        navigate("/artisan-profile");
-      }
+      console.log("Profile.jsx: Registration successful:", data);
+      // Update AuthContext
+      setArtisanStatus(true);
+      setArtisan(data.data.id); // Use data.data.id to match the response structure
+      // Update user with artisanid
+      const updatedUser = { ...user, artisanId: data.data.id };
+      await login(updatedUser);
+      setTimeout(() => {
+        navigate(`/artisan-profile/${data.data.id}`);
+      }, 2000);
     } catch (err) {
-      console.error("Registration error:", err);
+      console.error("Profile.jsx: Registration error:", err.message);
       setErrorMessages((prev) => ({ ...prev, general: err.message }));
     }
   };
-
-  if (!user) {
-    return <p>Please log in to register as an artisan.</p>;
-  }
 
   return (
     <form onSubmit={handleSubmit} encType="multipart/form-data" className="artisan-registration-form">

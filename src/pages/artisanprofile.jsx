@@ -5,7 +5,7 @@ import { useAuth } from "./AuthContext";
 function ArtisanProfile() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const artisanId = user.artisanId;
+  const artisanId = user?.artisanId;
   const [artisan, setArtisan] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -17,39 +17,62 @@ function ArtisanProfile() {
   const [reviewError, setReviewError] = useState("");
   const [reviewSuccess, setReviewSuccess] = useState("");
   const [reviews, setReviews] = useState([]);
+  const [jobPostingData, setJobPostingData] = useState({
+    dealId: "",
+    description: "",
+    image: null,
+  });
+  const [jobPostingError, setJobPostingError] = useState("");
+  const [jobPostingSuccess, setJobPostingSuccess] = useState("");
 
   useEffect(() => {
+    if (!user || !artisanId) {
+      console.log("ArtisanProfile.jsx: No user or artisanId, redirecting to signin");
+      navigate("/signin");
+      return;
+    }
+
     const fetchArtisan = async () => {
       try {
+        console.log(`ArtisanProfile.jsx: Fetching artisan data for ID: ${artisanId}`);
         const response = await fetch(`http://localhost:8080/artisan/${artisanId}`, {
           credentials: "include",
         });
-        if (!response.ok) throw new Error("Failed to fetch artisan");
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(`Failed to fetch artisan: ${errorData.error || response.statusText}`);
+        }
         const data = await response.json();
+        console.log("ArtisanProfile.jsx: Artisan data fetched:", data);
         setArtisan(data);
         setLoading(false);
       } catch (err) {
-        console.error("Error fetching artisan:", err);
+        console.error("ArtisanProfile.jsx: Error fetching artisan:", err.message);
         setLoading(false);
       }
     };
 
     const fetchReviews = async () => {
       try {
+        console.log(`ArtisanProfile.jsx: Fetching reviews for artisan ID: ${artisanId}`);
         const response = await fetch(`http://localhost:8080/artisan/${artisanId}/reviews`, {
           credentials: "include",
         });
-        if (!response.ok) throw new Error("Failed to fetch reviews");
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(`Failed to fetch reviews: ${errorData.error || response.statusText}`);
+        }
         const data = await response.json();
+        console.log("ArtisanProfile.jsx: Reviews fetched:", data);
         setReviews(data);
       } catch (err) {
-        console.error("Error fetching reviews:", err);
+        console.error("ArtisanProfile.jsx: Error fetching reviews:", err.message);
       }
     };
 
     fetchArtisan();
     fetchReviews();
-  }, [artisanId]);
+  }, [artisanId, user, navigate]);
 
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
@@ -59,6 +82,7 @@ function ArtisanProfile() {
     }
 
     try {
+      console.log("ArtisanProfile.jsx: Submitting review:", reviewData);
       const response = await fetch("http://localhost:8080/reviews", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -87,15 +111,73 @@ function ArtisanProfile() {
           const response = await fetch(`http://localhost:8080/artisan/${artisanId}/reviews`, {
             credentials: "include",
           });
-          if (response.ok) setReviews(await response.json());
+          if (response.ok) {
+            const data = await response.json();
+            setReviews(data);
+          }
         };
         fetchReviews();
       }, 2000);
     } catch (err) {
-      console.error("Error submitting review:", err);
+      console.error("ArtisanProfile.jsx: Error submitting review:", err.message);
       setReviewError(err.message);
     }
   };
+
+  const handleJobPostingSubmit = async (e) => {
+    e.preventDefault();
+    if (!jobPostingData.dealId || !jobPostingData.description || !jobPostingData.image) {
+      setJobPostingError("Please provide a deal, description, and image.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("dealId", parseInt(jobPostingData.dealId));
+    formData.append("description", jobPostingData.description);
+    formData.append("image", jobPostingData.image);
+
+    try {
+      console.log(`ArtisanProfile.jsx: Submitting job posting for artisan ID: ${artisanId}`);
+      const response = await fetch(`http://localhost:8080/artisan/${artisanId}/add-job-posting`, {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`Failed to add job posting: ${errorData.error || response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log("ArtisanProfile.jsx: Job posting added:", data);
+      setJobPostingSuccess("Job posting added successfully!");
+      setJobPostingData({ dealId: "", description: "", image: null });
+      setTimeout(() => {
+        setJobPostingSuccess("");
+        // Refresh artisan data
+        const fetchArtisan = async () => {
+          const response = await fetch(`http://localhost:8080/artisan/${artisanId}`, {
+            credentials: "include",
+          });
+          if (response.ok) {
+            const data = await response.json();
+            setArtisan(data);
+          }
+        };
+        fetchArtisan();
+      }, 2000);
+    } catch (err) {
+      console.error("ArtisanProfile.jsx: Error adding job posting:", err.message);
+      setJobPostingError(err.message);
+    }
+  };
+
+  if (!user) {
+    console.log("ArtisanProfile.jsx: No user, redirecting to signin");
+    navigate("/signin");
+    return null;
+  }
 
   if (loading) return <p className="profile-loading">Loading profile...</p>;
   if (!artisan) return <p className="profile-error">No profile data found.</p>;
@@ -106,10 +188,10 @@ function ArtisanProfile() {
 
       <div className="profile-header">
         <img
-          src={`http://localhost:8080/uploads/${artisan.profile_pic}`}
+          src={artisan.profile_pic ? `http://localhost:8080/uploads/${artisan.profile_pic}` : "/default-profile.png"}
           alt="Profile"
           className="profile-image"
-          onError={(e) => (e.target.src = "https://via.placeholder.com/150")}
+          onError={(e) => (e.target.src = "/default-profile.png")}
         />
         <div className="profile-info">
           <h2>{artisan.firstname} {artisan.lastname}</h2>
@@ -182,6 +264,57 @@ function ArtisanProfile() {
         </div>
       )}
 
+      {user.artisanId === artisan.id && artisan.deals && artisan.deals.length > 0 && (
+        <div className="profile-section">
+          <h3>Add Job Posting</h3>
+          {jobPostingError && <p className="error-message">{jobPostingError}</p>}
+          {jobPostingSuccess && <p className="success-message">{jobPostingSuccess}</p>}
+          <form onSubmit={handleJobPostingSubmit} encType="multipart/form-data">
+            <label>
+              Select Deal: <span className="aesterik">*</span>
+              <select
+                value={jobPostingData.dealId}
+                onChange={(e) =>
+                  setJobPostingData({ ...jobPostingData, dealId: e.target.value })
+                }
+                required
+              >
+                <option value="">Select a deal</option>
+                {artisan.deals.map((deal) => (
+                  <option key={deal.id} value={deal.id}>
+                    Deal with User ID {deal.user_id}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Description: <span className="aesterik">*</span>
+              <textarea
+                value={jobPostingData.description}
+                onChange={(e) =>
+                  setJobPostingData({ ...jobPostingData, description: e.target.value })
+                }
+                required
+              />
+            </label>
+            <label>
+              Image: <span className="aesterik">*</span>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) =>
+                  setJobPostingData({ ...jobPostingData, image: e.target.files[0] })
+                }
+                required
+              />
+            </label>
+            <button type="submit" className="submitbutton">
+              Add Job Posting
+            </button>
+          </form>
+        </div>
+      )}
+
       {artisan.job_postings && artisan.job_postings.length > 0 && (
         <div className="profile-section">
           <h3>Job Postings</h3>
@@ -189,7 +322,7 @@ function ArtisanProfile() {
             {artisan.job_postings.map((job) => (
               <div key={job.id} className="job-posting-item">
                 <img
-                  src={`http://localhost:8080/uploads/${job.image}`}
+                  src={job.image ? `http://localhost:8080/uploads/${job.image}` : "/default-image.png"}
                   alt="Job Posting"
                   className="job-posting-image"
                   onError={(e) => (e.target.src = "/default-image.png")}

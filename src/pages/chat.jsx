@@ -278,9 +278,6 @@ function Chat() {
 
       console.log(`[Confirm Deal] Navigating to /review/${selectedConversation.artisan_id}`);
       navigate(`/review/${selectedConversation.artisan_id}`);
-    } catch (err) {
-      console.error("[Confirm Deal] Error:", err.message, err.stack);
-      setErrorWithTimeout(err.message);
     } finally {
       setIsConfirming(false);
     }
@@ -444,7 +441,7 @@ function Chat() {
             </form>
           </>
         ) : (
-          <p>Select a conversation or enter an artisan ID to start chatting.</p>
+          <p>Select a conversation or enter an artisan ID to start chatting, it is the last number in route.</p>
         )}
       </div>
     </div>

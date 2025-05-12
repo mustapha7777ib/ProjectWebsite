@@ -13,59 +13,79 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUser = async () => {
+  const fetchUser = async () => {
+    try {
+      const storedUserRaw = localStorage.getItem("user");
+      if (!storedUserRaw) {
+        setLoading(false);
+        return;
+      }
+
+      let storedUser;
       try {
-        const storedUser = JSON.parse(localStorage.getItem("user"));
-        if (!storedUser || !storedUser.id) {
-          setLoading(false);
-          return;
-        }
-
-        const response = await fetch(`http://localhost:8080/users/${storedUser.id}`);
-        if (!response.ok) {
-          localStorage.removeItem("user");
-          localStorage.removeItem("coins");
-          setLoading(false);
-          return;
-        }
-
-        setUser(storedUser);
-        if (storedUser.artisanId) {
-          const response = await fetch(`http://localhost:8080/artisan/${storedUser.artisanId}`);
-          if (response.ok) {
-            const artisanData = await response.json();
-            setIsArtisan(!!artisanData.id);
-            setArtisanId(artisanData.id || null);
-            if (artisanData.id) {
-              const coinsResponse = await fetch(`http://localhost:8080/artisan/${artisanData.id}/coins`);
-              if (coinsResponse.ok) {
-                const { coins: newCoins } = await coinsResponse.json();
-                setCoins(newCoins);
-                localStorage.setItem("coins", newCoins.toString());
-              } else {
-                setCoins(null);
-                localStorage.removeItem("coins");
-              }
-            }
-          } else {
-            setIsArtisan(false);
-            setArtisanId(null);
-            setCoins(null);
-            localStorage.removeItem("coins");
-          }
-        }
+        storedUser = JSON.parse(storedUserRaw);
       } catch (err) {
-        console.error("Error fetching user data:", err);
-        setError("Failed to load user data");
+        console.error("Error parsing user from localStorage:", err);
         localStorage.removeItem("user");
         localStorage.removeItem("coins");
-      } finally {
         setLoading(false);
+        return;
       }
-    };
 
-    fetchUser();
-  }, []);
+      if (!storedUser || !storedUser.id || typeof storedUser.id !== "number") {
+        console.error("Invalid user data in localStorage:", storedUser);
+        localStorage.removeItem("user");
+        localStorage.removeItem("coins");
+        setLoading(false);
+        return;
+      }
+
+      const response = await fetch(`http://localhost:8080/users/${storedUser.id}`);
+      if (!response.ok) {
+        console.error("Failed to fetch user:", response.status);
+        localStorage.removeItem("user");
+        localStorage.removeItem("coins");
+        setLoading(false);
+        return;
+      }
+
+      setUser(storedUser);
+      if (storedUser.artisanId) {
+        const response = await fetch(`http://localhost:8080/artisan/${storedUser.artisanId}`);
+        if (response.ok) {
+          const artisanData = await response.json();
+          setIsArtisan(!!artisanData.id);
+          setArtisanId(artisanData.id || null);
+          if (artisanData.id) {
+            const coinsResponse = await fetch(`http://localhost:8080/artisan/${artisanData.id}/coins`);
+            if (coinsResponse.ok) {
+              const { coins: newCoins } = await coinsResponse.json();
+              setCoins(newCoins);
+              localStorage.setItem("coins", newCoins.toString());
+            } else {
+              setCoins(null);
+              localStorage.removeItem("coins");
+            }
+          }
+        } else {
+          setIsArtisan(false);
+          setArtisanId(null);
+          setCoins(null);
+          localStorage.removeItem("coins");
+        }
+      }
+    } catch (err) {
+      console.error("Error fetching user data:", err);
+      setError("Failed to load user data");
+      localStorage.removeItem("user");
+      localStorage.removeItem("coins");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchUser();
+}, []);
 
   const login = useCallback(async (userData) => {
     if (!userData || !userData.id || !userData.email) {
