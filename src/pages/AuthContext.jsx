@@ -21,6 +21,14 @@ export const AuthProvider = ({ children }) => {
           return;
         }
 
+        const response = await fetch(`http://localhost:8080/users/${storedUser.id}`);
+        if (!response.ok) {
+          localStorage.removeItem("user");
+          localStorage.removeItem("coins");
+          setLoading(false);
+          return;
+        }
+
         setUser(storedUser);
         if (storedUser.artisanId) {
           const response = await fetch(`http://localhost:8080/artisan/${storedUser.artisanId}`);
@@ -49,6 +57,8 @@ export const AuthProvider = ({ children }) => {
       } catch (err) {
         console.error("Error fetching user data:", err);
         setError("Failed to load user data");
+        localStorage.removeItem("user");
+        localStorage.removeItem("coins");
       } finally {
         setLoading(false);
       }
@@ -167,6 +177,11 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  const setArtisanStatus = useCallback((status) => {
+    const isArtisanStatus = status === "true" || status === true;
+    setIsArtisan(isArtisanStatus);
+  }, []);
+
   const updateCoins = useCallback((newCoins) => {
     if (typeof newCoins !== "number" || newCoins < 0) {
       setError("Invalid coin amount");
@@ -183,6 +198,7 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         setArtisan,
+        setArtisanStatus,
         isArtisan,
         artisanId,
         coins,

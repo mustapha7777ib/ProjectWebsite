@@ -43,7 +43,7 @@ function Header() {
         {user ? (
           <div className="profile-container" ref={dropdownRef}>
             {isArtisan && coins !== null && (
-              <Link to="/purchase-coins" onClick={() => scrollToSection("contact")} className="coin-balance" style={{ marginRight: "10px" }}>
+              <Link to="/purchase-coins" onClick={() => scrollToSection("contact")} className="coin-balance" style={{ marginRight: "10px", textDecoration: "none", marginTop: "3px" }}>
                 Coins: {coins}</Link>
             )}
             <button onClick={toggleDropdown} className="profile-btn">Profile</button>

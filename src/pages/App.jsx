@@ -16,9 +16,9 @@ import MatchingArtisansPage from './matching-artisans.jsx';
 import PublicArtisanProfile from './PublicArtisanProfile.jsx';
 import Chat from './chat.jsx';
 import Conversations from './conversations.jsx';
-import ConversationsList from './conversationslist.jsx';
 import EditProfile from './editprofile.jsx';
 import PurchaseCoins from './PurchaseCoins.jsx';
+import Review from './Review.jsx';
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -99,14 +99,6 @@ function App() {
           }
         />
         <Route
-          path="/conversationslist"
-          element={
-            <ProtectedRoute>
-              <ConversationsList />
-            </ProtectedRoute>
-          }
-        />
-        <Route
           path="/purchase-coins"
           element={
             <ProtectedRoute>
@@ -119,6 +111,14 @@ function App() {
           element={
             <ProtectedRoute>
               <EditProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route 
+          path="/review/:artisanId" 
+          element={
+            <ProtectedRoute>
+              <Review />
             </ProtectedRoute>
           }
         />

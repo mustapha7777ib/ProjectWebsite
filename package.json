@@ -12,9 +12,11 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
+    "connect-pg-simple": "^10.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "express-session": "^1.18.1",
     "multer": "^1.4.5-lts.2",
     "nodemon": "^3.1.10",
     "paystack-api": "^2.0.6",

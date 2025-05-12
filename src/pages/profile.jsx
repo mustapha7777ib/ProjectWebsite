@@ -25,20 +25,20 @@ function Profile() {
     skill: "",
     experience: "",
     bio: "",
+    reference: "",
   });
 
   const navigate = useNavigate();
   const [profilePic, setProfilePic] = useState(null);
   const [certificate, setCertificate] = useState(null);
-  const [reference, setReference] = useState("");
   const [portfolio, setPortfolio] = useState([]);
   const [showCityDropdown, setShowCityDropdown] = useState(false);
   const [filteredCities, setFilteredCities] = useState(abujaData.cities);
-  const [selectedCity, setSelectedCity] = useState("");
   const [errorMessages, setErrorMessages] = useState({
     gender: "",
     phone: "",
     city: "",
+    general: "",
   });
   const { setArtisanStatus, setArtisan, user } = useAuth();
   const phoneErrorRef = useRef(null);
@@ -54,7 +54,6 @@ function Profile() {
 
   const handleCitySelect = (city) => {
     setFormData((prev) => ({ ...prev, city }));
-    setSelectedCity(city);
     setErrorMessages((prev) => ({ ...prev, city: "" }));
     setShowCityDropdown(false);
   };
@@ -65,11 +64,11 @@ function Profile() {
     }
   }, [errorMessages.phone]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessages({ gender: "", phone: "", city: "", general: "" });
 
     let formErrors = {};
-
     const phoneRegex = /^0\d{10}$/;
     if (!formData.phone || !phoneRegex.test(formData.phone)) {
       formErrors.phone = "Enter a valid Nigerian phone number (e.g., 08012345678)";
@@ -90,46 +89,50 @@ function Profile() {
 
     const submission = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
-      submission.append(key, value);
+      if (value) submission.append(key, value);
     });
 
     if (profilePic) submission.append("profilePic", profilePic);
     if (certificate) submission.append("certificate", certificate);
-    if (reference) submission.append("reference", reference);
     portfolio.forEach((file, index) => {
       submission.append(`portfolio_${index}`, file);
     });
 
-    fetch("http://localhost:8080/register-artisan", {
-      method: "POST",
-      body: submission,
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.message === "Registration successful") {
-          setArtisanStatus("true");
-          setArtisan(data.data.id);
-
-          fetch("http://localhost:8080/link-artisan-to-user", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId: user.id, artisanId: data.data.id }),
-          })
-            .then((res) => res.json())
-            .then(() => {
-              navigate("/artisan-profile");
-            })
-            .catch((err) => {
-              console.error("Error linking artisan to user:", err);
-            });
-        } else {
-          alert("Registration failed: " + data.error);
-        }
-      })
-      .catch((err) => {
-        console.error("Error:", err);
-        alert("Submission failed");
+    try {
+      console.log("Submitting artisan registration:", [...submission.entries()]);
+      const response = await fetch("http://localhost:8080/register-artisan", {
+        method: "POST",
+        body: submission,
+        credentials: "include",
       });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Registration failed");
+      }
+
+      if (data.message === "Registration successful") {
+        setArtisanStatus(true);
+        setArtisan(data.data.id);
+
+        const linkResponse = await fetch("http://localhost:8080/link-artisan-to-user", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: user.id, artisanId: data.data.id }),
+          credentials: "include",
+        });
+
+        if (!linkResponse.ok) {
+          const linkData = await linkResponse.json();
+          throw new Error(linkData.error || "Failed to link artisan to user");
+        }
+
+        navigate("/artisan-profile");
+      }
+    } catch (err) {
+      console.error("Registration error:", err);
+      setErrorMessages((prev) => ({ ...prev, general: err.message }));
+    }
   };
 
   if (!user) {
@@ -137,32 +140,14 @@ function Profile() {
   }
 
   return (
-    <form onSubmit={handleSubmit} encType="multipart/form-data">
+    <form onSubmit={handleSubmit} encType="multipart/form-data" className="artisan-registration-form">
       <h2>Artisan Registration</h2>
+      {errorMessages.general && (
+        <div className="error-message" style={{ color: "red", marginBottom: "1rem" }}>
+          {errorMessages.general}
+        </div>
+      )}
 
-      <label>
-        Phone Number: <span className="aesterik">*</span>
-        <input type="tel" name="phone" value={formData.phone} onChange={handleChange} required />
-        {errorMessages.phone && (
-          <div
-            ref={phoneErrorRef}
-            style={{
-              color: "red",
-              fontStyle: "italic",
-              fontWeight: "bold",
-              fontSize: "0.8rem",
-              marginTop: "4px"
-            }}
-          >
-            {errorMessages.phone}
-          </div>
-        )}
-      </label>
-
-      <label>
-        Email: <span className="aesterik">*</span>
-        <input name="email" value={formData.email} onChange={handleChange} required />
-      </label>
       <label>
         First Name: <span className="aesterik">*</span>
         <input name="firstname" value={formData.firstname} onChange={handleChange} required />
@@ -174,6 +159,31 @@ function Profile() {
       </label>
 
       <label>
+        Phone Number: <span className="aesterik">*</span>
+        <input type="tel" name="phone" value={formData.phone} onChange={handleChange} required />
+        {errorMessages.phone && (
+          <div
+            ref={phoneErrorRef}
+            className="error-message"
+            style={{
+              color: "red",
+              fontStyle: "italic",
+              fontWeight: "bold",
+              fontSize: "0.8rem",
+              marginTop: "4px",
+            }}
+          >
+            {errorMessages.phone}
+          </div>
+        )}
+      </label>
+
+      <label>
+        Email: <span className="aesterik">*</span>
+        <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+      </label>
+
+      <label>
         Gender: <span className="aesterik">*</span>
         <select name="gender" value={formData.gender} onChange={handleChange} required>
           <option value="">Select</option>
@@ -181,7 +191,11 @@ function Profile() {
           <option value="female">Female</option>
           <option value="other">Other</option>
         </select>
-        {errorMessages.gender && <div style={{ color: "red" }} className="error-message">{errorMessages.gender}</div>}
+        {errorMessages.gender && (
+          <div className="error-message" style={{ color: "red", fontSize: "0.8rem", marginTop: "4px" }}>
+            {errorMessages.gender}
+          </div>
+        )}
       </label>
 
       <label>
@@ -194,11 +208,6 @@ function Profile() {
           required
           max={today}
         />
-      </label>
-
-      <label>
-        Profile Picture:
-        <input type="file" accept="image/*" onChange={(e) => setProfilePic(e.target.files[0])} />
       </label>
 
       <label>
@@ -216,22 +225,15 @@ function Profile() {
           {showCityDropdown && (
             <ul className="city-dropdown">
               {filteredCities.map((city, index) => (
-                <li key={index} onClick={() => handleCitySelect(city)}>{city}</li>
+                <li key={index} onClick={() => handleCitySelect(city)}>
+                  {city}
+                </li>
               ))}
             </ul>
           )}
         </div>
         {errorMessages.city && (
-          <div
-            className="error-message"
-            style={{
-              color: "red",
-              fontStyle: "italic",
-              fontWeight: "bold",
-              fontSize: "0.8rem",
-              marginTop: "4px"
-            }}
-          >
+          <div className="error-message" style={{ color: "red", fontSize: "0.8rem", marginTop: "4px" }}>
             {errorMessages.city}
           </div>
         )}
@@ -260,7 +262,14 @@ function Profile() {
 
       <label>
         Years of Experience: <span className="aesterik">*</span>
-        <input type="number" name="experience" value={formData.experience} onChange={handleChange} required />
+        <input
+          type="number"
+          name="experience"
+          value={formData.experience}
+          onChange={handleChange}
+          min="0"
+          required
+        />
       </label>
 
       <label>
@@ -269,12 +278,22 @@ function Profile() {
       </label>
 
       <label>
-        Certificate or Training Proof:
+        Reference (Optional):
+        <input name="reference" value={formData.reference} onChange={handleChange} />
+      </label>
+
+      <label>
+        Profile Picture (Optional):
+        <input type="file" accept="image/*" onChange={(e) => setProfilePic(e.target.files[0])} />
+      </label>
+
+      <label>
+        Certificate or Training Proof (Optional):
         <input type="file" accept=".pdf,image/*" onChange={(e) => setCertificate(e.target.files[0])} />
       </label>
 
       <label>
-        Portfolio (photos/videos of past work):
+        Portfolio (photos/videos of past work, Optional):
         <input
           type="file"
           accept="image/*,video/*"
@@ -283,7 +302,9 @@ function Profile() {
         />
       </label>
 
-      <button className="submitbutton" type="submit">Submit</button>
+      <button className="submitbutton" type="submit">
+        Submit
+      </button>
     </form>
   );
 }

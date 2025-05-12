@@ -110,7 +110,6 @@ messagesRouter.get('/conversations-summary/:userId', async (req, res) => {
         artisan_id: row.artisan_id
       }))
     });
-    // Filter out invalid conversations
     const validConversations = messages.rows.filter(row => {
       const otherUserId = row.sender_id === parseInt(userId) ? row.receiver_id : row.sender_id;
       if (!otherUserId || otherUserId === 'undefined') {
@@ -158,7 +157,6 @@ messagesRouter.post('/', async (req, res) => {
   }
 
   try {
-    // Check if sender is an artisan via users.artisanid
     const artisanCheck = await pool.query(
       `SELECT a.coins 
        FROM users u 
@@ -180,7 +178,6 @@ messagesRouter.post('/', async (req, res) => {
           console.log('Insufficient coins for artisan:', { sender_id, coins });
           return res.status(403).json({ error: 'Insufficient coins. Please purchase more.' });
         }
-        // Deduct coins from artisan
         const artisanIdResult = await pool.query(
           `SELECT artisanid FROM users WHERE id = $1`,
           [sender_id]
@@ -281,6 +278,40 @@ app.post("/signin", async (req, res) => {
   }
 });
 
+app.get("/users/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query(
+      `SELECT id, email, first_name, last_name, artisanid FROM users WHERE id = $1`,
+      [id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.status(200).json(result.rows[0]);
+  } catch (err) {
+    console.error("Error fetching user:", err.message, err.stack);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+app.get("/users/by-artisan/:artisanId", async (req, res) => {
+  try {
+    const { artisanId } = req.params;
+    const result = await pool.query(
+      `SELECT id, first_name, last_name FROM users WHERE artisanid = $1`,
+      [artisanId]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "No user linked to this artisan" });
+    }
+    res.status(200).json(result.rows[0]);
+  } catch (err) {
+    console.error("Error fetching user by artisan:", err.message, err.stack);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 app.put("/link-artisan-to-user", async (req, res) => {
   try {
     const { userId, artisanId } = req.body;
@@ -338,8 +369,8 @@ app.post("/register-artisan", upload.any(), async (req, res) => {
 
     const result = await pool.query(
       `INSERT INTO artisans 
-       (id, firstname, lastname, phone, gender, dob, city, address, skill, experience, bio, profile_pic, certificate, reference, email, portfolio, coins)
-       VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, 50)
+       (firstname, lastname, phone, gender, dob, city, address, skill, experience, bio, profile_pic, certificate, reference, email, portfolio, coins)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, 50)
        RETURNING *`,
       [
         firstname,
@@ -356,30 +387,111 @@ app.post("/register-artisan", upload.any(), async (req, res) => {
         certificate,
         reference,
         email,
-        JSON.stringify(portfolio)
+        portfolio.length > 0 ? JSON.stringify(portfolio) : null
       ]
     );
     res.status(200).json({ message: "Registration successful", data: result.rows[0] });
   } catch (err) {
     console.error("Registration failed:", err.message, err.stack);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Server error: " + err.message });
   }
 });
 
 app.get("/artisan/:id", async (req, res) => {
+  const { id } = req.params;
+  if (!id || isNaN(parseInt(id))) {
+    return res.status(400).json({ error: "Invalid artisan ID" });
+  }
+
   try {
-    const { id } = req.params;
-    const result = await pool.query(
-      `SELECT *, coins FROM artisans WHERE id = $1`,
-      [id]
-    );
+    const result = await pool.query("SELECT * FROM artisans WHERE id = $1", [parseInt(id)]);
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "Artisan not found" });
     }
-    res.status(200).json(result.rows[0]);
+    res.json(result.rows[0]);
   } catch (err) {
-    console.error("Error fetching artisan:", err.message, err.stack);
-    res.status(500).json({ error: "Server error" });
+    console.error("Error fetching artisan:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put("/artisan/:id", upload.any(), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      firstname,
+      lastname,
+      phone,
+      email,
+      gender,
+      dob,
+      city,
+      address,
+      skill,
+      experience,
+      bio,
+      reference,
+      existingPortfolio,
+    } = req.body;
+
+    let profilePic = null;
+    let certificate = null;
+    const portfolio = existingPortfolio ? JSON.parse(existingPortfolio) : [];
+
+    req.files.forEach((file) => {
+      if (file.fieldname === "profile_pic") {
+        profilePic = file.filename;
+      } else if (file.fieldname === "certificate") {
+        certificate = file.filename;
+      } else if (file.fieldname === "portfolio") {
+        portfolio.push(file.filename);
+      }
+    });
+
+    if (!firstname || !lastname || !phone || !email || !gender || !dob || !city || !address || !skill || !experience || !bio) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const artisanCheck = await pool.query(
+      `SELECT id FROM artisans WHERE id = $1`,
+      [id]
+    );
+    if (artisanCheck.rows.length === 0) {
+      return res.status(404).json({ error: "Artisan not found" });
+    }
+
+    const result = await pool.query(
+      `UPDATE artisans 
+       SET firstname = $1, lastname = $2, phone = $3, email = $4, gender = $5, dob = $6, 
+           city = $7, address = $8, skill = $9, experience = $10, bio = $11, 
+           profile_pic = COALESCE($12, profile_pic), certificate = COALESCE($13, certificate), 
+           reference = $14, portfolio = $15
+       WHERE id = $16
+       RETURNING *`,
+      [
+        firstname,
+        lastname,
+        phone,
+        email,
+        gender,
+        dob,
+        city,
+        address,
+        skill,
+        experience,
+        bio,
+        profilePic,
+        certificate,
+        reference,
+        portfolio.length > 0 ? JSON.stringify(portfolio) : null,
+        id,
+      ]
+    );
+
+    res.status(200).json({ message: "Profile updated successfully", data: result.rows[0] });
+  } catch (err) {
+    console.error("Error updating artisan:", err.message, err.stack);
+    res.status(500).json({ error: "Server error: " + err.message });
   }
 });
 
@@ -426,7 +538,6 @@ app.post("/artisan/:id/purchase-coins", async (req, res) => {
   }
 
   try {
-    // Verify artisan exists
     const artisanResult = await pool.query(
       `SELECT email FROM artisans WHERE id = $1`,
       [id]
@@ -441,10 +552,9 @@ app.post("/artisan/:id/purchase-coins", async (req, res) => {
       return res.status(400).json({ error: "Email does not match artisan record" });
     }
 
-    // Initialize Paystack transaction
     const transaction = await paystack.transaction.initialize({
       email,
-      amount: amount * 100, // Convert NGN to kobo
+      amount: amount * 100,
       callback_url: `http://localhost:5173/purchase-coins/success`,
       metadata: { artisan_id: id, coin_amount },
     });
@@ -481,7 +591,6 @@ app.post("/artisan/verify-payment", async (req, res) => {
   }
 
   try {
-    // Verify transaction with Paystack
     const verification = await paystack.transaction.verify({ reference });
     console.log('Paystack verification response:', {
       status: verification.data.status,
@@ -494,14 +603,12 @@ app.post("/artisan/verify-payment", async (req, res) => {
       return res.status(400).json({ error: "Transaction not successful" });
     }
 
-    // Verify amount
-    const expectedAmount = coin_amount * 10 * 100; // 1 coin = NGN 10, in kobo
+    const expectedAmount = coin_amount * 10 * 100;
     if (verification.data.amount !== expectedAmount) {
       console.error('Amount mismatch:', { expected: expectedAmount, received: verification.data.amount });
       return res.status(400).json({ error: "Transaction amount mismatch" });
     }
 
-    // Verify artisan exists
     const artisanResult = await pool.query(
       `SELECT id FROM artisans WHERE id = $1`,
       [artisan_id]
@@ -511,7 +618,6 @@ app.post("/artisan/verify-payment", async (req, res) => {
       return res.status(404).json({ error: "Artisan not found" });
     }
 
-    // Update artisan's coins
     const updateResult = await pool.query(
       `UPDATE artisans SET coins = coins + $1 WHERE id = $2 RETURNING coins`,
       [coin_amount, artisan_id]
@@ -533,9 +639,102 @@ app.post("/artisan/verify-payment", async (req, res) => {
   }
 });
 
+// Deal-related endpoints
+app.post("/confirm-deal", async (req, res) => {
+  const { artisanId, userId } = req.body;
+
+  console.log('POST /confirm-deal received:', { artisanId, userId });
+
+  if (!artisanId || !userId) {
+    console.error('Invalid deal payload:', { artisanId, userId });
+    return res.status(400).json({ error: "Missing artisanId or userId" });
+  }
+
+  try {
+    const artisanCheck = await pool.query(
+      `SELECT id FROM artisans WHERE id = $1`,
+      [artisanId]
+    );
+    if (artisanCheck.rows.length === 0) {
+      console.error('Artisan not found:', artisanId);
+      return res.status(404).json({ error: "Artisan not found" });
+    }
+
+    const userCheck = await pool.query(
+      `SELECT id FROM users WHERE id = $1`,
+      [userId]
+    );
+    if (userCheck.rows.length === 0) {
+      console.error('User not found:', userId);
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const result = await pool.query(
+      `INSERT INTO deals (user_id, artisan_id)
+       VALUES ($1, $2)
+       RETURNING *`,
+      [userId, artisanId]
+    );
+
+    console.log('Deal created successfully:', result.rows[0]);
+
+    res.status(200).json({ message: "Deal confirmed successfully", deal: result.rows[0] });
+  } catch (err) {
+    console.error('Error confirming deal:', err.message, err.stack);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Review-related endpoints
+app.post("/reviews", async (req, res) => {
+  const { artisanId, rating, comment, dealId, userId } = req.body;
+
+  console.log('POST /reviews received:', { artisanId, rating, comment, dealId, userId });
+
+  if (!artisanId || !rating || !comment || !dealId || !userId || rating < 1 || rating > 5) {
+    console.error('Invalid review payload:', { artisanId, rating, comment, dealId, userId });
+    return res.status(400).json({ error: "Missing or invalid required fields" });
+  }
+
+  try {
+    const dealCheck = await pool.query(
+      `SELECT id, user_id FROM deals WHERE id = $1 AND artisan_id = $2`,
+      [dealId, artisanId]
+    );
+    if (dealCheck.rows.length === 0) {
+      console.error('Invalid deal or artisan:', { dealId, artisanId });
+      return res.status(404).json({ error: "Deal not found or does not belong to artisan" });
+    }
+
+    if (dealCheck.rows[0].user_id !== parseInt(userId)) {
+      console.error('User not authorized for this deal:', { userId, dealUserId: dealCheck.rows[0].user_id });
+      return res.status(403).json({ error: "Not authorized to review this deal" });
+    }
+
+    const result = await pool.query(
+      `INSERT INTO reviews (artisan_id, user_id, deal_id, rating, comment, created_at)
+       VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP)
+       RETURNING *`,
+      [artisanId, userId, dealId, rating, comment]
+    );
+
+    console.log('Review created successfully:', result.rows[0]);
+    res.status(200).json({ message: "Review submitted successfully", review: result.rows[0] });
+  } catch (err) {
+    console.error('Error submitting review:', err.message, err.stack);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 // Health check
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "Server is running" });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err.message, err.stack);
+  res.status(500).json({ error: 'Something went wrong!' });
 });
 
 app.listen(8080, () => console.log("Server running on http://localhost:8080"));
