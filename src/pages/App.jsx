@@ -18,7 +18,7 @@ import Chat from './chat.jsx';
 import Conversations from './conversations.jsx';
 import EditProfile from './editprofile.jsx';
 import PurchaseCoins from './PurchaseCoins.jsx';
-import Review from './Review.jsx';
+import Review from "./reviews";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -114,14 +114,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route 
-          path="/review/:artisanId" 
-          element={
-            <ProtectedRoute>
-              <Review />
-            </ProtectedRoute>
-          }
-        />
+<Route path="/review/:artisanId" element={<Review />} />
         <Route path="*" element={<div className="not-found">404 - Page Not Found</div>} />
       </Routes>
     </>

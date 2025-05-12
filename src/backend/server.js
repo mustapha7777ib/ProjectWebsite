@@ -15,7 +15,7 @@ const pool = new Pool({
   user: "postgres",
   host: "localhost",
   database: "artisans",
-  password: "password", // Replace with your PostgreSQL password
+  password:"password", 
   port: 5432,
 });
 
@@ -24,16 +24,20 @@ if (!process.env.PAYSTACK_SECRET_KEY) {
   process.exit(1);
 }
 
+
 const paystack = Paystack(process.env.PAYSTACK_SECRET_KEY);
+
+// Test database connection on startup
+pool.connect((err) => {
+  if (err) {
+    console.error("Failed to connect to PostgreSQL:", err.message);
+    process.exit(1);
+  }
+  console.log("Connected to PostgreSQL database");
+});
 
 pool.on('error', (err) => {
   console.error('Database connection error:', err.stack);
-});
-
-// Test database connection on startup
-pool.query('SELECT NOW()', (err, res) => {
-  if (err) console.error('Test query failed:', err);
-  else console.log('Database connected:', res.rows[0]);
 });
 
 app.use(cors({
@@ -64,9 +68,9 @@ const messagesRouter = express.Router();
 
 messagesRouter.get('/conversations-summary/:userId', async (req, res) => {
   const { userId } = req.params;
-  console.log('GET /api/messages/conversations-summary:', { userId, type: typeof userId });
+  console.log("server.js: GET /conversations-summary/", userId);
   if (!userId || userId === 'undefined' || isNaN(userId)) {
-    console.error('Invalid userId:', userId);
+    console.error("server.js: Invalid userId:", userId);
     return res.status(400).json({ error: 'Invalid userId' });
   }
   try {
@@ -97,25 +101,12 @@ messagesRouter.get('/conversations-summary/:userId', async (req, res) => {
         LEAST(sender_id, receiver_id), 
         GREATEST(sender_id, receiver_id), 
         m.timestamp DESC;`,
-      [userId]
+      [parseInt(userId)]
     );
-    console.log('Conversations query result:', {
-      rowCount: messages.rowCount,
-      rows: messages.rows.map(row => ({
-        sender_id: row.sender_id,
-        receiver_id: row.receiver_id,
-        first_name: row.first_name,
-        last_name: row.last_name,
-        content: row.content,
-        artisan_id: row.artisan_id
-      }))
-    });
+    console.log("server.js: Conversations fetched for user", userId, ":", messages.rows.length);
     const validConversations = messages.rows.filter(row => {
       const otherUserId = row.sender_id === parseInt(userId) ? row.receiver_id : row.sender_id;
-      if (!otherUserId || otherUserId === 'undefined') {
-        console.warn('Skipping invalid conversation:', row);
-        return false;
-      }
+      if (!otherUserId || otherUserId === 'undefined') return false;
       return true;
     });
     res.json(validConversations);
@@ -127,9 +118,9 @@ messagesRouter.get('/conversations-summary/:userId', async (req, res) => {
 
 messagesRouter.get('/conversations/:userId/:otherUserId', async (req, res) => {
   const { userId, otherUserId } = req.params;
-  console.log('GET /api/messages/conversations:', { userId, otherUserId, userIdType: typeof userId, otherUserIdType: typeof otherUserId });
+  console.log("server.js: GET /conversations/", userId, "/", otherUserId);
   if (!userId || !otherUserId || userId === 'undefined' || otherUserId === 'undefined') {
-    console.error('Missing or invalid userId or otherUserId:', { userId, otherUserId });
+    console.error("server.js: Invalid userId or otherUserId:", userId, otherUserId);
     return res.status(400).json({ error: 'Missing or invalid userId or otherUserId' });
   }
   try {
@@ -138,9 +129,9 @@ messagesRouter.get('/conversations/:userId/:otherUserId', async (req, res) => {
        WHERE (sender_id = $1 AND receiver_id = $2)
           OR (sender_id = $2 AND receiver_id = $1)
        ORDER BY timestamp ASC`,
-      [userId, otherUserId]
+      [parseInt(userId), parseInt(otherUserId)]
     );
-    console.log('Conversation query result:', { rowCount: messages.rowCount });
+    console.log("server.js: Messages fetched for", userId, otherUserId, ":", messages.rows.length);
     res.json(messages.rows);
   } catch (err) {
     console.error('Error fetching conversation:', err.message, err.stack);
@@ -150,55 +141,54 @@ messagesRouter.get('/conversations/:userId/:otherUserId', async (req, res) => {
 
 messagesRouter.post('/', async (req, res) => {
   const { sender_id, receiver_id, content } = req.body;
-  console.log('POST /api/messages received:', { sender_id, receiver_id, content });
+  console.log("server.js: POST /messages", { sender_id, receiver_id });
   if (!sender_id || !receiver_id || !content || typeof content !== 'string' || content.trim() === '') {
-    console.error('Invalid message payload:', { sender_id, receiver_id, content });
+    console.error("server.js: Invalid message data:", { sender_id, receiver_id, content });
     return res.status(400).json({ error: 'Invalid message content or missing fields' });
   }
-
   try {
     const artisanCheck = await pool.query(
       `SELECT a.coins 
        FROM users u 
        LEFT JOIN artisans a ON a.id = u.artisanid 
        WHERE u.id = $1`,
-      [sender_id]
+      [parseInt(sender_id)]
     );
-
+    console.log("server.js: Artisan coins check for sender", sender_id, ":", artisanCheck.rows);
     if (artisanCheck.rows.length > 0 && artisanCheck.rows[0].coins !== null) {
       const coins = artisanCheck.rows[0].coins;
       const firstReplyCheck = await pool.query(
         `SELECT COUNT(*) FROM messages
          WHERE sender_id = $1 AND receiver_id = $2`,
-        [sender_id, receiver_id]
+        [parseInt(sender_id), parseInt(receiver_id)]
       );
-
+      console.log("server.js: First reply check:", firstReplyCheck.rows[0].count);
       if (parseInt(firstReplyCheck.rows[0].count) === 0) {
         if (coins < 25) {
-          console.log('Insufficient coins for artisan:', { sender_id, coins });
+          console.error("server.js: Insufficient coins for sender", sender_id, ":", coins);
           return res.status(403).json({ error: 'Insufficient coins. Please purchase more.' });
         }
         const artisanIdResult = await pool.query(
           `SELECT artisanid FROM users WHERE id = $1`,
-          [sender_id]
+          [parseInt(sender_id)]
         );
+        console.log("server.js: Artisan ID for sender", sender_id, ":", artisanIdResult.rows);
         if (artisanIdResult.rows[0].artisanid) {
           const updateResult = await pool.query(
             `UPDATE artisans SET coins = coins - 25 WHERE id = $1 RETURNING coins`,
-            [artisanIdResult.rows[0].artisanid]
+            [parseInt(artisanIdResult.rows[0].artisanid)]
           );
-          console.log('Coins after deduction:', updateResult.rows[0].coins);
+          console.log("server.js: Coins updated for artisan", artisanIdResult.rows[0].artisanid, ":", updateResult.rows[0].coins);
         }
       }
     }
-
     const newMessage = await pool.query(
       `INSERT INTO messages (sender_id, receiver_id, content, read)
        VALUES ($1, $2, $3, false)
        RETURNING *`,
-      [sender_id, receiver_id, content]
+      [parseInt(sender_id), parseInt(receiver_id), content]
     );
-    console.log('Message sent successfully:', newMessage.rows[0]);
+    console.log("server.js: Message sent:", newMessage.rows[0]);
     res.json(newMessage.rows[0]);
   } catch (err) {
     console.error('Error sending message:', err.message, err.stack);
@@ -208,9 +198,9 @@ messagesRouter.post('/', async (req, res) => {
 
 messagesRouter.patch('/mark-as-read', async (req, res) => {
   const { sender_id, receiver_id } = req.body;
-  console.log('PATCH /api/messages/mark-as-read received:', { sender_id, receiver_id });
+  console.log("server.js: PATCH /mark-as-read", { sender_id, receiver_id });
   if (!sender_id || !receiver_id) {
-    console.error('Invalid mark-as-read payload:', { sender_id, receiver_id });
+    console.error("server.js: Missing sender_id or receiver_id:", { sender_id, receiver_id });
     return res.status(400).json({ error: 'Missing sender_id or receiver_id' });
   }
   try {
@@ -219,10 +209,10 @@ messagesRouter.patch('/mark-as-read', async (req, res) => {
        SET read = true
        WHERE sender_id = $1 AND receiver_id = $2 AND read = false
        RETURNING *`,
-      [sender_id, receiver_id]
+      [parseInt(sender_id), parseInt(receiver_id)]
     );
-    console.log('Messages marked as read:', { updatedCount: result.rowCount });
-    res.json({ message: 'Messages marked as read' });
+    console.log("server.js: Messages marked as read:", result.rows.length);
+    res.json({ message: 'Messages marked as read', updated: result.rows });
   } catch (err) {
     console.error('Error marking messages as read:', err.message, err.stack);
     res.status(500).json({ error: 'Server error' });
@@ -232,97 +222,153 @@ messagesRouter.patch('/mark-as-read', async (req, res) => {
 app.use('/api/messages', messagesRouter);
 
 // User-related endpoints
+app.post("/artisan/:id/add-job-posting", upload.single("image"), async (req, res) => {
+  const { id } = req.params;
+  const { dealId, description } = req.body;
+  const image = req.file ? req.file.filename : null;
+  console.log("server.js: POST /artisan/", id, "/add-job-posting", { dealId, description, image });
+  if (!id || !dealId || !description || !image) {
+    console.error("server.js: Missing required fields:", { id, dealId, description, image });
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+  try {
+    const dealCheck = await pool.query(
+      `SELECT id FROM deals WHERE id = $1 AND artisan_id = $2`,
+      [parseInt(dealId), parseInt(id)]
+    );
+    console.log("server.js: Deal check for deal", dealId, "artisan", id, ":", dealCheck.rows);
+    if (dealCheck.rows.length === 0) {
+      console.error("server.js: Deal not found or does not belong to artisan:", dealId, id);
+      return res.status(404).json({ error: "Deal not found or does not belong to artisan" });
+    }
+    const result = await pool.query(
+      `INSERT INTO job_postings (artisan_id, deal_id, description, image, created_at)
+       VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
+       RETURNING *`,
+      [parseInt(id), parseInt(dealId), description, image]
+    );
+    console.log("server.js: Job posting added:", result.rows[0]);
+    res.status(200).json({ message: "Job posting added successfully", jobPosting: result.rows[0] });
+  } catch (err) {
+    console.error('Error adding job posting:', err.message, err.stack);
+    res.status(500).json({ error: "Server error: " + err.message });
+  }
+});
+
 app.post("/signup", async (req, res) => {
   const { email, firstName, lastName, password } = req.body;
-  if (!password) {
-    return res.status(400).json({ error: "Password is required" });
+  console.log("server.js: POST /signup", { email, firstName, lastName });
+  if (!email || !firstName || !lastName || !password) {
+    console.error("server.js: Missing required fields:", { email, firstName, lastName });
+    return res.status(400).json({ error: "All fields are required" });
   }
-
   try {
     const existing = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+    console.log("server.js: Email check:", existing.rows.length);
     if (existing.rows.length > 0) {
+      console.error("server.js: Email already exists:", email);
       return res.status(400).json({ error: "Email already exists" });
     }
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
     const result = await pool.query(
       `INSERT INTO users (email, first_name, last_name, password)
-       VALUES ($1, $2, $3, $4) RETURNING *`,
+       VALUES ($1, $2, $3, $4) RETURNING id, email, first_name, last_name, artisanid`,
       [email, firstName, lastName, hashedPassword]
     );
+    console.log("server.js: User added:", result.rows[0]);
     res.json({ message: "User added", user: result.rows[0] });
   } catch (err) {
     console.error("Database error:", err.message, err.stack);
-    res.status(500).json({ error: "Database error" });
+    res.status(500).json({ error: "Database error: " + err.message });
   }
 });
 
 app.post("/signin", async (req, res) => {
   const { email, password } = req.body;
+  console.log("server.js: POST /signin", { email });
+  if (!email || !password) {
+    console.error("server.js: Missing email or password");
+    return res.status(400).json({ error: "Email and password are required" });
+  }
   try {
     const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+    console.log("server.js: User check:", result.rows.length);
     if (result.rows.length === 0) {
+      console.error("server.js: Invalid email:", email);
       return res.status(401).json({ error: "Invalid email or password" });
     }
     const user = result.rows[0];
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
+      console.error("server.js: Invalid password for email:", email);
       return res.status(401).json({ error: "Invalid email or password" });
     }
+    console.log("server.js: Login successful for user:", user.id);
     res.json({
       message: "Login successful",
       user: { id: user.id, email: user.email, artisanId: user.artisanid }
     });
   } catch (err) {
     console.error("Sign-in error:", err.message, err.stack);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Server error: " + err.message });
   }
 });
 
 app.get("/users/:id", async (req, res) => {
+  const { id } = req.params;
+  console.log("server.js: GET /users/", id);
   try {
-    const { id } = req.params;
     const result = await pool.query(
       `SELECT id, email, first_name, last_name, artisanid FROM users WHERE id = $1`,
-      [id]
+      [parseInt(id)]
     );
+    console.log("server.js: User fetch:", result.rows);
     if (result.rows.length === 0) {
+      console.error("server.js: User not found:", id);
       return res.status(404).json({ error: "User not found" });
     }
     res.status(200).json(result.rows[0]);
   } catch (err) {
     console.error("Error fetching user:", err.message, err.stack);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Server error: " + err.message });
   }
 });
 
 app.get("/users/by-artisan/:artisanId", async (req, res) => {
+  const { artisanId } = req.params;
+  console.log("server.js: GET /users/by-artisan/", artisanId);
   try {
-    const { artisanId } = req.params;
     const result = await pool.query(
       `SELECT id, first_name, last_name FROM users WHERE artisanid = $1`,
-      [artisanId]
+      [parseInt(artisanId)]
     );
+    console.log("server.js: User by artisan fetch:", result.rows);
     if (result.rows.length === 0) {
+      console.error("server.js: No user linked to artisan:", artisanId);
       return res.status(404).json({ error: "No user linked to this artisan" });
     }
     res.status(200).json(result.rows[0]);
   } catch (err) {
     console.error("Error fetching user by artisan:", err.message, err.stack);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Server error: " + err.message });
   }
 });
 
 app.put("/link-artisan-to-user", async (req, res) => {
+  const { userId, artisanId } = req.body;
+  console.log("server.js: PUT /link-artisan-to-user", { userId, artisanId });
+  if (!userId || !artisanId) {
+    console.error("server.js: Missing userId or artisanId:", { userId, artisanId });
+    return res.status(400).json({ error: "Missing userId or artisanId" });
+  }
   try {
-    const { userId, artisanId } = req.body;
-    if (!userId || !artisanId) {
-      return res.status(400).json({ error: "Missing userId or artisanId" });
-    }
     const result = await pool.query(
       `UPDATE users SET artisanid = $1 WHERE id = $2 RETURNING *`,
-      [artisanId, userId]
+      [parseInt(artisanId), parseInt(userId)]
     );
+    console.log("server.js: User linked to artisan:", result.rows);
     if (result.rows.length === 0) {
+      console.error("server.js: User not found:", userId);
       return res.status(404).json({ error: "User not found" });
     }
     res.status(200).json({
@@ -331,42 +377,27 @@ app.put("/link-artisan-to-user", async (req, res) => {
     });
   } catch (err) {
     console.error("Failed to link artisan to user:", err.message, err.stack);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Server error: " + err.message });
   }
 });
 
 // Artisan-related endpoints
 app.post("/register-artisan", upload.any(), async (req, res) => {
+  const { firstname, lastname, phone, gender, dob, city, address, skill, experience, bio, reference, email } = req.body;
+  console.log("server.js: POST /register-artisan", { firstname, lastname, email });
   try {
-    const {
-      firstname,
-      lastname,
-      phone,
-      gender,
-      dob,
-      city,
-      address,
-      skill,
-      experience,
-      bio,
-      reference,
-      email
-    } = req.body;
-
     let profilePic = null;
     let certificate = null;
     const portfolio = [];
-
     req.files.forEach((file) => {
-      if (file.fieldname === "profilePic") {
-        profilePic = file.filename;
-      } else if (file.fieldname === "certificate") {
-        certificate = file.filename;
-      } else if (file.fieldname.startsWith("portfolio_")) {
-        portfolio.push(file.filename);
-      }
+      if (file.fieldname === "profilePic") profilePic = file.filename;
+      else if (file.fieldname === "certificate") certificate = file.filename;
+      else if (file.fieldname.startsWith("portfolio_")) portfolio.push(file.filename);
     });
-
+    if (!firstname || !lastname || !phone || !email || !gender || !dob || !city || !address || !skill || !experience || !bio) {
+      console.error("server.js: Missing required fields:", req.body);
+      return res.status(400).json({ error: "Missing required fields" });
+    }
     const result = await pool.query(
       `INSERT INTO artisans 
        (firstname, lastname, phone, gender, dob, city, address, skill, experience, bio, profile_pic, certificate, reference, email, portfolio, coins)
@@ -390,6 +421,7 @@ app.post("/register-artisan", upload.any(), async (req, res) => {
         portfolio.length > 0 ? JSON.stringify(portfolio) : null
       ]
     );
+    console.log("server.js: Artisan registered:", result.rows[0].id);
     res.status(200).json({ message: "Registration successful", data: result.rows[0] });
   } catch (err) {
     console.error("Registration failed:", err.message, err.stack);
@@ -399,25 +431,93 @@ app.post("/register-artisan", upload.any(), async (req, res) => {
 
 app.get("/artisan/:id", async (req, res) => {
   const { id } = req.params;
+  console.log("server.js: GET /artisan/", id);
   if (!id || isNaN(parseInt(id))) {
+    console.error("server.js: Invalid artisan ID:", id);
     return res.status(400).json({ error: "Invalid artisan ID" });
   }
-
   try {
-    const result = await pool.query("SELECT * FROM artisans WHERE id = $1", [parseInt(id)]);
-    if (result.rows.length === 0) {
+    const artisanResult = await pool.query("SELECT * FROM artisans WHERE id = $1", [parseInt(id)]);
+    console.log("server.js: Artisan fetch for ID", id, ":", artisanResult.rows);
+    if (artisanResult.rows.length === 0) {
+      console.error("server.js: Artisan not found for ID:", id);
       return res.status(404).json({ error: "Artisan not found" });
     }
-    res.json(result.rows[0]);
+    const dealsResult = await pool.query(
+      `SELECT d.*, u.first_name, u.last_name,
+              EXISTS (
+                SELECT 1 FROM job_postings jp WHERE jp.deal_id = d.id
+              ) as job_posting
+       FROM deals d
+       JOIN users u ON u.id = d.user_id
+       WHERE d.artisan_id = $1`,
+      [parseInt(id)]
+    );
+    console.log("server.js: Deals for artisan", id, ":", dealsResult.rows);
+    const jobPostingsResult = await pool.query(
+      `SELECT jp.*, 
+              COALESCE(
+                (SELECT json_agg(
+                  json_build_object(
+                    'id', r.id,
+                    'rating', r.rating,
+                    'comment', r.comment,
+                    'first_name', u.first_name,
+                    'last_name', u.last_name,
+                    'created_at', r.created_at
+                  )
+                )
+                FROM reviews r
+                JOIN users u ON u.id = r.user_id
+                WHERE r.deal_id = jp.deal_id),
+                '[]'::json
+              ) as reviews
+       FROM job_postings jp
+       WHERE jp.artisan_id = $1
+       ORDER BY jp.created_at DESC`,
+      [parseInt(id)]
+    );
+    console.log("server.js: Job postings for artisan", id, ":", jobPostingsResult.rows);
+    const artisan = {
+      ...artisanResult.rows[0],
+      deals: dealsResult.rows,
+      job_postings: jobPostingsResult.rows,
+    };
+    res.json(artisan);
   } catch (err) {
-    console.error("Error fetching artisan:", err.message);
-    res.status(500).json({ error: err.message });
+    console.error("server.js: Error fetching artisan:", err.message, err.stack);
+    res.status(500).json({ error: "Server error: " + err.message });
+  }
+});
+
+app.get("/artisan/:id/reviews", async (req, res) => {
+  const { id } = req.params;
+  console.log("server.js: GET /artisan/", id, "/reviews");
+  if (!id || isNaN(parseInt(id))) {
+    console.error("server.js: Invalid artisan ID for reviews:", id);
+    return res.status(400).json({ error: "Invalid artisan ID" });
+  }
+  try {
+    const result = await pool.query(
+      `SELECT r.*, u.first_name, u.last_name
+       FROM reviews r
+       JOIN users u ON u.id = r.user_id
+       WHERE r.artisan_id = $1
+       ORDER BY r.created_at DESC`,
+      [parseInt(id)]
+    );
+    console.log("server.js: Reviews for artisan", id, ":", result.rows);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("server.js: Error fetching reviews:", err.message, err.stack);
+    res.status(500).json({ error: "Server error: " + err.message });
   }
 });
 
 app.put("/artisan/:id", upload.any(), async (req, res) => {
+  const { id } = req.params;
+  console.log("server.js: PUT /artisan/", id);
   try {
-    const { id } = req.params;
     const {
       firstname,
       lastname,
@@ -433,33 +533,27 @@ app.put("/artisan/:id", upload.any(), async (req, res) => {
       reference,
       existingPortfolio,
     } = req.body;
-
     let profilePic = null;
     let certificate = null;
     const portfolio = existingPortfolio ? JSON.parse(existingPortfolio) : [];
-
     req.files.forEach((file) => {
-      if (file.fieldname === "profile_pic") {
-        profilePic = file.filename;
-      } else if (file.fieldname === "certificate") {
-        certificate = file.filename;
-      } else if (file.fieldname === "portfolio") {
-        portfolio.push(file.filename);
-      }
+      if (file.fieldname === "profile_pic") profilePic = file.filename;
+      else if (file.fieldname === "certificate") certificate = file.filename;
+      else if (file.fieldname === "portfolio") portfolio.push(file.filename);
     });
-
     if (!firstname || !lastname || !phone || !email || !gender || !dob || !city || !address || !skill || !experience || !bio) {
+      console.error("server.js: Missing required fields:", req.body);
       return res.status(400).json({ error: "Missing required fields" });
     }
-
     const artisanCheck = await pool.query(
       `SELECT id FROM artisans WHERE id = $1`,
-      [id]
+      [parseInt(id)]
     );
+    console.log("server.js: Artisan check for ID", id, ":", artisanCheck.rows);
     if (artisanCheck.rows.length === 0) {
+      console.error("server.js: Artisan not found:", id);
       return res.status(404).json({ error: "Artisan not found" });
     }
-
     const result = await pool.query(
       `UPDATE artisans 
        SET firstname = $1, lastname = $2, phone = $3, email = $4, gender = $5, dob = $6, 
@@ -484,10 +578,10 @@ app.put("/artisan/:id", upload.any(), async (req, res) => {
         certificate,
         reference,
         portfolio.length > 0 ? JSON.stringify(portfolio) : null,
-        id,
+        parseInt(id),
       ]
     );
-
+    console.log("server.js: Artisan updated:", result.rows[0]);
     res.status(200).json({ message: "Profile updated successfully", data: result.rows[0] });
   } catch (err) {
     console.error("Error updating artisan:", err.message, err.stack);
@@ -496,145 +590,120 @@ app.put("/artisan/:id", upload.any(), async (req, res) => {
 });
 
 app.get("/artisans", async (req, res) => {
+  const { artisan, city } = req.query;
+  console.log("server.js: GET /artisans", { artisan, city });
   try {
-    const { artisan, city } = req.query;
     const result = await pool.query(
       `SELECT * FROM artisans WHERE LOWER(skill) = LOWER($1) AND LOWER(city) = LOWER($2)`,
       [artisan, city]
     );
+    console.log("server.js: Artisans fetched:", result.rows.length);
     res.status(200).json(result.rows);
   } catch (err) {
     console.error("Error fetching artisans:", err.message, err.stack);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Server error: " + err.message });
   }
 });
 
 app.get("/artisan/:id/coins", async (req, res) => {
+  const { id } = req.params;
+  console.log("server.js: GET /artisan/", id, "/coins");
   try {
-    const { id } = req.params;
     const result = await pool.query(
       `SELECT coins FROM artisans WHERE id = $1`,
-      [id]
+      [parseInt(id)]
     );
+    console.log("server.js: Coins fetch for artisan", id, ":", result.rows);
     if (result.rows.length === 0) {
+      console.error("server.js: Artisan not found:", id);
       return res.status(404).json({ error: "Artisan not found" });
     }
     res.status(200).json({ coins: result.rows[0].coins });
   } catch (err) {
     console.error("Error fetching coins:", err.message, err.stack);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Server error: " + err.message });
   }
 });
 
 app.post("/artisan/:id/purchase-coins", async (req, res) => {
   const { id } = req.params;
   const { amount, email, coin_amount } = req.body;
-
-  console.log('POST /artisan/:id/purchase-coins received:', { id, amount, email, coin_amount });
-
+  console.log("server.js: POST /artisan/", id, "/purchase-coins", { amount, email, coin_amount });
   if (!id || !amount || amount <= 0 || !coin_amount || coin_amount <= 0 || !email) {
-    console.error('Invalid purchase payload:', { id, amount, email, coin_amount });
+    console.error("server.js: Invalid coin amount, email, or missing fields:", req.body);
     return res.status(400).json({ error: "Invalid coin amount, email, or missing fields" });
   }
-
   try {
     const artisanResult = await pool.query(
       `SELECT email FROM artisans WHERE id = $1`,
-      [id]
+      [parseInt(id)]
     );
+    console.log("server.js: Artisan email check for ID", id, ":", artisanResult.rows);
     if (artisanResult.rows.length === 0) {
-      console.error('Artisan not found:', id);
+      console.error("server.js: Artisan not found:", id);
       return res.status(404).json({ error: "Artisan not found" });
     }
-
     if (artisanResult.rows[0].email !== email) {
-      console.error('Email mismatch:', { provided: email, expected: artisanResult.rows[0].email });
+      console.error("server.js: Email mismatch for artisan", id, ":", email);
       return res.status(400).json({ error: "Email does not match artisan record" });
     }
-
     const transaction = await paystack.transaction.initialize({
       email,
       amount: amount * 100,
       callback_url: `http://localhost:5173/purchase-coins/success`,
-      metadata: { artisan_id: id, coin_amount },
+      metadata: { artisan_id: parseInt(id), coin_amount },
     });
-
-    console.log('Paystack transaction initialized:', {
-      authorization_url: transaction.data.authorization_url,
-      reference: transaction.data.reference
-    });
-
+    console.log("server.js: Transaction initialized for artisan", id, ":", transaction.data.reference);
     res.status(200).json({
       message: "Transaction initialized",
       authorization_url: transaction.data.authorization_url,
       reference: transaction.data.reference,
     });
   } catch (err) {
-    console.error("Error initializing transaction:", {
-      message: err.message,
-      stack: err.stack,
-      code: err.code,
-      response: err.response ? err.response.data : null
-    });
+    console.error("Error initializing transaction:", err.message, err.stack);
     res.status(500).json({ error: "Failed to initialize transaction: " + err.message });
   }
 });
 
 app.post("/artisan/verify-payment", async (req, res) => {
   const { reference, artisan_id, coin_amount } = req.body;
-
-  console.log('POST /artisan/verify-payment received:', { reference, artisan_id, coin_amount });
-
+  console.log("server.js: POST /artisan/verify-payment", { reference, artisan_id, coin_amount });
   if (!reference || !artisan_id || !coin_amount || coin_amount <= 0) {
-    console.error('Invalid verify payload:', { reference, artisan_id, coin_amount });
+    console.error("server.js: Missing or invalid required fields:", req.body);
     return res.status(400).json({ error: "Missing or invalid required fields" });
   }
-
   try {
     const verification = await paystack.transaction.verify({ reference });
-    console.log('Paystack verification response:', {
-      status: verification.data.status,
-      amount: verification.data.amount,
-      currency: verification.data.currency
-    });
-
+    console.log("server.js: Transaction verification:", verification.data.status);
     if (verification.data.status !== "success") {
-      console.error('Transaction not successful:', verification.data);
+      console.error("server.js: Transaction not successful:", reference);
       return res.status(400).json({ error: "Transaction not successful" });
     }
-
     const expectedAmount = coin_amount * 10 * 100;
     if (verification.data.amount !== expectedAmount) {
-      console.error('Amount mismatch:', { expected: expectedAmount, received: verification.data.amount });
+      console.error("server.js: Transaction amount mismatch:", verification.data.amount, expectedAmount);
       return res.status(400).json({ error: "Transaction amount mismatch" });
     }
-
     const artisanResult = await pool.query(
       `SELECT id FROM artisans WHERE id = $1`,
-      [artisan_id]
+      [parseInt(artisan_id)]
     );
+    console.log("server.js: Artisan check for ID", artisan_id, ":", artisanResult.rows);
     if (artisanResult.rows.length === 0) {
-      console.error('Artisan not found during verification:', artisan_id);
+      console.error("server.js: Artisan not found:", artisan_id);
       return res.status(404).json({ error: "Artisan not found" });
     }
-
     const updateResult = await pool.query(
       `UPDATE artisans SET coins = coins + $1 WHERE id = $2 RETURNING coins`,
-      [coin_amount, artisan_id]
+      [coin_amount, parseInt(artisan_id)]
     );
-
-    console.log('Coins updated successfully:', updateResult.rows[0].coins);
+    console.log("server.js: Coins updated for artisan", artisan_id, ":", updateResult.rows[0].coins);
     res.status(200).json({
       message: "Coins purchased successfully",
       coins: updateResult.rows[0].coins,
     });
   } catch (err) {
-    console.error("Error verifying transaction:", {
-      message: err.message,
-      stack: err.stack,
-      code: err.code,
-      response: err.response ? err.response.data : null
-    });
+    console.error("Error verifying transaction:", err.message, err.stack);
     res.status(500).json({ error: "Failed to verify transaction: " + err.message });
   }
 });
@@ -642,92 +711,92 @@ app.post("/artisan/verify-payment", async (req, res) => {
 // Deal-related endpoints
 app.post("/confirm-deal", async (req, res) => {
   const { artisanId, userId } = req.body;
-
-  console.log('POST /confirm-deal received:', { artisanId, userId });
-
+  console.log("server.js: POST /confirm-deal", { artisanId, userId });
   if (!artisanId || !userId) {
-    console.error('Invalid deal payload:', { artisanId, userId });
+    console.error("server.js: Missing artisanId or userId:", { artisanId, userId });
     return res.status(400).json({ error: "Missing artisanId or userId" });
   }
-
   try {
     const artisanCheck = await pool.query(
       `SELECT id FROM artisans WHERE id = $1`,
-      [artisanId]
+      [parseInt(artisanId)]
     );
+    console.log("server.js: Artisan check for ID", artisanId, ":", artisanCheck.rows);
     if (artisanCheck.rows.length === 0) {
-      console.error('Artisan not found:', artisanId);
+      console.error("server.js: Artisan not found:", artisanId);
       return res.status(404).json({ error: "Artisan not found" });
     }
-
     const userCheck = await pool.query(
       `SELECT id FROM users WHERE id = $1`,
-      [userId]
+      [parseInt(userId)]
     );
+    console.log("server.js: User check for ID", userId, ":", userCheck.rows);
     if (userCheck.rows.length === 0) {
-      console.error('User not found:', userId);
+      console.error("server.js: User not found:", userId);
       return res.status(404).json({ error: "User not found" });
     }
-
     const result = await pool.query(
       `INSERT INTO deals (user_id, artisan_id)
        VALUES ($1, $2)
        RETURNING *`,
-      [userId, artisanId]
+      [parseInt(userId), parseInt(artisanId)]
     );
-
-    console.log('Deal created successfully:', result.rows[0]);
-
+    console.log("server.js: Deal confirmed:", result.rows[0]);
     res.status(200).json({ message: "Deal confirmed successfully", deal: result.rows[0] });
   } catch (err) {
     console.error('Error confirming deal:', err.message, err.stack);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Server error: " + err.message });
   }
 });
 
 // Review-related endpoints
 app.post("/reviews", async (req, res) => {
   const { artisanId, rating, comment, dealId, userId } = req.body;
-
-  console.log('POST /reviews received:', { artisanId, rating, comment, dealId, userId });
-
+  console.log("server.js: POST /reviews", { artisanId, rating, comment, dealId, userId });
   if (!artisanId || !rating || !comment || !dealId || !userId || rating < 1 || rating > 5) {
-    console.error('Invalid review payload:', { artisanId, rating, comment, dealId, userId });
+    console.error("server.js: Invalid review data:", { artisanId, rating, comment, dealId, userId });
     return res.status(400).json({ error: "Missing or invalid required fields" });
   }
-
   try {
     const dealCheck = await pool.query(
       `SELECT id, user_id FROM deals WHERE id = $1 AND artisan_id = $2`,
-      [dealId, artisanId]
+      [parseInt(dealId), parseInt(artisanId)]
     );
+    console.log("server.js: Deal check for deal", dealId, "artisan", artisanId, ":", dealCheck.rows);
     if (dealCheck.rows.length === 0) {
-      console.error('Invalid deal or artisan:', { dealId, artisanId });
+      console.error("server.js: Deal not found for ID:", dealId, "Artisan:", artisanId);
       return res.status(404).json({ error: "Deal not found or does not belong to artisan" });
     }
-
     if (dealCheck.rows[0].user_id !== parseInt(userId)) {
-      console.error('User not authorized for this deal:', { userId, dealUserId: dealCheck.rows[0].user_id });
+      console.error("server.js: User not authorized for deal:", userId, dealId);
       return res.status(403).json({ error: "Not authorized to review this deal" });
     }
-
+    const jobPostingCheck = await pool.query(
+      `SELECT id FROM job_postings WHERE deal_id = $1 AND artisan_id = $2`,
+      [parseInt(dealId), parseInt(artisanId)]
+    );
+    console.log("server.js: Job posting check for deal  deal", dealId, "artisan", artisanId, ":", jobPostingCheck.rows);
+    if (jobPostingCheck.rows.length === 0) {
+      console.error("server.js: No job posting for deal:", dealId, "Artisan:", artisanId);
+      return res.status(403).json({ error: "Cannot review until artisan uploads job details" });
+    }
     const result = await pool.query(
       `INSERT INTO reviews (artisan_id, user_id, deal_id, rating, comment, created_at)
        VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP)
        RETURNING *`,
-      [artisanId, userId, dealId, rating, comment]
+      [parseInt(artisanId), parseInt(userId), parseInt(dealId), rating, comment]
     );
-
-    console.log('Review created successfully:', result.rows[0]);
+    console.log("server.js: Review submitted for artisan", artisanId, ":", result.rows[0]);
     res.status(200).json({ message: "Review submitted successfully", review: result.rows[0] });
   } catch (err) {
-    console.error('Error submitting review:', err.message, err.stack);
-    res.status(500).json({ error: "Server error" });
+    console.error('server.js: Error submitting review:', err.message, err.stack);
+    res.status(500).json({ error: "Server error: " + err.message });
   }
 });
 
 // Health check
 app.get("/health", (req, res) => {
+  console.log("server.js: GET /health");
   res.status(200).json({ status: "Server is running" });
 });
 

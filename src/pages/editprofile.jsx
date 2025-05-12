@@ -2,20 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 
-const abujaData = {
-  cities: [
-    "Asokoro", "Maitama", "Wuse", "Garki", "Gwarimpa", "Lokogoma", "Jabi", "Utako",
-    "Katampe Extension Hill", "Kuje", "Abaji", "Bwari", "Gwagwalada", "Kwali",
-    "Abuja Municipal Area Council (AMAC)", "Dawaki", "Gwagwa", "Nyanya", "Kubwa",
-    "Olu Awotesu Street", "Lugbe", "Guzape", "Apo Dutse", "Dakibiyu", "Duboyi",
-    "Durumi", "Gaduwa", "Games Village", "Kaura", "Gudu", "Jahi", "Kado", "Kukwaba",
-    "Mabushi", "Wuye", "Galadimawa", "Kabusa", "Karmo", "Life Camp", "Nbora"
-  ]
-};
-
 function EditProfile() {
-  const { user, isArtisan, artisanId, logout } = useAuth();
+  const { user, isArtisan, logout } = useAuth();
   const navigate = useNavigate();
+  const artisanId = user.artisanId;
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -34,18 +24,17 @@ function EditProfile() {
   const [certificate, setCertificate] = useState(null);
   const [portfolio, setPortfolio] = useState([]);
   const [existingPortfolio, setExistingPortfolio] = useState([]);
-  const [showCityDropdown, setShowCityDropdown] = useState(false);
-  const [filteredCities, setFilteredCities] = useState(abujaData.cities);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [deals, setDeals] = useState([]);
+  const [newJobPosting, setNewJobPosting] = useState({
+    dealId: "",
+    description: "",
+    image: null,
+  });
 
   useEffect(() => {
-    if (!user || !isArtisan || !artisanId) {
-      navigate("/signin");
-      return;
-    }
-
-    const fetchArtisan = async () => {
+    const fetchArtisanAndDeals = async () => {
       try {
         const response = await fetch(`http://localhost:8080/artisan/${artisanId}`, {
           credentials: "include",
@@ -73,6 +62,7 @@ function EditProfile() {
           reference: data.reference || "",
         });
         setExistingPortfolio(data.portfolio || []);
+        setDeals(data.deals || []);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching artisan:", err);
@@ -81,50 +71,58 @@ function EditProfile() {
       }
     };
 
-    fetchArtisan();
+    if (!user || !isArtisan) {
+      navigate("/profile");
+    } else {
+      fetchArtisanAndDeals();
+    }
   }, [user, isArtisan, artisanId, navigate, logout]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleCitySelect = (city) => {
-    setFormData({ ...formData, city });
-    setShowCityDropdown(false);
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    if (name === "profilePic") {
+      setProfilePic(files[0]);
+    } else if (name === "certificate") {
+      setCertificate(files[0]);
+    } else if (name === "portfolio") {
+      setPortfolio(Array.from(files));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    if (!formData.firstname || !formData.lastname || !formData.phone) {
+      setError("Please fill in all required fields.");
+      return;
+    }
 
-    const submission = new FormData();
+    const formDataToSend = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
-      submission.append(key, value);
+      formDataToSend.append(key, value);
     });
-    if (profilePic) submission.append("profile_pic", profilePic);
-    if (certificate) submission.append("certificate", certificate);
-    portfolio.forEach((file) => submission.append("portfolio", file));
-    submission.append("existingPortfolio", JSON.stringify(existingPortfolio));
+    if (profilePic) formDataToSend.append("profilePic", profilePic);
+    if (certificate) formDataToSend.append("certificate", certificate);
+    portfolio.forEach((file) => formDataToSend.append("portfolio", file));
 
     try {
-      console.log("Sending PUT request to update artisan:", { artisanId, userId: user.id });
       const response = await fetch(`http://localhost:8080/artisan/${artisanId}`, {
         method: "PUT",
-        body: submission,
+        body: formDataToSend,
         credentials: "include",
       });
 
-      const responseData = await response.json();
-      console.log("PUT response:", { status: response.status, data: responseData });
-
       if (!response.ok) {
-        if (response.status === 401) {
-          logout();
-          return;
-        }
-        throw new Error(responseData.error || `Failed to update profile: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to update profile");
       }
 
+      setError("");
+      alert("Profile updated successfully!");
       navigate("/artisan-profile");
     } catch (err) {
       console.error("Error updating profile:", err);
@@ -132,215 +130,259 @@ function EditProfile() {
     }
   };
 
-  if (loading) return <p className="profile-loading">Loading profile...</p>;
-  if (!user) return <p>Please log in to edit your profile.</p>;
+  const handleJobPostingSubmit = async (e) => {
+    e.preventDefault();
+    if (!newJobPosting.dealId || !newJobPosting.description || !newJobPosting.image) {
+      setError("Please provide a deal, description, and image.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("dealId", newJobPosting.dealId);
+    formData.append("description", newJobPosting.description);
+    formData.append("image", newJobPosting.image);
+
+    try {
+      const response = await fetch(`http://localhost:8080/artisan/${artisanId}/add-job-posting`, {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to add job posting");
+      }
+      setNewJobPosting({ dealId: "", description: "", image: null });
+      setError("");
+      alert("Job posting added successfully!");
+    } catch (err) {
+      console.error("Error adding job posting:", err);
+      setError(err.message);
+    }
+  };
+
+  if (loading) return <p>Loading...</p>;
 
   return (
-    <form onSubmit={handleSubmit} encType="multipart/form-data" className="artisan-profile-container">
-      <h2 className="profile-title">Edit Artisan Profile</h2>
+    <div className="edit-profile-container">
+      <h2>Edit Artisan Profile</h2>
       {error && <p className="error-message">{error}</p>}
-
-      <label>
-        First Name: <span className="aesterik">*</span>
-        <input
-          name="firstname"
-          value={formData.firstname}
-          onChange={handleChange}
-          required
-        />
-      </label>
-
-      <label>
-        Last Name: <span className="aesterik">*</span>
-        <input
-          name="lastname"
-          value={formData.lastname}
-          onChange={handleChange}
-          required
-        />
-      </label>
-
-      <label>
-        Phone Number: <span className="aesterik">*</span>
-        <input
-          type="tel"
-          name="phone"
-          value={formData.phone}
-          onChange={handleChange}
-          pattern="\+?[0-9]{10,15}"
-          title="Phone number should be 10-15 digits, optionally starting with +"
-          required
-        />
-      </label>
-
-      <label>
-        Email: <span className="aesterik">*</span>
-        <input
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-      </label>
-
-      <label>
-        Gender: <span className="aesterik">*</span>
-        <select name="gender" value={formData.gender} onChange={handleChange} required>
-          <option value="">Select</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other</option>
-        </select>
-      </label>
-
-      <label>
-        Date of Birth: <span className="aesterik">*</span>
-        <input
-          type="date"
-          name="dob"
-          value={formData.dob}
-          onChange={handleChange}
-          required
-          max={new Date().toISOString().split("T")[0]}
-        />
-      </label>
-
-      <label>
-        City / Town: <span className="aesterik">*</span>
-        <div className="city-dropdown-wrapper">
+      <form onSubmit={handleSubmit} encType="multipart/form-data">
+        <label>
+          First Name: <span className="aesterik">*</span>
+          <input
+            type="text"
+            name="firstname"
+            value={formData.firstname}
+            onChange={handleChange}
+            required
+          />
+        </label>
+        <label>
+          Last Name: <span className="aesterik">*</span>
+          <input
+            type="text"
+            name="lastname"
+            value={formData.lastname}
+            onChange={handleChange}
+            required
+          />
+        </label>
+        <label>
+          Phone: <span className="aesterik">*</span>
+          <input
+            type="tel"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            required
+          />
+        </label>
+        <label>
+          Email:
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+        </label>
+        <label>
+          Gender: <span className="aesterik">*</span>
+          <select name="gender" value={formData.gender} onChange={handleChange} required>
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+        <label>
+          Date of Birth: <span className="aesterik">*</span>
+          <input
+            type="date"
+            name="dob"
+            value={formData.dob}
+            onChange={handleChange}
+            required
+          />
+        </label>
+        <label>
+          City: <span className="aesterik">*</span>
           <input
             type="text"
             name="city"
             value={formData.city}
-            onClick={() => setShowCityDropdown(!showCityDropdown)}
-            placeholder="Select City"
-            readOnly
+            onChange={handleChange}
             required
           />
-          {showCityDropdown && (
-            <ul className="city-dropdown">
-              {filteredCities.map((city, index) => (
-                <li key={index} onClick={() => handleCitySelect(city)}>
-                  {city}
-                </li>
+        </label>
+        <label>
+          Address: <span className="aesterik">*</span>
+          <input
+            type="text"
+            name="address"
+            value={formData.address}
+            onChange={handleChange}
+            required
+          />
+        </label>
+        <label>
+          Skill: <span className="aesterik">*</span>
+          <input
+            type="text"
+            name="skill"
+            value={formData.skill}
+            onChange={handleChange}
+            required
+          />
+        </label>
+        <label>
+          Years of Experience: <span className="aesterik">*</span>
+          <input
+            type="number"
+            name="experience"
+            value={formData.experience}
+            onChange={handleChange}
+            required
+          />
+        </label>
+        <label>
+          Bio:
+          <textarea name="bio" value={formData.bio} onChange={handleChange} />
+        </label>
+        <label>
+          Reference:
+          <input
+            type="text"
+            name="reference"
+            value={formData.reference}
+            onChange={handleChange}
+          />
+        </label>
+        <label>
+          Profile Picture:
+          <input
+            type="file"
+            name="profilePic"
+            accept="image/*"
+            onChange={handleFileChange}
+          />
+        </label>
+        <label>
+          Certificate (PDF):
+          <input
+            type="file"
+            name="certificate"
+            accept="application/pdf"
+            onChange={handleFileChange}
+          />
+        </label>
+        <label>
+          Portfolio (Images/Videos):
+          <input
+            type="file"
+            name="portfolio"
+            accept="image/*,video/*"
+            multiple
+            onChange={handleFileChange}
+          />
+        </label>
+        {existingPortfolio.length > 0 && (
+          <div className="existing-portfolio">
+            <h3>Existing Portfolio</h3>
+            <div className="portfolio-grid">
+              {existingPortfolio.map((file, index) => (
+                <div key={index} className="portfolio-item">
+                  {file.endsWith(".mp4") ? (
+                    <video controls>
+                      <source src={`http://localhost:8080/uploads/${file}`} type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  ) : (
+                    <img
+                      src={`http://localhost:8080/uploads/${file}`}
+                      alt={`Portfolio ${index + 1}`}
+                      onError={(e) => (e.target.src = "/default-image.png")}
+                    />
+                  )}
+                </div>
               ))}
-            </ul>
-          )}
-        </div>
-      </label>
-
-      <label>
-        Full Address: <span className="aesterik">*</span>
-        <textarea
-          name="address"
-          value={formData.address}
-          onChange={handleChange}
-          required
-        />
-      </label>
-
-      <label>
-        Primary Skill / Trade: <span className="aesterik">*</span>
-        <select name="skill" value={formData.skill} onChange={handleChange} required>
-          <option value="">Select Skill</option>
-          <option value="Carpenter">Carpenter</option>
-          <option value="Electrician">Electrician</option>
-          <option value="Plumber">Plumber</option>
-          <option value="Welder">Welder</option>
-          <option value="Tiler">Tiler</option>
-          <option value="Cleaner">Cleaner</option>
-          <option value="Painter">Painter</option>
-          <option value="Gardener">Gardener</option>
-          <option value="Technician">Technician</option>
-        </select>
-      </label>
-
-      <label>
-        Years of Experience: <span className="aesterik">*</span>
-        <input
-          type="number"
-          name="experience"
-          value={formData.experience}
-          onChange={handleChange}
-          required
-        />
-      </label>
-
-      <label>
-        Brief Bio / About Me: <span className="aesterik">*</span>
-        <textarea
-          name="bio"
-          value={formData.bio}
-          onChange={handleChange}
-          required
-        />
-      </label>
-
-      <label>
-        Reference:
-        <input
-          name="reference"
-          value={formData.reference}
-          onChange={handleChange}
-        />
-      </label>
-
-      <label>
-        Profile Picture:
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setProfilePic(e.target.files[0])}
-        />
-      </label>
-
-      <label>
-        Certificate or Training Proof:
-        <input
-          type="file"
-          accept=".pdf,image/*"
-          onChange={(e) => setCertificate(e.target.files[0])}
-        />
-      </label>
-
-      <label>
-        Portfolio (photos/videos of past work):
-        <input
-          type="file"
-          accept="image/*,video/*"
-          multiple
-          onChange={(e) => setPortfolio(Array.from(e.target.files))}
-        />
-      </label>
-
-      {existingPortfolio.length > 0 && (
-        <div className="profile-section">
-          <h3>Existing Portfolio</h3>
-          <div className="portfolio-grid">
-            {existingPortfolio.map((file, index) => (
-              <div key={index} className="portfolio-item">
-                {file.endsWith(".mp4") ? (
-                  <video controls>
-                    <source src={`http://localhost:8080/uploads/${file}`} type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
-                ) : (
-                  <img
-                    src={`http://localhost:8080/uploads/${file}`}
-                    alt={`Portfolio ${index + 1}`}
-                    onError={(e) => (e.target.src = "/default-image.png")}
-                  />
-                )}
-              </div>
-            ))}
+            </div>
           </div>
+        )}
+        <button type="submit" className="submit-button">
+          Update Profile
+        </button>
+      </form>
+
+      {deals.length > 0 && (
+        <div className="profile-section">
+          <h3>Add Job Posting</h3>
+          {deals.some((deal) => !deal.job_posting) && (
+            <p className="notification">You have confirmed deals. Please add job details below.</p>
+          )}
+          <form onSubmit={handleJobPostingSubmit} encType="multipart/form-data">
+            <label>
+              Select Deal: <span className="aesterik">*</span>
+              <select
+                value={newJobPosting.dealId}
+                onChange={(e) => setNewJobPosting({ ...newJobPosting, dealId: e.target.value })}
+                required
+              >
+                <option value="">Select a deal</option>
+                {deals
+                  .filter((deal) => !deal.job_posting)
+                  .map((deal) => (
+                    <option key={deal.id} value={deal.id}>
+                      Deal with {deal.first_name} {deal.last_name}
+                    </option>
+                  ))}
+              </select>
+            </label>
+            <label>
+              Job Description: <span className="aesterik">*</span>
+              <textarea
+                value={newJobPosting.description}
+                onChange={(e) => setNewJobPosting({ ...newJobPosting, description: e.target.value })}
+                required
+              />
+            </label>
+            <label>
+              Job Image: <span className="aesterik">*</span>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setNewJobPosting({ ...newJobPosting, image: e.target.files[0] })}
+                required
+              />
+            </label>
+            <button type="submit" className="submitbutton">
+              Add Job Posting
+            </button>
+          </form>
         </div>
       )}
-
-      <button type="submit" className="submitbutton">
-        Save Changes
-      </button>
-    </form>
+    </div>
   );
 }
 
