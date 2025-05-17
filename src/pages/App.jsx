@@ -18,12 +18,15 @@ import Chat from './chat.jsx';
 import Conversations from './conversations.jsx';
 import EditProfile from './editprofile.jsx';
 import PurchaseCoins from './PurchaseCoins.jsx';
-import Review from "./reviews";
+import Review from "./reviews.jsx";
+import AdminDashboard from './AdminDashboard.jsx';
 
-function ProtectedRoute({ children }) {
+function ProtectedRoute({ children, requireAdmin = false }) {
   const { user, loading } = useAuth();
   if (loading) return <div className="loading">Loading...</div>;
-  return user ? children : <Navigate to="/signin" />;
+  if (!user) return <Navigate to="/signin" />;
+  if (requireAdmin && user.role !== "admin") return <Navigate to="/" />;
+  return children;
 }
 
 function App() {
@@ -114,7 +117,15 @@ function App() {
             </ProtectedRoute>
           }
         />
-<Route path="/review/:artisanId" element={<Review />} />
+        <Route path="/review/:artisanId" element={<Review />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute requireAdmin={true}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
         <Route path="*" element={<div className="not-found">404 - Page Not Found</div>} />
       </Routes>
     </>

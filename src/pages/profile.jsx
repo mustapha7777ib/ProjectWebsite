@@ -131,14 +131,12 @@ function Profile() {
       }
 
       console.log("Profile.jsx: Registration successful:", data);
-      // Update AuthContext
       setArtisanStatus(true);
-      setArtisan(data.data.id); // Use data.data.id to match the response structure
-      // Update user with artisanid
+      setArtisan(data.data.id);
       const updatedUser = { ...user, artisanId: data.data.id };
       await login(updatedUser);
       setTimeout(() => {
-        navigate(`/artisan-profile/${data.data.id}`);
+        navigate("/artisan-profile");
       }, 2000);
     } catch (err) {
       console.error("Profile.jsx: Registration error:", err.message);

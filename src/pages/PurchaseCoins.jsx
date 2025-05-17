@@ -132,7 +132,7 @@ function PurchaseCoins() {
           placeholder="Enter number of coins"
         />
         <p className="cost-info">
-          Cost: NGN {coinAmount * 100} (NGN 100 per coin)
+          Cost: NGN {coinAmount * 10} (NGN 10 per coin)
         </p>
         <button onClick={handlePurchase} className="purchase-btn">
           Buy Coins with Paystack

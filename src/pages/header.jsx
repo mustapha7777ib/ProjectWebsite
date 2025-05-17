@@ -43,8 +43,19 @@ function Header() {
         {user ? (
           <div className="profile-container" ref={dropdownRef}>
             {isArtisan && coins !== null && (
-              <Link to="/purchase-coins" onClick={() => scrollToSection("contact")} className="coin-balance" style={{ marginRight: "10px", textDecoration: "none", marginTop: "3px" }}>
-                Coins: {coins}</Link>
+              <Link
+                to="/purchase-coins"
+                onClick={() => scrollToSection("contact")}
+                className="coin-balance"
+                style={{ marginRight: "10px", textDecoration: "none", marginTop: "3px" }}
+              >
+                Coins: {coins}
+              </Link>
+            )}
+            {user.role === "admin" && (
+              <Link to="/admin" className="admin-btn" style={{ marginLeft: "10px" }}>
+                Admin Dashboard
+              </Link>
             )}
             <button onClick={toggleDropdown} className="profile-btn">Profile</button>
             {dropdownOpen && (

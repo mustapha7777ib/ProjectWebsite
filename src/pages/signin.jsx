@@ -24,6 +24,7 @@ function SignIn() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
+      credentials: "include",
     })
       .then((res) => res.json())
       .then((data) => {

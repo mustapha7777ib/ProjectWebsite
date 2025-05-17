@@ -13,45 +13,26 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-  const fetchUser = async () => {
+  const checkSessionAndFetchUser = async () => {
     try {
-      const storedUserRaw = localStorage.getItem("user");
-      if (!storedUserRaw) {
-        setLoading(false);
-        return;
-      }
-
-      let storedUser;
-      try {
-        storedUser = JSON.parse(storedUserRaw);
-      } catch (err) {
-        console.error("Error parsing user from localStorage:", err);
-        localStorage.removeItem("user");
-        localStorage.removeItem("coins");
-        setLoading(false);
-        return;
-      }
-
-      if (!storedUser || !storedUser.id || typeof storedUser.id !== "number") {
-        console.error("Invalid user data in localStorage:", storedUser);
-        localStorage.removeItem("user");
-        localStorage.removeItem("coins");
-        setLoading(false);
-        return;
-      }
-
-      const response = await fetch(`http://localhost:8080/users/${storedUser.id}`);
+      const response = await fetch("http://localhost:8080/auth/check-session", {
+        credentials: "include",
+      });
+      console.log("Auth check status:", response.status);
       if (!response.ok) {
-        console.error("Failed to fetch user:", response.status);
+        console.error("Auth check failed:", response.status);
         localStorage.removeItem("user");
         localStorage.removeItem("coins");
         setLoading(false);
         return;
       }
-
-      setUser(storedUser);
-      if (storedUser.artisanId) {
-        const response = await fetch(`http://localhost:8080/artisan/${storedUser.artisanId}`);
+      const sessionUser = await response.json();
+      console.log("Session user:", sessionUser);
+      localStorage.setItem("user", JSON.stringify(sessionUser));
+      setUser(sessionUser);
+      // Continue with artisan and coins fetching as before
+      if (sessionUser.artisanId) {
+        const response = await fetch(`http://localhost:8080/artisan/${sessionUser.artisanId}`);
         if (response.ok) {
           const artisanData = await response.json();
           setIsArtisan(!!artisanData.id);
@@ -75,7 +56,7 @@ export const AuthProvider = ({ children }) => {
         }
       }
     } catch (err) {
-      console.error("Error fetching user data:", err);
+      console.error("Error checking session or fetching user:", err);
       setError("Failed to load user data");
       localStorage.removeItem("user");
       localStorage.removeItem("coins");
@@ -84,7 +65,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  fetchUser();
+  const storedUserRaw = localStorage.getItem("user");
+  if (storedUserRaw) {
+    checkSessionAndFetchUser();
+  } else {
+    setLoading(false);
+  }
 }, []);
 
   const login = useCallback(async (userData) => {
