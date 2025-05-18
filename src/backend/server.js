@@ -1546,35 +1546,44 @@ app.put("/api/admin/users/:id", ensureAdmin, async (req, res) => {
     res.status(500).json({ error: "Server error: " + err.message });
   }
 });
-
 app.get("/api/admin/signup-trends", ensureAdmin, async (req, res) => {
-  const { range } = req.query;
-  console.log("server.js: GET /api/admin/signup-trends", { range });
+  const { range, role } = req.query;
+  console.log("server.js: GET /api/admin/signup-trends", { range, role });
   if (!['7d', '30d', '90d'].includes(range)) {
     console.error("server.js: Invalid range parameter:", range);
     return res.status(400).json({ error: "Invalid range parameter" });
   }
+  if (role && !['user', 'artisan', 'admin', 'all'].includes(role)) {
+    console.error("server.js: Invalid role parameter:", role);
+    return res.status(400).json({ error: "Invalid role parameter" });
+  }
   try {
     const days = range === '7d' ? 7 : range === '30d' ? 30 : 90;
     const endDate = new Date();
-    endDate.setHours(23, 59, 59, 999); // End of today in UTC
+    endDate.setUTCHours(23, 59, 59, 999); // End of today in UTC
     const startDate = new Date(endDate);
     startDate.setDate(startDate.getDate() - days);
-    startDate.setHours(0, 0, 0, 0); // Start of day in UTC
+    startDate.setUTCHours(0, 0, 0, 0); // Start of day in UTC
     console.log("server.js: Date range:", startDate.toISOString(), "to", endDate.toISOString());
-    // Fetch grouped signup counts
-    const result = await pool.query(
-      `SELECT TO_CHAR(created_at AT TIME ZONE 'WAT', 'YYYY-MM-DD') as date, COUNT(*) as count
-       FROM users
-       WHERE created_at IS NOT NULL
-         AND created_at >= $1
-         AND created_at <= $2
-       GROUP BY TO_CHAR(created_at AT TIME ZONE 'WAT', 'YYYY-MM-DD')
-       ORDER BY TO_CHAR(created_at AT TIME ZONE 'WAT', 'YYYY-MM-DD') ASC`,
-      [startDate, endDate]
-    );
+    const query = role && role !== 'all'
+      ? `SELECT TO_CHAR(created_at AT TIME ZONE 'WAT', 'YYYY-MM-DD') as date, COUNT(*) as count
+         FROM users
+         WHERE created_at IS NOT NULL
+           AND created_at >= $1
+           AND created_at <= $2
+           AND role = $3
+         GROUP BY TO_CHAR(created_at AT TIME ZONE 'WAT', 'YYYY-MM-DD')
+         ORDER BY TO_CHAR(created_at AT TIME ZONE 'WAT', 'YYYY-MM-DD') ASC`
+      : `SELECT TO_CHAR(created_at AT TIME ZONE 'WAT', 'YYYY-MM-DD') as date, COUNT(*) as count
+         FROM users
+         WHERE created_at IS NOT NULL
+           AND created_at >= $1
+           AND created_at <= $2
+         GROUP BY TO_CHAR(created_at AT TIME ZONE 'WAT', 'YYYY-MM-DD')
+         ORDER BY TO_CHAR(created_at AT TIME ZONE 'WAT', 'YYYY-MM-DD') ASC`;
+    const params = role && role !== 'all' ? [startDate, endDate, role] : [startDate, endDate];
+    const result = await pool.query(query, params);
     console.log("server.js: Signup trends fetched:", result.rows);
-    // Generate trends array
     const trends = [];
     for (let i = 0; i <= days; i++) {
       const date = new Date(startDate);

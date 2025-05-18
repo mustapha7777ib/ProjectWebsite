@@ -1,109 +1,152 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 
-const Signup = () => {
+function SignUp() {
+  const [step, setStep] = useState(1); 
   const [formData, setFormData] = useState({
-    first_name: '',
-    last_name: '',
-    email: '',
-    password: '',
-    role: 'user',
+    email: "",
+    firstName: "",
+    lastName: "",
+    password: "",
+    confirmPassword: "",
   });
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const [message, setMessage] = useState(""); 
 
-  const handleChange = (e) => {
+  const { login } = useAuth(); 
+  const navigate = useNavigate(); 
+
+  function handleChange(e) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  }
 
-  const handleFinalSubmit = async (e) => {
+  function handleNextStep(e) {
     e.preventDefault();
-    console.log("signup.jsx: Submitting signup form", formData);
-    try {
-      const response = await fetch('http://localhost:8080/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(formData),
-      });
-      if (!response.ok) {
-        let errorMessage = `Signup failed: ${response.statusText} (${response.status})`;
-        try {
-          const data = await response.json();
-          errorMessage = data.error || errorMessage;
-        } catch (jsonError) {
-          console.error("signup.jsx: Non-JSON response:", await response.text());
-        }
-        console.error("signup.jsx: Signup error:", errorMessage);
-        setError(errorMessage);
-        return;
-      }
-      const data = await response.json();
-      console.log("signup.jsx: Signup successful:", data);
-      setError('');
-      navigate('/dashboard'); // Adjust based on your app’s routing
-    } catch (err) {
-      console.error("signup.jsx: Network error:", err.message);
-      setError('Network error: Could not connect to server');
+    const { email, firstName, lastName } = formData;
+    if (!email || !firstName || !lastName) {
+      setMessage("Please fill in all fields.");
+      return;
     }
-  };
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (!emailRegex.test(email)) {
+      setMessage("Please enter a valid email.");
+      return;
+    }
+    setMessage(""); 
+    setStep(2);
+  }
+
+  function handleFinalSubmit(e) {
+    e.preventDefault();
+    const { password, confirmPassword } = formData;
+    if (!password || !confirmPassword) {
+      setMessage("Please enter and confirm your password.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setMessage("Passwords do not match.");
+      return;
+    }
+
+    fetch("http://localhost:8080/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          setMessage(data.error); 
+        } else {
+          login(data.user); 
+          navigate("/"); 
+        }
+      })
+      .catch((err) => setMessage("Error: " + err.message)); 
+  }
 
   return (
-    <div>
-      <h2>Sign Up</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleFinalSubmit}>
-        <div>
-          <label>First Name</label>
-          <input
-            type="text"
-            name="first_name"
-            value={formData.first_name}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Last Name</label>
-          <input
-            type="text"
-            name="last_name"
-            value={formData.last_name}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Email</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Password</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Role</label>
-          <select name="role" value={formData.role} onChange={handleChange}>
-            <option value="user">User</option>
-            <option value="artisan">Artisan</option>
-          </select>
-        </div>
-        <button type="submit">Sign Up</button>
-      </form>
+    <div className="signupjsx">
+      <h2>Create an Account</h2>
+
+      {message && <p className="message">{message}</p>} 
+
+      {step === 1 && (
+        <>
+          <div className="inputer">
+            <p>Email</p>
+            <input
+              className="inputerchild"
+              placeholder="Enter your Email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="inputer">
+            <p>First Name</p>
+            <input
+              className="inputerchild"
+              placeholder="Enter your First Name"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="inputer">
+            <p>Last Name</p>
+            <input
+              className="inputerchild"
+              placeholder="Enter your Last Name"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+            />
+          </div>
+          <button onClick={handleNextStep}>Next</button>
+        </>
+      )}
+
+      {step === 2 && (
+        <>
+          <div className="inputer">
+            <p>Password</p>
+            <input
+              className="inputerchild"
+              type="password"
+              placeholder="Enter your Password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="inputer">
+            <p>Confirm Password</p>
+            <input
+              className="inputerchild"
+              type="password"
+              placeholder="Confirm your Password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+            />
+          </div>
+
+          <button onClick={handleFinalSubmit}>Sign Up</button>
+        </>
+      )}
+
+      <p className="have">
+        Already have an account?{" "}
+        <span>
+          <Link to="/signin" className="signin">
+            Sign in
+          </Link>
+        </span>
+      </p>
     </div>
   );
-};
+}
 
-export default Signup;
+export default SignUp;

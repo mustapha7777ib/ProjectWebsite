@@ -40,6 +40,8 @@ function AdminDashboard() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [timeRange, setTimeRange] = useState("30d");
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
 
   const fetchAdminData = async () => {
     setIsLoading(true);
@@ -120,19 +122,23 @@ function AdminDashboard() {
       });
       if (signupsResponse.ok) {
         const signupsData = await signupsResponse.json();
-        newActivities.recentSignups = signupsData.slice(0, 10);
+        newActivities.recentSignups = signupsData;
       } else {
         errorMessages.push(`Signups: ${signupsResponse.statusText} (${signupsResponse.status})`);
       }
 
-      // Fetch audit logs (mock data for now)
-      newAuditLogs = [
-        { id: 1, admin: "Admin1", action: "Banned user ID 123", timestamp: new Date().toISOString() },
-        { id: 2, admin: "Admin2", action: "Updated user role", timestamp: new Date().toISOString() },
-      ];
+      // Fetch audit logs
+      const auditLogsResponse = await fetch("http://localhost:8080/api/admin/audit-logs", {
+        credentials: "include",
+      });
+      if (auditLogsResponse.ok) {
+        newAuditLogs = await auditLogsResponse.json();
+      } else {
+        errorMessages.push(`Audit Logs: ${auditLogsResponse.statusText} (${auditLogsResponse.status})`);
+      }
 
       // Fetch signup trends
-      const trendsResponse = await fetch(`http://localhost:8080/api/admin/signup-trends?range=${timeRange}`, {
+      const trendsResponse = await fetch(`http://localhost:8080/api/admin/signup-trends?range=${timeRange}&role=${roleFilter}`, {
         credentials: "include",
         headers: { "Content-Type": "application/json" },
       });
@@ -145,6 +151,21 @@ function AdminDashboard() {
           console.warn("AdminDashboard.jsx: Signup trends empty");
         }
         console.log("AdminDashboard.jsx: Signup trends data:", newSignupTrends);
+        const expectedDays = timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 90;
+        const endDate = new Date();
+        endDate.setUTCHours(23, 59, 59, 999);
+        const startDate = new Date(endDate);
+        startDate.setDate(startDate.getDate() - expectedDays);
+        const filledTrends = [];
+        for (let i = 0; i <= expectedDays; i++) {
+          const date = new Date(startDate);
+          date.setDate(startDate.getDate() + i);
+          const dateStr = date.toISOString().split('T')[0];
+          const trend = newSignupTrends.find(t => t.date === dateStr) || { date: dateStr, count: 0 };
+          filledTrends.push(trend);
+        }
+        newSignupTrends = filledTrends;
+        console.log("AdminDashboard.jsx: Filled signup trends:", newSignupTrends);
       } else {
         console.error("AdminDashboard.jsx: Trends fetch failed:", trendsResponse.status, await trendsResponse.text());
         errorMessages.push(`Signup Trends: ${trendsResponse.statusText} (${trendsResponse.status})`);
@@ -172,13 +193,8 @@ function AdminDashboard() {
       navigate("/signin");
       return;
     }
-
     fetchAdminData();
-
-    // Polling for real-time updates every 10 seconds (for testing)
-    const interval = setInterval(fetchAdminData, 10000);
-    return () => clearInterval(interval);
-  }, [user, authLoading, navigate, timeRange]);
+  }, [user, authLoading, navigate, timeRange, roleFilter]);
 
   const handleBanUser = async (userId) => {
     if (window.confirm("Are you sure you want to ban this user?")) {
@@ -283,8 +299,31 @@ function AdminDashboard() {
     responsive: true,
     plugins: {
       legend: { position: "top" },
-      title: { display: true, text: "User Signup Trends" },
+      title: {
+        display: true,
+        text: `User Signup Trends (${roleFilter === 'all' ? 'All Roles' : roleFilter.charAt(0).toUpperCase() + roleFilter.slice(1)})`,
+      },
     },
+  };
+
+  // Pagination logic
+  const filteredSignups = activities.recentSignups
+    .filter((signup) =>
+      `${signup.first_name} ${signup.last_name} ${signup.email}`
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    )
+    .filter((signup) => roleFilter === "all" || signup.role === roleFilter);
+  const totalPages = Math.ceil(filteredSignups.length / itemsPerPage);
+  const paginatedSignups = filteredSignups.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
   };
 
   if (authLoading || isLoading) {
@@ -321,11 +360,19 @@ function AdminDashboard() {
 
       <div className="analytics-section">
         <h2 className="section-title">Analytics</h2>
-        <select value={timeRange} onChange={(e) => setTimeRange(e.target.value)}>
-          <option value="7d">Last 7 Days</option>
-          <option value="30d">Last 30 Days</option>
-          <option value="90d">Last 90 Days</option>
-        </select>
+        <div className="filters">
+          <select value={timeRange} onChange={(e) => setTimeRange(e.target.value)}>
+            <option value="7d">Last 7 Days</option>
+            <option value="30d">Last 30 Days</option>
+            <option value="90d">Last 90 Days</option>
+          </select>
+          <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
+            <option value="all">All Roles</option>
+            <option value="user">Users</option>
+            <option value="artisan">Artisans</option>
+            <option value="admin">Admins</option>
+          </select>
+        </div>
         <div className="chart-container">
           <Line data={chartData} options={chartOptions} />
         </div>
@@ -352,7 +399,9 @@ function AdminDashboard() {
               <tbody>
                 {activities.coinPurchases.map((purchase) => (
                   <tr key={purchase.id}>
-                    <td>{purchase.firstname} {purchase.lastname}</td>
+                    <td>
+                      {purchase.firstname} {purchase.lastname}
+                    </td>
                     <td>{purchase.coin_amount}</td>
                     <td>{purchase.amount / 100}</td>
                     <td>{new Date(purchase.created_at).toLocaleString()}</td>
@@ -383,8 +432,12 @@ function AdminDashboard() {
               <tbody>
                 {activities.deals.map((deal) => (
                   <tr key={deal.id}>
-                    <td>{deal.user_first_name} {deal.user_last_name}</td>
-                    <td>{deal.artisan_firstname} {deal.artisan_lastname}</td>
+                    <td>
+                      {deal.user_first_name} {deal.user_last_name}
+                    </td>
+                    <td>
+                      {deal.artisan_firstname} {deal.artisan_lastname}
+                    </td>
                     <td>{deal.coins_deducted || 25}</td>
                     <td>{new Date(deal.created_at).toLocaleString()}</td>
                   </tr>
@@ -446,34 +499,30 @@ function AdminDashboard() {
               <option value="artisan">Artisan</option>
               <option value="admin">Admin</option>
             </select>
-            <button onClick={() => exportToCSV(activities.recentSignups, "user_signups.csv", "signups")}>
+            <button onClick={() => exportToCSV(filteredSignups, "user_signups.csv", "signups")}>
               Export to CSV
             </button>
           </div>
-          {activities.recentSignups.length === 0 ? (
+          {paginatedSignups.length === 0 ? (
             <p>No recent signups.</p>
           ) : (
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>User</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Signup Date</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {activities.recentSignups
-                  .filter((signup) =>
-                    `${signup.first_name} ${signup.last_name} ${signup.email}`
-                      .toLowerCase()
-                      .includes(searchTerm.toLowerCase())
-                  )
-                  .filter((signup) => roleFilter === "all" || signup.role === roleFilter)
-                  .map((signup) => (
+            <>
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Signup Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginatedSignups.map((signup) => (
                     <tr key={signup.id}>
-                      <td>{signup.first_name} {signup.last_name}</td>
+                      <td>
+                        {signup.first_name} {signup.last_name}
+                      </td>
                       <td>{signup.email}</td>
                       <td>{signup.role}</td>
                       <td>{new Date(signup.created_at).toLocaleString()}</td>
@@ -483,8 +532,26 @@ function AdminDashboard() {
                       </td>
                     </tr>
                   ))}
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+              <div className="pagination">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </button>
+                <span>
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </button>
+              </div>
+            </>
           )}
         </div>
 
