@@ -5,9 +5,9 @@ function Services() {
     return (
         <div id="services">
             <div className="containerservices">
-                <div>
+                <div className='outside'>
                     <div className="containerservices1">
-                        <h2>Carpenter</h2>
+                        <h2 className='carpenter'>Carpenter</h2>
                         <p className="servicetext">
                             We are currently available in Abuja, we provide this woodwork services for 
                             residence of the city in certain areas, find more below

@@ -33,11 +33,14 @@ body {
     justify-content: space-around;
     display: flex;
     padding-left: 100px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
 }
 
 .header11 {
     justify-content: space-around;
     display: flex;
+    padding-bottom: 10px;
 }
 
 .header1 * {
@@ -69,6 +72,8 @@ body {
     display: none;
     font-size: 2rem;
     cursor: pointer;
+    padding-top: 17px;
+    padding-bottom: 17px;
 }
 
 .work {
@@ -325,13 +330,9 @@ body {
 }
 
 .contact {
-    margin-left: -150px;
-    width: 95.5vw;
     background-color: #764abc;
-    padding-bottom: 30px;
     padding: 20px;
     color: white;
-    margin-bottom: -30px;
 }
 
 .email, .phone, .address {
@@ -342,12 +343,12 @@ body {
 .contact1 {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-between;
     padding-bottom: 40px;
 }
 
 .details {
-    margin-left: -130px;
+
 }
 
 .joinus1, .joinus2, .joinus3, .joinus4 {
@@ -1811,4 +1812,309 @@ label {
 .admin-btn{
     margin-top: 3px;
     text-decoration: none;
+}
+.texxt{
+    padding-left: 10px;
+    padding-right: 10px;
+}
+@media screen and (max-width: 1169px) {
+    .hearwhatoga{
+        width: 700px;
+    }
+    .containerservices1{
+        width: 350px;
+    }
+    .containerservices2{
+        width: 350px;
+    }
+    .containerservices11{
+        width: 350px;
+    }
+    .containerservices21{
+        width: 350px;
+    }
+    .seemore {
+        margin-left: 260px;
+    }
+}
+@media screen and (max-width: 1045px) {
+
+    .containerservices1{
+        width: 550px;
+        margin-right: 0px;
+    }
+    .containerservices2{
+        display:none;
+    }
+    .containerservices11{
+        width: 550px;
+        margin-right: 0px;
+    }
+    .containerservices21{
+        display:none;
+    }
+    .containerservices{
+        margin-left: 100px;
+    }
+    .right {
+        margin-left: -50px;
+        margin-top: 200px;
+    }
+    .work {
+        font-size: 70px;
+        margin-bottom: -80px;
+        margin-top: 110px;
+    }
+
+    .up {
+        font-size: 60px;
+        font-style: italic;
+    }
+    .seemore {
+        margin-left: 260px;
+    }
+    .hearwhatoga{
+        width: 600px;
+    }
+    .text{
+        margin-left: 100px;
+    }
+    .outside{
+        width: 300px;
+    }
+}
+@media screen and (max-width: 865px) {
+    .text{
+        margin-left: 100px;
+        margin-top: -100px;
+    }
+    .right{
+        display: none;
+    }
+    .containerservices1{
+        width: 350px;
+        margin-right: 0px;
+    }
+    .containerservices11{
+        width: 350px;       
+    }
+    .seemore {
+        margin-left: 180px;
+    }
+    .hearwhatoga{
+        width: 400px;
+        padding-bottom: 10px;
+    }
+    .hearwhat{
+        font-size: 12.9px;
+        margin-top: 0px;
+        padding-bottom: 0px;
+    }
+    .hear{
+        font-size: 20px;
+    }
+    .contact *{
+        font-size: 15px;
+    }
+    .buttonsss{
+        display:none;
+    }
+    div.artisan:nth-of-type(4){
+        display: none;
+    }
+    div.artisan:nth-of-type(5){
+        display: none;
+    }
+}
+@media screen and (max-width: 667px) {
+    .header1{
+        display:none;
+    }
+    .hamburger{
+        display:flex
+    }
+    .hamburger-icon{
+        width: 30px;
+        height: 30px;
+    }
+    .hamburger-icon1{
+        width: 30px;
+        height: 30px;
+    }
+    .header11{
+        display: flex;
+        flex-direction: column;
+    }
+    .containerservices1{
+        width: 250px;
+        margin-left: -50px;
+        height: 250px;
+        font-size: 13px;
+    }
+    .carpenter{
+        margin-bottom: -10px;
+    }
+    .servicetext{
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 0px;
+    }
+    .containerservices11{
+        display: none;    
+        margin-bottom: -20px; 
+        padding-bottom: -20px;
+    }
+    .text{
+        margin-left: 50px;
+        margin-top: -100px;
+        padding-top: -20px;
+    }
+    .seemore{
+        margin-left: 60px;
+        background-color: #ffffff;
+        color: #764abc;
+    }
+    .containerservices{
+        margin-bottom: 10px;
+    }
+    .hearwhatoga{
+        width: 200px;
+        padding-bottom: 10px;
+        padding-top: 20px;
+        margin-left: 50px;
+    }
+    .hearwhat{
+        font-size: 12px;
+        line-height: 15px;
+        margin-top: 0px;
+        padding-bottom: 0px;
+    }
+    body{
+        margin-left: -100px;
+    }
+    .ceo{
+        font-size: 10px;
+    }
+    .hear{
+        margin-top: -50px;
+        font-size: 15px;
+        margin-left: 50px;
+    }
+    .details{
+        display: none;
+    }
+    .details2{
+        margin-left: 150px;
+    }
+    .contact h1{
+        display: none;
+    }
+    .texxt{
+        display: none;
+    }
+    .gettrusted{
+        margin-left: 100px;
+    }
+    h1.gettrusted{
+        font-size: 30px;
+    }
+    .searchbar{
+        width:400px;
+        margin-left: 100px;
+    }
+    .searchbar p{
+        font-size: 15px;    
+       
+    }
+    .icon{
+        width: 25px;
+        padding-left: 20px;
+        margin-top: -5px;
+    }
+    .artisanss{
+        margin-left: 100px;
+        
+    }
+    .artisan .jj{
+        font-size: 15px;
+    }
+    .artisanss{
+        margin-left: 150px;
+    }
+    .signinjsx{
+        margin-left: 100px;
+    }
+    .signupjsx{
+        margin-left: 100px;
+    }
+    .inputer input{
+        width: 250px;
+    }
+    .signinjsx button {
+        width: 260px;
+    }
+    .signupjsx button {
+        width: 260px;
+    }
+    .donthave{
+        font-size: 13px;
+        margin-left: 0px;
+    }
+    .have{
+        font-size: 13px;
+        margin-left: 0px;
+    }
+}
+@media screen and (max-width: 500px) {
+    .containerservices1{
+        width: 170px;
+        margin-left: -50px;
+        height: 300px;
+        font-size: 10px;
+    }
+    .seemore{
+        margin-left: 20px;
+        background-color: #ffffff;
+        color: #764abc;
+    }
+    .hearwhatoga{
+        width: 200px;
+        padding-bottom: 10px;
+        padding-top: 20px;
+        margin-left: 50px;
+        padding-left: 10px;
+        padding-right: 0px;
+    }
+    .details2 *{
+        font-weight: 300;
+    }
+        .texxt{
+        display: none;
+    }
+    .gettrusted{
+        margin-left: 100px;
+    }
+    h1.gettrusted{
+        font-size: 30px;
+    }
+    .searchbar{
+        width: 300px;
+        margin-left: 100px;
+    }
+    .searchbar p{
+        font-size: 13px;    
+       
+    }
+    .icon{
+        width: 25px;
+        padding-left: 10px;
+        margin-top: -5px;
+    }
+    .artisan .jj{
+        font-size: 13px;
+    }
+    .artisanss{
+        margin-left: 120px;
+    }
+
 }

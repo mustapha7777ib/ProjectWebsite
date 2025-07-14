@@ -41,12 +41,14 @@ function App() {
         <Route
           path="/"
           element={
-            <div style={{ marginLeft: '150px' }}>
-              <Body />
-              <Services />
-              <About />
+            <>
+              <div style={{ marginLeft: '150px' }}>
+                <Body />
+                <Services />
+                <About />
+              </div>
               <Contact />
-            </div>
+            </>
           }
         />
         <Route path="/workers" element={<Workers />} />

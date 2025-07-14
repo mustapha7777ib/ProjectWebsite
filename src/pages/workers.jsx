@@ -62,11 +62,11 @@ function Workers() {
     return (
         <div className='Workers'>
             <div>
-                <h1>
+                <h1 className='gettrusted'>
                     Get Trusted <span className='Artisans'>Artisans</span><br />
                     for Your Home Needs
                 </h1>
-                <p>
+                <p className='texxt'>
                     Easily connect with experienced and verified professionals for cleaning,<br />
                     electrical work, maintenance, and plumbing.<br />
                     Simply post your task and receive a quote in no time.<br />
@@ -177,7 +177,7 @@ function Workers() {
                             setIsOpen(true);
                         }}
                     >
-                        <p>{j}</p>
+                        <p className='jj'>{j}</p>
                     </div>
                 ))}
             </div>

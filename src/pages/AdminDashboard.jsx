@@ -52,7 +52,6 @@ function AdminDashboard() {
     let errorMessages = [];
 
     try {
-      // Fetch total users
       const usersResponse = await fetch("http://localhost:8080/api/admin/users", {
         credentials: "include",
       });
@@ -63,7 +62,6 @@ function AdminDashboard() {
         errorMessages.push(`Users: ${usersResponse.statusText} (${usersResponse.status})`);
       }
 
-      // Fetch total artisans
       const artisansResponse = await fetch("http://localhost:8080/api/admin/artisans", {
         credentials: "include",
       });
