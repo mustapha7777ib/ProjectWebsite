@@ -20,6 +20,8 @@ import EditProfile from './editprofile.jsx';
 import PurchaseCoins from './PurchaseCoins.jsx';
 import Review from "./reviews.jsx";
 import AdminDashboard from './AdminDashboard.jsx';
+import Process from './process.jsx';
+import Testimonials from './testimonials.jsx';
 
 function ProtectedRoute({ children, requireAdmin = false }) {
   const { user, loading } = useAuth();
@@ -45,7 +47,9 @@ function App() {
               <div style={{ marginLeft: '150px' }}>
                 <Body />
                 <Services />
+                <Process/>
                 <About />
+                <Testimonials/>
               </div>
               <Contact />
             </>

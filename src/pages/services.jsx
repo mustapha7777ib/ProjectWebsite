@@ -1,74 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Arrow from '../images/arrow.svg';
 
 function Services() {
     return (
         <div id="services">
-            <div className="containerservices">
-                <div className='outside'>
-                    <div className="containerservices1">
-                        <h2 className='carpenter'>Carpenter</h2>
-                        <p className="servicetext">
-                            We are currently available in Abuja, we provide this woodwork services for 
-                            residence of the city in certain areas, find more below
-                        </p>
-                        <Link to="/workers" className="findmore1 anchortagfindmore">
-                            More
-                        </Link>
-                        <Link to="/join" className="joinus1">
-                            Join Us
-                        </Link>
-                    </div>
-                </div>
-                <div>
-                    <div className="containerservices2">
-                        <h2>Electrician</h2>
-                        <p className="servicetext">
-                            Now serving Abuja! We offer reliable electrical services to residents in select areas of the city. Learn more below!
-                        </p>
-                        <Link to="/workers" className="findmore2 anchortagfindmore">
-                            More
-                        </Link>
-                        <Link to="/join" className="joinus2">
-                            Join Us
-                        </Link>
-                    </div>
-                </div>
-            </div>
-            <div className="containerservices">
-                <div>
-                    <div className="containerservices11">
-                        <h2>Plumber</h2>
-                        <p className="servicetext">
-                            Providing expert plumbing services across Abuja! We serve residents in select areas of the city. Find out more below!
-                        </p>
-                        <Link to="/workers" className="findmore11 anchortagfindmore">
-                            More
-                        </Link>
-                        <Link to="/join" className="joinus3">
-                            Join Us
-                        </Link>
-
-                    </div>
-                </div>
-                <div>
-                    <div className="containerservices21">
-                        <h2>Welder</h2>
-                        <p className="servicetext">
-                            Reliable welding services now available in Abuja! We cater to residents in specific areas of the city. Learn more below!
-                        </p>
-                        <Link to="/workers" className="findmore21">
-                            More
-                        </Link>
-                        <Link to="/join" className="joinus4">
-                            Join Us
-                        </Link>
-                    </div>
-                </div>
-            </div>
             <Link to="/workers" className="seemore">
-                See More
+                Get Services
             </Link>
+            <img src={Arrow} className='arrow'></img>
         </div>
     );
 }

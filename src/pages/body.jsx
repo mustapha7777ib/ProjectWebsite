@@ -5,7 +5,7 @@ function Body() {
     return (
         <div id="home" className="containerbody">
             <p className="text">
-                New to your area?<br /> Looking for<br />
+                New to your area? Looking for<br />
                 <TypeAnimation
                     sequence={["an electrician", 1000, "a carpenter", 1000, "a plumber", 1000]}
                     speed={50}
@@ -14,10 +14,6 @@ function Body() {
                 /><br />
                 lets <span className="spann">work it up</span> for you
             </p>
-            <div className="right">
-                <p className="work">WORK</p>
-                <p className="up">UP</p>
-            </div>
         </div>
     );
 }
