@@ -45,7 +45,6 @@ function App() {
           element={
             <>
               <div >
-                <Body />
                 <Services />
                 <Process/>
                 <About />
