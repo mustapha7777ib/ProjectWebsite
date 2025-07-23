@@ -6,7 +6,7 @@ import Body from './body.jsx';
 import Services from './services.jsx';
 import About from './about.jsx';
 import Workers from './workers.jsx';
-import Contact from './contact.jsx';
+import Footer from './footer.jsx';
 import Join from './join.jsx';
 import SignIn from './signin.jsx';
 import SignUp from './signup.jsx';
@@ -44,14 +44,14 @@ function App() {
           path="/"
           element={
             <>
-              <div style={{ marginLeft: '150px' }}>
+              <div >
                 <Body />
                 <Services />
                 <Process/>
                 <About />
                 <Testimonials/>
               </div>
-              <Contact />
+              <Footer />
             </>
           }
         />

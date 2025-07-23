@@ -3,7 +3,7 @@ import { TypeAnimation } from 'react-type-animation';
 
 function Body() {
     return (
-        <div id="home" className="containerbody">
+        <div className="containerbody">
             <p className="text">
                 New to your area? Looking for<br />
                 <TypeAnimation
@@ -12,7 +12,6 @@ function Body() {
                     repeat={Infinity}
                     style={{ fontWeight: 900 }}
                 /><br />
-                lets <span className="spann">work it up</span> for you
             </p>
         </div>
     );

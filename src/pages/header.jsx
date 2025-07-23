@@ -101,7 +101,7 @@ function Header() {
               <div className="dropdown-menu">
                 {isArtisan && (
                   <Link
-                    to={`/artisan/${artisanId}`}
+                    to="/artisan-profile"
                     className="dropdown-item buttonss"
                     onClick={() => setDropdownOpen(false)}
                   >
@@ -122,16 +122,16 @@ function Header() {
           </div>
         ) : (
           <div className="log">
-            <button className="buttonssss">
-              <Link to="/signin" className="text-scroll">
+            <Link className="buttonssss" to="/signin" >
+              <span className="text-scroll">
                 Log in
-              </Link>
-            </button>
-            <button className="buttonsss">
-              <Link to="/signup" className="text-scroll">
+              </span>
+            </Link>
+            <Link className="buttonsss" to="/signup">
+              <span className="text-scroll">
                 Get Started
-              </Link>
-            </button>
+              </span>
+            </Link>
           </div>
         )}
         {showLangDropdown && (
