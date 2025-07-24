@@ -14,6 +14,7 @@ function Header() {
   const [language, setLanguage] = useState("en");
   const { user, logout, artisanId, isArtisan } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const dropdownRef = useRef(null);
   const langDropdownRef = useRef(null);
 
@@ -54,8 +55,9 @@ function Header() {
   const handleClick = () => {
     setShow((prevShow) => !prevShow);
   };
-  const location = useLocation();
+
   const isHomePage = location.pathname === "/";
+  const isLoginOrSignupPage = location.pathname === "/signin" || location.pathname === "/signup";
 
   return (
     <div>
@@ -65,21 +67,23 @@ function Header() {
           {user && <Link to="/conversations" className="buttonss">Messages</Link>}
         </div>
         <div className="header2">
-          {isHomePage &&(
-          <div onClick={handleClick} className={show ? "hamburger" : "hamburger-1"}>
-            <img src={Menu} alt="Menu" className="hamburger-icon" />
-          </div>
+          {isHomePage && (
+            <div onClick={handleClick} className={show ? "hamburger" : "hamburger-1"}>
+              <img src={Menu} alt="Menu" className="hamburger-icon" />
+            </div>
           )}
           <div onClick={handleClick} className={show ? "cancel-1" : "cancel"}>
             <img src={Cancel} alt="Cancel" className="cancel-icon" />
           </div>
-          <div ref={langDropdownRef} className="dropdown-container" onClick={() => setShowLangDropdown(!showLangDropdown)}>
-            <img src={Globe} style={{ width: "20px", height: "20px", marginRight: "5px" }} alt="Globe icon" />
-            <button className="buttonss" aria-label="Select language" aria-expanded={showLangDropdown}>
-              {language === "en" ? "EN" : "AR"}
-            </button>
-            <img src={DropDown} style={{ width: "20px", height: "20px", marginLeft: "-25px", marginRight: "0px", paddingRight: "0px" }} alt="Dropdown icon" />
-          </div>
+          {!isLoginOrSignupPage && ( // Hide language dropdown on /signin and /signup
+            <div ref={langDropdownRef} className="dropdown-container" onClick={() => setShowLangDropdown(!showLangDropdown)}>
+              <img src={Globe} style={{ width: "20px", height: "20px", marginRight: "5px" }} alt="Globe icon" />
+              <button className="buttonss" aria-label="Select language" aria-expanded={showLangDropdown}>
+                {language === "en" ? "EN" : "AR"}
+              </button>
+              <img src={DropDown} style={{ width: "20px", height: "20px", marginLeft: "-25px", marginRight: "0px", paddingRight: "0px" }} alt="Dropdown icon" />
+            </div>
+          )}
           {user ? (
             <div ref={dropdownRef} className="dropdown-container">
               <button className="buttonss" onClick={() => setDropdownOpen(!dropdownOpen)} aria-label="User menu" aria-expanded={dropdownOpen}>
@@ -99,12 +103,14 @@ function Header() {
               )}
             </div>
           ) : (
-            <div className="log">
-              <Link className="buttonssss" to="/signin"><span className="text-scroll">Log in</span></Link>
-              <Link className="buttonsss" to="/signup"><span className="text-scroll">Get Started</span></Link>
-            </div>
+            !isLoginOrSignupPage && ( // Show login links on all pages except /signin and /signup
+              <div className="log">
+                <Link className="buttonssss" to="/signin"><span className="text-scroll">Log in</span></Link>
+                <Link className="buttonsss" to="/signup"><span className="text-scroll">Get Started</span></Link>
+              </div>
+            )
           )}
-          {showLangDropdown && (
+          {!isLoginOrSignupPage && showLangDropdown && ( // Hide dropdown menu on /signin and /signup
             <div className="dropdown-menu">
               <div className="dropdown-item buttonss" onClick={() => changeLanguage("en")} role="button" tabIndex={0} onKeyDown={(e) => e.key === "Enter" && changeLanguage("en")}>
                 EN

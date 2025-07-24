@@ -11,7 +11,7 @@ function Process() {
     <div className="containerbodyy crc ">
       <h1 className="process-title">How to Get an Artisan</h1>
       <div className="process-grid">
-        <div className="process-box">
+        <div className="process-box process-box-1">
             <div style={{ display: 'flex'}}>
                 <img src={One} alt="Step 1" className="process-icon" />   
                 <p className="process-name">Sign Up</p>  

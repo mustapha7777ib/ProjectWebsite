@@ -79,9 +79,6 @@ body {
     line-height: 1;
 
 }
-    .buttonssss:hover {
-      color: #2563eb;
-    }
     .buttonssss .text-scroll {
       text-decoration: none;
       color: inherit;
@@ -125,14 +122,14 @@ body {
     color: white;
 }
 
-.text-scroll:hover {
-    opacity: 0.1;
-}
-
 .buttonsss:hover .text-scroll {
     animation: scrollText 0.5s ease-in-out forwards;
     opacity: 0.5;
     cursor: pointer;
+}
+.log .buttonsss:hover{
+  opacity: 0.95;
+  transition: 0.3s ease-in;
 }
     .buttonssss::after {
       content: '';
@@ -141,7 +138,6 @@ body {
       bottom: 0;
       width: 0;
       height: 2px;
-      background-color: #04252b;
       transition: width 0.3s ease;
     }
     .buttonssss:hover::after {
@@ -151,7 +147,7 @@ body {
 @keyframes scrollText {
     0% {
         transform: translateY(0%);
-        opacity: 1;
+        opacity: 0.5;
     }
     40% {
         transform: translateY(-100%);
@@ -324,8 +320,11 @@ body {
     padding: 5px 30px 5px 30px;
 }
 .containerbodyy{
+  display: flex;
+  flex-direction: column;
   background-color: #D9E8D8;
-  padding-left: 150px;
+  justify-content: center;
+  align-items: center;
   padding-top: 20px;
   padding-bottom: 130px;
 }
@@ -383,34 +382,35 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   padding-top: 50px; 
   padding-bottom: 50px;
   min-height: 100vh;
-
-  padding-left: 150px;
 }
 
 .hear {
   font-size: 2.5rem;
-  color: #04252b; /* Matches buttonss color */
+  color: #04252b;
   font-style: italic;
   margin-bottom: 40px;
   text-align: center;
 }
 
 .hearwhatoga {
-  position: relative;
   background-color: #04252b;
   color: white;
   border-radius: 20px 0 0 20px; /* Rounded left corners, straight right for slant */
   max-width: 900px;
-  width: 90%;
-  min-height: 400px;
+  width: 650px;
+  padding-right: 20px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); /* Matches Process.css box shadow */
   opacity: 0;
   transform: translateX(100%); /* Start off-screen to the right */
   transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; /* Smooth slide-in */
-  clip-path: polygon(0 0, 85% 0, 70% 100%, 0 100%); /* Slanted right edge */
+  display: flex;
+  flex-direction: column;
+  
+
 }
 
 .about.visible .hearwhatoga {
@@ -419,7 +419,6 @@ body {
 }
 
 .hearwhatoga-inner {
-  padding: 40px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -432,23 +431,14 @@ body {
   font-style: italic;
   font-weight: 300;
   line-height: 2;
-  margin: 0 0 20px 0;
   padding-top: 40px;
+  width: 530px;
   padding-left: 40px;
   
+  
 }
-
-.ceo {
-  align-self: flex-end;
-  font-size: 1.1rem;
-  font-style: italic;
-  text-align: right;
+.ceo{
   padding-left: 40px;
-  padding-bottom: 20px;
-}
-
-.ceo p {
-  margin: 5px 0;
 }
 
 .cto .about {
@@ -469,21 +459,22 @@ body {
   text-align: left;
 }
 
+
 .testimonials {
   display: flex;
   flex-direction: column;
-  padding-left: 150px;
+  justify-content: center;
+  align-items: center;
   padding-top: 50px;
   padding-bottom: 50px;
   min-height: 100vh;
   background-color: #f5f3eb;
-  font-family: "DM Sans", sans-serif;
   font-weight: 300;
 }
 
 .testimonials-title {
   font-size: 2.5rem;
-  color: #04252b; /* Matches header and About.css title */
+  color: #04252b; 
   font-style: italic;
   margin-bottom: 40px;
   text-align: center;
@@ -494,7 +485,7 @@ body {
   grid-template-columns: repeat(2, 1fr); /* 2x2 grid on desktop */
   gap: 20px;
   max-width: 1200px;
-  width: 90%;
+  width: 80%;
 }
 
 .testimonial-card {
@@ -562,7 +553,7 @@ body {
   background-color: #053139; 
   z-index: 1000; 
   color: white;
-  padding: 150px 50px 50px 12vw;
+  padding: 120px 50px 50px 5vw;
   
 }
 .footer-copyright {
@@ -798,11 +789,6 @@ body {
     margin-bottom: 30px;
 }
 
-.signin {
-    font-weight: 900;
-    color: #04252b;
-}
-
 .signupbutton {
     padding: 10px;
     background-color: #04252b;
@@ -810,20 +796,6 @@ body {
     border: none;
     border-radius: 5px;
     text-decoration: none;
-}
-
-.signinjsx {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: #D9E8D8;
-    padding-bottom: 13%;
-    padding-top: 50px;
-}
-
-.signinjsx > div {
-    flex: 50% 0 0;
 }
 
 .secondhalf {
@@ -841,66 +813,6 @@ body {
     color: #04252b;
 }
 
-.signinjsx button {
-    background-color: #04252b;
-    color: white;
-    width: 420px;
-    border: none;
-    border-radius: 5px;
-    height: 40px;
-}
-
-.donthave {
-    margin-left: 60px;
-}
-
-.signup {
-    color: #04252b;
-    text-decoration: none;
-}
-
-.inputerchild {
-    width: 420px;
-    height: 40px;
-    background-color: #F5EFED;
-    border: 1px black solid;
-    border-radius: 5px;
-    padding-left: 5px;
-}
-
-.inputer p {
-    font-weight: 600;
-    margin-bottom: 5px;
-}
-
-.workuplogo {
-    color: #04252b;
-    font-style: italic;
-    margin-bottom: -10px;
-}
-
-.workuplogo span {
-    color: black;
-}
-
-.signupjsx {
-    margin-top: 100px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding-top: 100px;
-}
-
-.signupjsx button {
-    margin-top: 20px;
-    background-color: #04252b;
-    color: white;
-    width: 420px;
-    border: none;
-    border-radius: 5px;
-    height: 40px;
-}
 
 .have {
     margin-left: 80px;
@@ -1201,10 +1113,6 @@ label {
     background: #f9f9f9;
 }
 
-.issue {
-    margin-top: 30px;
-}
-
 .profile-container1 {
     max-width: 800px;
     margin-top: 150px;
@@ -1486,12 +1394,7 @@ label {
   background-color: #f5f5f5;
 }
 
-.message {
-  max-width: 60%;
-  margin-bottom: 15px;
-  padding: 10px;
-  border-radius: 10px;
-}
+
 
 .message.sent {
   background-color: #007bff;
@@ -2087,7 +1990,11 @@ display:none;
 .containerbody-1{
   display: none;
 }
-@media screen and (max-width: 1063px) {
+.footer-11{
+  display: flex;
+  flex-direction: row;
+}
+@media screen and (max-width: 1036px) {
   .log{
     display: none;
   }
@@ -2162,7 +2069,7 @@ display:none;
   left: 0;
   width: 100%;
   height: 350px;
-  background-color: rgba(105, 98, 68, 0.5); /* transparent background */
+  background-color: #f5f3eb00;
   backdrop-filter: blur(10px); /* apply the blur effect */
   -webkit-backdrop-filter: blur(10px); /* Safari support */
   padding-top: 20px;
@@ -2171,290 +2078,216 @@ display:none;
   transition: all 0.1s ease-in-out;
   z-index: 100; /* make sure it's above the content you're blurring */
 }
+.buttonssss-1:hover {
+    opacity: 0.5;
+    transition: 0.2s ease-in;
+}
 
-    .hearwhatoga{
-        width: 700px;
-    }
-    .containerservices1{
-        width: 350px;
-    }
-    .containerservices2{
-        width: 350px;
-    }
-    .containerservices11{
-        width: 350px;
-    }
-    .containerservices21{
-        width: 350px;
-    }
+
+.buttonsss-1:hover {
+    transition: 0.2s ease-in;
+    opacity: 0.5;
+    cursor: pointer;
+}
+.footer-1{
+  flex-direction: column;
+};
+.footer-title{
+    margin-top: 0px;
+  padding-top: 0px;
+}
+.footer-brand{
+  height: 20px;
+  padding-bottom: 0px;
+  margin-bottom: 90px;
+  margin-top: 0px;
+  padding-top: 0px;
+}
+.footer-1{
+    margin-top: 0px;
+  padding-top: 0px;
+}
+.footer{
+  padding-top: 50px;
+}
 
 }
-@media screen and (max-width: 1045px) {
-
-    .containerservices1{
-        width: 550px;
-        margin-right: 0px;
-    }
-    .containerservices2{
-        display:none;
-    }
-    .containerservices11{
-        width: 550px;
-        margin-right: 0px;
-    }
-    .containerservices21{
-        display:none;
-    }
-    .containerservices{
-        margin-left: 100px;
-    }
-    .right {
-        margin-left: -50px;
-        margin-top: 200px;
-    }
-    .work {
-        font-size: 70px;
-        margin-bottom: -80px;
-        margin-top: 110px;
-    }
-
-    .up {
-        font-size: 60px;
-        font-style: italic;
-    }
-
-    .hearwhatoga{
-        width: 600px;
-    }
-    .text{
-        margin-left: 100px;
-    }
-    .outside{
-        width: 300px;
-    }
+@media screen and (max-width: 922px) {
+  .text{
+    font-size: 50px;
+  }
+  .hearwhat{
+      font-size: 15px;
+  }
+  .hear{
+      font-size: 25px;
+  }
+  .about{
+    margin-bottom: -120px;
+    padding-bottom: 80px;
+    margin-top: -100px;
+  }
+  .testimonials{
+    padding-top: 0px;
+    padding-bottom: 80px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .containerbody-1 {
+    height: 300px;
 }
-@media screen and (max-width: 865px) {
-    .text{
-        margin-left: 100px;
-        margin-top: -100px;
-    }
-    .right{
-        display: none;
-    }
-    .containerservices1{
-        width: 350px;
-        margin-right: 0px;
-    }
-    .containerservices11{
-        width: 350px;       
-    }
 
+}
+@media screen and (max-width: 752px) {
+    .text{
+      font-size: 35px;
+      padding-left: 20px;
+      padding-right: 20px;
+    }
     .hearwhatoga{
-        width: 400px;
-        padding-bottom: 10px;
+      width: 500px;
     }
     .hearwhat{
-        font-size: 12.9px;
-        margin-top: 0px;
-        padding-bottom: 0px;
+      width: 450px;
     }
-    .hear{
-        font-size: 20px;
-    }
-    .contact *{
-        font-size: 15px;
-    }
-    .buttonsss{
-        display:none;
-    }
-    div.artisan:nth-of-type(4){
-        display: none;
-    }
-    div.artisan:nth-of-type(5){
-        display: none;
-    }
-}
-@media screen and (max-width: 667px) {
-    .header1{
-        display:none;
-    }
-    .hamburger{
-        display:flex
-    }
-    .hamburger-icon{
-        width: 30px;
-        height: 30px;
-    }
-    .hamburger-icon1{
-        width: 30px;
-        height: 30px;
-    }
-    .header11{
-        display: flex;
-        flex-direction: column;
-    }
-    .containerservices1{
-        width: 250px;
-        margin-left: -50px;
-        height: 250px;
-        font-size: 13px;
-    }
-    .carpenter{
-        margin-bottom: -10px;
-    }
-    .servicetext{
-        font-size: 13px;
-        font-weight: 500;
-        margin-bottom: 0px;
-    }
-    .containerservices11{
-        display: none;    
-        margin-bottom: -20px; 
-        padding-bottom: -20px;
-    }
-    .text{
-        margin-left: 50px;
-        margin-top: -100px;
-        padding-top: -20px;
-    }
+    #services{
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-bottom: -30px;
 
-    .containerservices{
-        margin-bottom: 10px;
-    }
-    .hearwhatoga{
-        width: 200px;
-        padding-bottom: 10px;
-        padding-top: 20px;
-        margin-left: 50px;
-    }
-    .hearwhat{
-        font-size: 12px;
-        line-height: 15px;
-        margin-top: 0px;
-        padding-bottom: 0px;
-    }
-    body{
-        margin-left: -100px;
-    }
-    .ceo{
-        font-size: 10px;
-    }
-    .hear{
-        margin-top: -50px;
-        font-size: 15px;
-        margin-left: 50px;
-    }
-    .details{
-        display: none;
-    }
-    .details2{
-        margin-left: 150px;
-    }
-    .contact h1{
-        display: none;
-    }
-    .texxt{
-        display: none;
-    }
-    .gettrusted{
-        margin-left: 100px;
-    }
-    h1.gettrusted{
-        font-size: 30px;
-    }
-    .searchbar{
-        width:400px;
-        margin-left: 100px;
-    }
-    .searchbar p{
-        font-size: 15px;    
-       
-    }
-    .icon{
-        width: 25px;
-        padding-left: 20px;
-        margin-top: -5px;
-    }
-    .artisanss{
-        margin-left: 100px;
-        
-    }
-    .artisan .jj{
-        font-size: 15px;
-    }
-    .artisanss{
-        margin-left: 150px;
-    }
-    .signinjsx{
-        margin-left: 100px;
-    }
-    .signupjsx{
-        margin-left: 100px;
-    }
-    .inputer input{
-        width: 250px;
-    }
-    .signinjsx button {
-        width: 260px;
-    }
-    .signupjsx button {
-        width: 260px;
-    }
-    .donthave{
-        font-size: 13px;
-        margin-left: 0px;
-    }
-    .have{
-        font-size: 13px;
-        margin-left: 0px;
-    }
+}
+  .containerbody-1 {
+    padding-top: 0px;
+    height: 300px;
+    top: 100px;
+}
 }
 @media screen and (max-width: 500px) {
-    .containerservices1{
-        width: 170px;
-        margin-left: -50px;
-        height: 300px;
-        font-size: 10px;
+    .text{
+      font-size: 17px;
     }
+    .seemore{
+    font-size: 12px;
+    margin-right: 0px;
+}
+  .ab{
+    margin-bottom: -30px;
+  }
+  .arrow{
+    margin-left: 2px;
+    height: 15px;
+  }
+  .process-title{
+    font-size: 25px;
+  }
+  .process-name{
+    font-size: 17px;
+  }
+  .process-text{
+    font-size: 12px;
+  }
+  .process-grid {
+    width: 80%;
+    margin-left: -30px;
+  }
+  .containerbodyy{
+    padding-bottom: 40px;
+  }
+    .hearwhat{
+        font-size: 15px;
+    }
+    .hear{
+        font-size: 25px;
+    }
+    .about{
+      margin-bottom: -40px;
+      padding-bottom: 80px;
+      margin-top: -40px;
+    }
+       .hearwhatoga{
+      width: 350px;
+    }
+    .hearwhat{
+      width: 270px;
+    }
+    #services{
+    padding-top: 40px;
+    padding-bottom: 20px;
+    margin-bottom: -30px;
 
-    .hearwhatoga{
-        width: 200px;
-        padding-bottom: 10px;
-        padding-top: 20px;
-        margin-left: 50px;
-        padding-left: 10px;
-        padding-right: 0px;
-    }
-    .details2 *{
-        font-weight: 300;
-    }
-        .texxt{
-        display: none;
-    }
-    .gettrusted{
-        margin-left: 100px;
-    }
-    h1.gettrusted{
-        font-size: 30px;
-    }
-    .searchbar{
-        width: 300px;
-        margin-left: 100px;
-    }
-    .searchbar p{
-        font-size: 13px;    
-       
-    }
-    .icon{
-        width: 25px;
-        padding-left: 10px;
-        margin-top: -5px;
-    }
-    .artisan .jj{
-        font-size: 13px;
-    }
-    .artisanss{
-        margin-left: 120px;
-    }
+}
+  .testimonials-title{
+    margin-top: -120px;
+    font-size: 25px;
+  }
+  .okk{
+    padding: 3px 12px 6px 15px;
+  }
+  .testimonials{
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+  .grid-3{
+    display: none;
+  }
+  .grid-4{
+    display: none;
+  }
+  .footer{
+    margin-top: -180px;
+  }
+  .footer-11 *{
+    margin-right: 3px;
+  }
+  .containerbody-1 {
+    top:90px;
+    height:280px;
+}
+} 
+@media screen and (max-width: 400px) {
+.text{
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+  .process-grid {
+    margin-left: -50px;
+  }
+    .process-title{
+    font-size: 20px;
+  }
+  .process-name{
+    font-size: 15px;
+  }
+  .process-text{
+    font-size: 10px;
+  }
+  .hear{
+    font-size: 20px;
+  }
+  .hearwhatoga{
+    width: 250px;
+  }
+  .hearwhat{
+    width: 200px;
+  }
+  .testimonials{
+    padding-top: 0px;
+  }
+  .grid-2{
+    display: none;
+  }
+  .testimonials-title{
+    padding-top: 0px;
+    margin-top: -250px;
+  }
+  .testimonial-card {
+    width: 300px;
 
+  }
+  .footer{
+    margin-top: -300px;
+  }
+  .seemore{
+    font-size: 9px;
+  }
 }

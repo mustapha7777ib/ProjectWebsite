@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from './AuthContext';
 import Header from './header.jsx';
 import Body from './body.jsx';
@@ -33,12 +34,17 @@ function ProtectedRoute({ children, requireAdmin = false }) {
 
 function App() {
   const { loading } = useAuth();
+  const location = useLocation();
+    const isLoginOrSignupPage = location.pathname === "/signin" || location.pathname === "/signup";
+
 
   if (loading) return <div className="loading">Loading...</div>;
 
   return (
     <>
+    {!isLoginOrSignupPage && (
       <Header />
+    )}
       <Routes>
         <Route
           path="/"

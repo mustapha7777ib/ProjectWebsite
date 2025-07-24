@@ -35,7 +35,7 @@ function Testimonials() {
     <div id="testimonials" className="testimonials abc">
       <h1 className="testimonials-title">What Our Users Say</h1>
       <div className="testimonials-grid" ref={testimonialsRef}>
-        <div className="testimonial-card">
+        <div className="testimonial-card grid-1">
           <div className="testimonial-card-inner">
             <p className="testimonial-quote">
               "Work Up connected me with a fantastic plumber who fixed my issue quickly. The booking process was seamless and stress-free!"
@@ -46,7 +46,7 @@ function Testimonials() {
             </div>
           </div>
         </div>
-        <div className="testimonial-card">
+        <div className="testimonial-card grid-2">
           <div className="testimonial-card-inner">
             <p className="testimonial-quote">
               "As an electrician, Work Up has been a game-changer. I get regular clients who appreciate my skills, and the platform is easy to use."
@@ -57,7 +57,7 @@ function Testimonials() {
             </div>
           </div>
         </div>
-        <div className="testimonial-card">
+        <div className="testimonial-card grid-3">
           <div className="testimonial-card-inner">
             <p className="testimonial-quote">
               "I found a skilled carpenter for my home renovation through Work Up. The quality of service was outstanding, and I’ll use it again!"
@@ -68,7 +68,7 @@ function Testimonials() {
             </div>
           </div>
         </div>
-        <div className="testimonial-card">
+        <div className="testimonial-card grid-4">
           <div className="testimonial-card-inner">
             <p className="testimonial-quote">
               "Work Up’s platform helps me showcase my masonry work and connect with clients efficiently. It’s boosted my business significantly."

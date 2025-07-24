@@ -5,6 +5,8 @@ import { AuthProvider } from './AuthContext';
 import App from '../pages/App.jsx';
 import ErrorBoundary from './ErrorBoundary';
 import '../pages/header.css';
+import '../pages/signin.css';
+import '../pages/signup.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

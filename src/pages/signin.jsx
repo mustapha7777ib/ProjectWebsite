@@ -42,34 +42,36 @@ function SignIn() {
   }
   return (
     <div className="signinjsx">
+      <div className="signinjsxchild">
       <p className="workuplogo">WORK<span>UP</span></p>
-      <h2>Welcome Back!</h2>
+      <h2>Sign In to your Account</h2>
 
-      {message && <p className="message">{message}</p>}
+      {message && <p className="message-email">{message}</p>}
 
       <div>
         <div className="inputer">
-          <p>Email</p>
           <input
             className="inputerchild"
             name="email"
-            placeholder="Enter your Email"
+            placeholder="Email"
             value={formData.email}
             onChange={handleChange}
           />
         </div>
         <div className="inputer">
-          <p>Password</p>
           <input
             className="inputerchild"
             type="password"
             name="password"
-            placeholder="Enter your Password"
+            placeholder="Password"
             value={formData.password}
             onChange={handleChange}
           />
         </div>
       </div>
+      <p className="condition">
+        By signing in, you are agreeing to Work Up's <span className="terms">Terms of Use</span> and <span  className="terms">Privacy Policy.</span>
+      </p>
 
       <button className="issue" onClick={handleSubmit}>Login</button>
 
@@ -81,6 +83,7 @@ function SignIn() {
           </Link>
         </span>
       </p>
+      </div>
     </div>
   );
 }

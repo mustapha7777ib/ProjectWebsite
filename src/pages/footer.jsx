@@ -11,6 +11,7 @@ function Footer() {
         <div className="footer-brand">
           <h3 className="footer-title">Work Up</h3>
         </div>
+        <div className="footer-11">
         <div className="footer-2">
         <div className="footer-contact">
           <h4 className="footer-subtitle">Contact Us</h4>
@@ -22,7 +23,7 @@ function Footer() {
             <span className="footer-icon">+234 905-617-1492</span> 
           </p>
           <p className="footer-item">
-            <span className="footer-icon">123 Main St, Abuja, Nigeria</span>
+            <span className="footer-icon">Abuja, Nigeria</span>
           </p>
           </div>
         </div>
@@ -44,10 +45,11 @@ function Footer() {
               <img src={Discord} className="social-link"/>
             </div>
           </div>
+          </div>
         </div>
 
       <p className="footer-copyright">© 2025 Work Up. All rights reserved.</p>
-            </div>
+    </div>
       </>
     
   );

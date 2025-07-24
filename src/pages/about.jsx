@@ -30,21 +30,19 @@ function About() {
       <h1 className="hear">Hear About Us From Our CEO</h1>
       <div className="hearwhatoga">
         <p className="hearwhat">
-          We are a company dedicated to bridging the gap<br />
-          between individuals in need of skilled labor services<br />
-          and qualified professionals who provide them.<br />
-          Our platform makes it easy for people to find and book<br />
-          reliable service providers, whether they require electrical work,<br />
-          carpentry, plumbing, or other specialized services.<br />
-          Our goal is to simplify the process of hiring skilled labor<br />
-          by offering a seamless, trustworthy, and efficient experience,<br />
-          ultimately saving our customers time and effort<br />
+          We are a company dedicated to bridging the gap
+          between individuals in need of skilled labor services
+          and qualified professionals who provide them.
+          Our platform makes it easy for people to find and book
+          reliable service providers, whether they require electrical work,
+          carpentry, plumbing, or other specialized services.
+          Our goal is to simplify the process of hiring skilled labor
+          by offering a seamless, trustworthy, and efficient experience,
+          ultimately saving our customers time and effort
           while ensuring high-quality service.
         </p>
-        <div className="ceo">
-          <p>- Mustapha Ibrahim</p>
-          <p>CEO, Work Up</p>
-        </div>
+        <p className="ceo">- Mustapha Ibrahim<br />CEO, Work Up</p>
+        <p></p>
       </div>
     </div>
   );
