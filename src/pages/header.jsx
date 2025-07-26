@@ -67,7 +67,7 @@ function Header() {
           {user && <Link to="/conversations" className="buttonss">Messages</Link>}
         </div>
         <div className="header2">
-          {isHomePage && (
+          {!isLoginOrSignupPage && (
             <div onClick={handleClick} className={show ? "hamburger" : "hamburger-1"}>
               <img src={Menu} alt="Menu" className="hamburger-icon" />
             </div>

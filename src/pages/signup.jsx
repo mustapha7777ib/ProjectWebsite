@@ -57,7 +57,8 @@ function SignUp() {
     fetch("http://localhost:8080/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...formData, step: "verify" }), // Indicate verification step
+      body: JSON.stringify({ ...formData, step: "verify" }), 
+      credentials: "include",
     })
       .then((res) => res.json())
       .then((data) => {
@@ -73,6 +74,7 @@ function SignUp() {
 
 function handleVerifyCode(e) {
   e.preventDefault();
+  console.log("Verify button clicked, code:", formData.verificationCode);
   const { verificationCode } = formData;
 
   if (!verificationCode) {
@@ -80,23 +82,29 @@ function handleVerifyCode(e) {
     return;
   }
 
-  // Verify the code with the backend
   fetch("http://localhost:8080/verify", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email: formData.email, verificationCode }),
-    credentials: "include", // Add this to send the session cookie
+    credentials: "include",
   })
-    .then((res) => res.json())
+    .then((res) => {
+      console.log("Verify response status:", res.status, "OK:", res.ok);
+      return res.json();
+    })
     .then((data) => {
+      console.log("Verify response data:", data);
       if (data.error) {
-        setMessage(data.error); // e.g., "Invalid verification code"
+        setMessage(data.error);
       } else {
-        login(data.user); // Log in the user after successful verification
-        navigate("/"); // Redirect to home page
+        login(data.user);
+        navigate("/");
       }
     })
-    .catch((err) => setMessage("Error: " + err.message));
+    .catch((err) => {
+      console.error("Verify fetch error:", err);
+      setMessage("Error: Unable to verify code. Please try again.");
+    });
 }
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
@@ -149,7 +157,7 @@ function handleVerifyCode(e) {
               <input
                 className="inputerchild"
                 type={showPassword ? "text" : "password"}
-                placeholder="Enter your Password"
+                placeholder="Create a password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
@@ -195,7 +203,7 @@ function handleVerifyCode(e) {
 
         {step === 3 && (
           <>
-            <div className="inputer">
+            <div className="inputerrr">
               <input
                 className="inputerchild"
                 placeholder="Enter Verification Code"
@@ -204,7 +212,8 @@ function handleVerifyCode(e) {
                 onChange={handleChange}
               />
             </div>
-            <button onClick={handleVerifyCode}>Verify</button>
+            <button type="submit" onClick={handleVerifyCode}>Verify</button>
+                  
           </>
         )}
 

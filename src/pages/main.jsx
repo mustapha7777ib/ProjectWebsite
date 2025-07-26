@@ -7,6 +7,7 @@ import ErrorBoundary from './ErrorBoundary';
 import '../pages/header.css';
 import '../pages/signin.css';
 import '../pages/signup.css';
+import '../pages/workers.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

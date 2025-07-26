@@ -45,7 +45,7 @@ pool.on("error", (err) => {
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "http://localhost:5174",
     methods: ["GET", "POST", "PUT", "PATCH", "OPTIONS"],
     credentials: true,
   })
@@ -392,6 +392,7 @@ app.post("/artisan/:id/add-job-posting", upload.single("image"), async (req, res
 app.post("/signup", async (req, res) => {
   const { email, firstName, lastName, password, step } = req.body;
   console.log("server.js: POST /signup", { email, firstName, lastName, step });
+  
 
   if (!email || !firstName || !lastName || !password) {
     console.error("server.js: Missing required fields:", { email, firstName, lastName });
@@ -407,40 +408,33 @@ app.post("/signup", async (req, res) => {
       }
 
       const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+      req.session.signupData = { email: email.toLowerCase(), firstName, lastName, password, verificationCode };
+      await new Promise((resolve, reject) => {
+        req.session.save((err) => {
+          if (err) {
+            console.error("server.js: Failed to save session:", err.message, err.stack);
+            return reject(err);
+          }
+          console.log("server.js: Session saved successfully, Session ID:", req.sessionID, "Data:", req.session.signupData);
+          resolve();
+        });
+      });
 
-      // Store user data and verification code in session
-      req.session.signupData = {
-        email: email.toLowerCase(),
-        firstName,
-        lastName,
-        password, // Note: Hash this in /verify for security
-        verificationCode,
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+        secure: true,
+        port: 587,
+        tls: { rejectUnauthorized: false },
+      });
+
+      const mailOptions = {
+        from: `"Work Up Team" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: "Your Work Up Account Verification",
+        text: `Hello ${firstName},\n\nThank you for signing up! Your verification code is ${verificationCode}. Please enter it on the signup page to complete your registration.\n\nBest,\nThe Work Up Team`,
       };
-      await req.session.save();
 
-      // Configure Nodemailer transporter
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  secure: true, // Use TLS
-  port: 587, // Default SMTP port
-  tls: {
-    rejectUnauthorized: false, // Optional, for testing; remove in production
-  },
-});
-
-      // Email options
-const mailOptions = {
-  from: `"Work Up Team" <${process.env.EMAIL_USER}>`, // Use a friendly name
-  to: email,
-  subject: "Your Work Up Account Verification",
-  text: `Hello ${firstName},\n\nThank you for signing up! Your verification code is ${verificationCode}. Please enter it on the signup page to complete your registration.\n\nBest,\nThe Work Up Team`,
-};
-
-      // Send email
       await transporter.sendMail(mailOptions);
       console.log("server.js: Verification email sent to:", email);
 
@@ -449,7 +443,7 @@ const mailOptions = {
 
     return res.status(400).json({ error: "Invalid step" });
   } catch (err) {
-    console.error("Database or email error:", err.message);
+    console.error("Database or email error:", err.message, err.stack);
     res.status(500).json({ error: "Server error: " + err.message });
   }
 });
@@ -538,39 +532,47 @@ app.post("/verify", async (req, res) => {
   }
 
   try {
+    console.log("server.js: POST /verify, Session ID:", req.sessionID, "Session data:", req.session.signupData);
     if (!req.session.signupData || req.session.signupData.email !== email.toLowerCase()) {
       console.error("server.js: No valid signup data in session for email:", email, "Session data:", req.session.signupData);
       return res.status(400).json({ error: "Invalid or expired session data. Please restart the signup process." });
     }
 
-    const { firstName, lastName, password, verificationCode: storedCode } = req.session.signupData;
-
-    if (verificationCode !== storedCode) {
+    if (req.session.signupData.verificationCode !== verificationCode) {
       console.error("server.js: Invalid verification code for email:", email);
-      return res.status(401).json({ error: "Invalid verification code" });
+      return res.status(400).json({ error: "Invalid verification code" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-
+    const hashedPassword = await bcrypt.hash(req.session.signupData.password, SALT_ROUNDS);
     const result = await pool.query(
-      `INSERT INTO users (email, first_name, last_name, password, verified)
-       VALUES ($1, $2, $3, $4, true) RETURNING id, email, first_name, last_name, artisanid, role`,
-      [email.toLowerCase(), firstName, lastName, hashedPassword]
+      `INSERT INTO users (email, first_name, last_name, password, verified, role, created_at)
+       VALUES ($1, $2, $3, $4, true, 'user', CURRENT_TIMESTAMP)
+       RETURNING id, email, first_name, last_name, role, artisanid`,
+      [
+        req.session.signupData.email,
+        req.session.signupData.firstName,
+        req.session.signupData.lastName,
+        hashedPassword,
+      ]
     );
 
-    delete req.session.signupData;
-    await req.session.save();
-
-    const user = result.rows[0];
-    console.log("server.js: Verification and user creation successful for email:", email);
-    res.json({
-      message: "Verification successful",
-      user,
+    req.session.userId = result.rows[0].id;
+    await new Promise((resolve, reject) => {
+      req.session.save((err) => {
+        if (err) {
+          console.error("server.js: Failed to save session:", err.message, err.stack);
+          return reject(err);
+        }
+        console.log("server.js: Session saved for user:", result.rows[0].id);
+        resolve();
+      });
     });
 
+    delete req.session.signupData;
+    res.json({ message: "Verification successful", user: result.rows[0] });
   } catch (err) {
-    console.error("Verification error:", err.message);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Verification error:", err.message, err.stack);
+    res.status(500).json({ error: "Server error: " + err.message });
   }
 });
 app.get("/users/:id", async (req, res) => {
@@ -1004,7 +1006,7 @@ app.post("/artisan/:id/purchase-coins", async (req, res) => {
     const transaction = await paystack.transaction.initialize({
       email,
       amount: amount * 100,
-      callback_url: `http://localhost:5173/purchase-coins/success`,
+      callback_url: `http://localhost:5174/purchase-coins/success`,
       metadata: { artisan_id: parseInt(id), coin_amount },
     });
     console.log(
